@@ -169,8 +169,7 @@ footer a:hover {
 footer .footer-name {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   color: var(--color-text-muted);
 }
 
