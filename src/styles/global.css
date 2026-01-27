@@ -160,10 +160,14 @@ footer a {
   color: var(--color-text-muted);
   transition: color 0.15s ease;
   font-size: 1.8rem;
+  text-decoration: none;
 }
 
 footer a:hover {
   color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
 }
 
 footer .footer-name {
