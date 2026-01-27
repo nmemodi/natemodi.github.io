@@ -1,1 +1,17 @@
-_site/
+# Astro
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.*
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store

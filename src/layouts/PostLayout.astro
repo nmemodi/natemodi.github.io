@@ -1,0 +1,36 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    date: string;
+    description?: string;
+  };
+  rawContent?: () => string;
+}
+
+const { frontmatter, rawContent } = Astro.props;
+const formattedDate = new Date(frontmatter.date).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+// Calculate reading time (average 200 words per minute)
+let readingTime = '';
+if (rawContent) {
+  const text = rawContent();
+  const words = text.split(/\s+/).length;
+  const minutes = Math.ceil(words / 200);
+  readingTime = `${minutes} min read`;
+}
+---
+
+<BaseLayout title={frontmatter.title} description={frontmatter.description}>
+  <article>
+    <h1>{frontmatter.title}</h1>
+    <p class="meta">{formattedDate}{readingTime && ` · ${readingTime}`}</p>
+    <slot />
+  </article>
+</BaseLayout>
