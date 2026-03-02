@@ -1,0 +1,664 @@
+---
+import placesData from '../data/travel-places.json';
+import { landPath, bordersPath } from './world-map-paths.js';
+
+const regions = [
+  'US & Canada',
+  'Europe',
+  'Asia Pacific',
+  'Central & South America',
+  'Africa',
+];
+
+const placesByRegion = regions.map(region => ({
+  region,
+  places: placesData.filter(p => p.region === region),
+}));
+---
+
+<div class="travel-container">
+  <div class="travel-layout">
+    <div class="travel-list">
+      {placesByRegion.map(({ region, places }) => (
+        <div class="travel-region">
+          <h3 class="travel-region-title">{region}</h3>
+          <ul class="travel-places">
+            {places.map(place => (
+              <li
+                class="travel-place"
+                tabindex="0"
+                data-place={JSON.stringify({
+                  name: place.displayName,
+                  country: place.country,
+                  lat: place.lat,
+                  lng: place.lng,
+                  population: place.population,
+                  elevation: place.elevation,
+                  timezone: place.timezone,
+                  wikiUrl: place.wikiUrl,
+                })}
+              >
+                {place.displayName}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <div class="travel-panel">
+      <div class="panel-empty" data-panel-empty>
+        <div class="panel-empty-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <p>Hover over a place to explore</p>
+      </div>
+
+      <div class="panel-content" data-panel-content style="display:none;">
+        <div class="map-wrap">
+          <svg
+            class="panel-map"
+            viewBox="-180 -90 360 180"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <rect x="-180" y="-90" width="360" height="180" class="map-ocean" />
+            <path d={landPath} class="map-land" />
+            <path d={bordersPath} class="map-borders" fill="none" />
+            <circle class="map-marker" cx="0" cy="0" r="1.5" />
+          </svg>
+        </div>
+
+        <h3 class="place-name" data-place-name></h3>
+        <p class="place-country" data-place-country></p>
+
+        <div class="panel-stats">
+          <div class="panel-stat">
+            <span class="stat-label">Population</span>
+            <span class="stat-value" data-stat-pop>—</span>
+          </div>
+          <div class="panel-stat">
+            <span class="stat-label">Elevation</span>
+            <span class="stat-value" data-stat-elev>—</span>
+          </div>
+          <div class="panel-stat">
+            <span class="stat-label">Weather</span>
+            <span class="stat-value" data-stat-weather>
+              <span class="weather-icon" data-weather-icon></span>
+              <span class="weather-temp" data-weather-temp>...</span>
+            </span>
+          </div>
+          <div class="panel-stat">
+            <span class="stat-label">Time Zone</span>
+            <span class="stat-value" data-stat-tz>—</span>
+          </div>
+        </div>
+
+        <a class="wiki-link" data-wiki-link href="#" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+          Wikipedia
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile modal — outside .travel-container to avoid transform breaking position:fixed -->
+<div class="travel-modal-overlay" id="travel-modal-overlay">
+  <div class="travel-modal">
+    <button class="modal-close" aria-label="Close" data-modal-close>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+    </button>
+    <!-- Map cloned from panel via JS (Issue 3A: single SVG, cloneNode for modal) -->
+    <div class="map-wrap" data-modal-map-slot></div>
+
+    <h3 class="place-name" data-place-name></h3>
+    <p class="place-country" data-place-country></p>
+    <div class="panel-stats">
+      <div class="panel-stat">
+        <span class="stat-label">Population</span>
+        <span class="stat-value" data-stat-pop>—</span>
+      </div>
+      <div class="panel-stat">
+        <span class="stat-label">Elevation</span>
+        <span class="stat-value" data-stat-elev>—</span>
+      </div>
+      <div class="panel-stat">
+        <span class="stat-label">Weather</span>
+        <span class="stat-value" data-stat-weather>
+          <span class="weather-icon" data-weather-icon></span>
+          <span class="weather-temp" data-weather-temp>...</span>
+        </span>
+      </div>
+      <div class="panel-stat">
+        <span class="stat-label">Time Zone</span>
+        <span class="stat-value" data-stat-tz>—</span>
+      </div>
+    </div>
+    <a class="wiki-link" data-wiki-link href="#" target="_blank" rel="noopener noreferrer">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+      Wikipedia
+    </a>
+  </div>
+</div>
+
+<style>
+  /* Container breaks out of the 640px parent */
+  .travel-container {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 1100px;
+    padding: 0 1.5rem;
+  }
+
+  .travel-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  /* List column */
+  .travel-list {
+    min-width: 0;
+  }
+
+  .travel-region {
+    margin-bottom: 1.5rem;
+  }
+
+  .travel-region-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+    margin-top: 1.5rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .travel-region:first-child .travel-region-title {
+    margin-top: 0;
+  }
+
+  .travel-places {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+
+  .travel-place {
+    padding: 0.4rem 0.6rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    transition: color 0.15s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    outline: none;
+  }
+
+  .travel-place:hover,
+  .travel-place:focus-visible,
+  .travel-place.active {
+    color: var(--color-text);
+  }
+
+  /* Panel column */
+  .travel-panel {
+    position: sticky;
+    top: 1.5rem;
+    background: var(--color-code-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    min-height: 420px;
+    transition: opacity 0.2s ease;
+  }
+
+  .panel-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    color: var(--color-text-muted);
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .panel-empty-icon {
+    opacity: 0.4;
+  }
+
+  .panel-empty p {
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  /* Map */
+  .map-wrap {
+    width: 100%;
+    height: 140px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+    background: var(--color-border);
+  }
+
+  .panel-map {
+    width: 100%;
+    height: 100%;
+  }
+
+  .map-ocean {
+    fill: var(--color-bg);
+  }
+
+  .map-land {
+    fill: var(--color-border);
+    stroke: var(--color-text-muted);
+    stroke-width: 0.3;
+    stroke-opacity: 0.3;
+  }
+
+  .map-borders {
+    stroke: var(--color-text-muted);
+    stroke-width: 0.15;
+    stroke-opacity: 0.2;
+  }
+
+  .map-marker {
+    fill: var(--color-accent);
+    stroke: #fff;
+    stroke-width: 0.5;
+  }
+
+  /* Place info */
+  .place-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.15rem 0;
+    letter-spacing: -0.01em;
+  }
+
+  .place-country {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin: 0 0 1rem 0;
+  }
+
+  /* Stats grid */
+  .panel-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: var(--color-bg);
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+  }
+
+  .panel-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .stat-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+  }
+
+  .stat-value {
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .weather-icon {
+    display: inline;
+  }
+
+  .weather-temp {
+    color: var(--color-text-muted);
+  }
+
+  .weather-temp:not(:empty) {
+    color: var(--color-text);
+  }
+
+  /* Wiki link */
+  .wiki-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--color-accent);
+    text-decoration: none;
+    padding: 0.4rem 0.7rem;
+    border-radius: 4px;
+    transition: background 0.15s ease;
+  }
+
+  .wiki-link:hover {
+    background: var(--color-bg);
+    text-decoration: none;
+  }
+
+  /* Mobile modal overlay */
+  .travel-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .travel-modal-overlay.visible {
+    display: flex;
+    opacity: 1;
+  }
+
+  .travel-modal-overlay.entering {
+    display: flex;
+    opacity: 0;
+  }
+
+  .travel-modal {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    max-width: 380px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.25s ease;
+  }
+
+  .travel-modal-overlay.visible .travel-modal {
+    transform: translateY(0);
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: color 0.15s ease;
+    z-index: 1;
+  }
+
+  .modal-close:hover {
+    color: var(--color-text);
+  }
+
+  .travel-modal .map-wrap {
+    height: 120px;
+    margin-bottom: 1rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .travel-container {
+      padding: 0;
+    }
+
+    .travel-layout {
+      display: block;
+    }
+
+    .travel-panel {
+      display: none;
+    }
+
+    .travel-places {
+      grid-template-columns: 1fr;
+    }
+
+    .travel-place {
+      padding: 0.5rem 0.6rem;
+    }
+  }
+</style>
+
+<script>
+  import { formatPopulation, formatElevation, getWeatherIconName, formatTimezone } from './travel-formatters.js';
+
+  // Weather SVG icons (trusted, hardcoded)
+  const WEATHER_ICONS = {
+    sun: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>',
+    'cloud-sun': '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/></svg>',
+    cloud: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>',
+    rain: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 14v6"/><path d="M8 14v6"/><path d="M12 16v6"/></svg>',
+    snow: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><line x1="2" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="22"/><path d="m20 16-4-4 4-4"/><path d="m4 8 4 4-4 4"/><path d="m16 4-4 4-4-4"/><path d="m8 20 4-4 4 4"/></svg>',
+    storm: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M6 16.326A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.973"/><path d="m13 12-3 5h4l-3 5"/></svg>',
+  };
+
+  const weatherCache = new Map();
+  let weatherTimeout = null;
+
+  async function fetchWeather(lat, lng) {
+    const key = `${lat},${lng}`;
+    if (weatherCache.has(key)) return weatherCache.get(key);
+
+    try {
+      const res = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=auto`
+      );
+      const data = await res.json();
+      if (data.current) {
+        const temp = Math.round(data.current.temperature_2m);
+        const iconName = getWeatherIconName(data.current.weather_code);
+        const result = {
+          temp: `${temp}°F`,
+          iconName,
+          timezone: data.timezone || null,
+        };
+        weatherCache.set(key, result);
+        return result;
+      }
+    } catch {
+      // silently fail — weather is non-critical
+    }
+    return null;
+  }
+
+  function animateMapTo(svgEl, lat, lng) {
+    const markerEl = svgEl.querySelector('.map-marker');
+    if (!markerEl) return;
+    const span = 20;
+    const vbX = lng - span;
+    const vbY = -lat - span / 2;
+    svgEl.setAttribute('viewBox', `${vbX} ${vbY} ${span * 2} ${span}`);
+    markerEl.setAttribute('cx', lng.toString());
+    markerEl.setAttribute('cy', (-lat).toString());
+    markerEl.setAttribute('r', (span * 0.04).toString());
+  }
+
+  /**
+   * Updates all data-* elements within a container.
+   * Used for both the desktop panel and mobile modal (Issue 5A).
+   *
+   *   container
+   *   ├── [data-place-name]     ← place.name (textContent)
+   *   ├── [data-place-country]  ← place.country (textContent)
+   *   ├── .panel-map            ← animateMapTo(lat, lng)
+   *   ├── [data-stat-pop]       ← formatPopulation (textContent)
+   *   ├── [data-stat-elev]      ← formatElevation (textContent)
+   *   ├── [data-weather-icon]   ← SVG icon (innerHTML, trusted)
+   *   ├── [data-weather-temp]   ← temp string (textContent)
+   *   ├── [data-stat-tz]        ← timezone (textContent)
+   *   └── [data-wiki-link]      ← wikiUrl (href)
+   */
+  function updateContainer(container, place) {
+    const q = (sel) => container.querySelector(sel);
+
+    const nameEl = q('[data-place-name]');
+    const countryEl = q('[data-place-country]');
+    const wikiLink = q('[data-wiki-link]');
+    const mapSvg = q('.panel-map');
+    const popEl = q('[data-stat-pop]');
+    const elevEl = q('[data-stat-elev]');
+    const iconEl = q('[data-weather-icon]');
+    const tempEl = q('[data-weather-temp]');
+    const tzEl = q('[data-stat-tz]');
+
+    if (nameEl) nameEl.textContent = place.name;
+    if (countryEl) countryEl.textContent = place.country;
+    if (wikiLink) wikiLink.href = place.wikiUrl || '#';
+    if (popEl) popEl.textContent = formatPopulation(place.population);
+    if (elevEl) elevEl.textContent = formatElevation(place.elevation);
+    if (tzEl) tzEl.textContent = formatTimezone(place.timezone);
+
+    // Map
+    if (mapSvg && place.lat != null) {
+      animateMapTo(mapSvg, place.lat, place.lng);
+    }
+
+    // Weather: show loading state then fetch (Issue 2A: textContent for temp)
+    if (iconEl) iconEl.innerHTML = '';
+    if (tempEl) tempEl.textContent = '...';
+
+    if (place.lat != null) {
+      // Issue 6A: debounced weather fetch (300ms)
+      if (weatherTimeout) clearTimeout(weatherTimeout);
+      weatherTimeout = setTimeout(() => {
+        fetchWeather(place.lat, place.lng).then(weather => {
+          if (weather) {
+            if (iconEl) iconEl.innerHTML = WEATHER_ICONS[weather.iconName] || '';
+            if (tempEl) tempEl.textContent = weather.temp;
+            // Issue 8B: populate timezone from API if data was missing
+            if (tzEl && !place.timezone && weather.timezone) {
+              tzEl.textContent = formatTimezone(weather.timezone);
+            }
+          } else {
+            if (iconEl) iconEl.innerHTML = '';
+            if (tempEl) tempEl.textContent = '—';
+          }
+        });
+      }, weatherCache.has(`${place.lat},${place.lng}`) ? 0 : 300);
+    }
+  }
+
+  // Responsive: check at event time, not load time
+  function isMobile() {
+    return window.matchMedia('(max-width: 768px)').matches;
+  }
+
+  // Get containers
+  const panelEmpty = document.querySelector('[data-panel-empty]');
+  const panelContent = document.querySelector('[data-panel-content]');
+  const modalOverlay = document.getElementById('travel-modal-overlay');
+  const modalMapSlot = modalOverlay?.querySelector('[data-modal-map-slot]');
+
+  // Attach handlers to each place
+  document.querySelectorAll('.travel-place').forEach(el => {
+    const place = JSON.parse(el.dataset.place);
+
+    // Desktop: hover updates the side panel
+    el.addEventListener('mouseenter', () => {
+      if (isMobile()) return;
+      activatePlace(el, place);
+    });
+
+    // Issue 4B: keyboard support — Enter/Space activates the place
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (isMobile()) {
+          openModal(place);
+        } else {
+          activatePlace(el, place);
+        }
+      }
+    });
+
+    // Mobile: tap opens the modal
+    el.addEventListener('click', () => {
+      if (!isMobile()) return;
+      openModal(place);
+    });
+  });
+
+  function activatePlace(el, place) {
+    document.querySelectorAll('.travel-place.active').forEach(a => a.classList.remove('active'));
+    el.classList.add('active');
+
+    if (panelEmpty) panelEmpty.style.display = 'none';
+    if (panelContent) panelContent.style.display = '';
+
+    updateContainer(panelContent, place);
+  }
+
+  // Mobile modal
+  function openModal(place) {
+    if (!modalOverlay) return;
+
+    // Issue 3A: clone map SVG from panel into modal
+    const panelMap = panelContent?.querySelector('.panel-map');
+    if (panelMap && modalMapSlot) {
+      modalMapSlot.innerHTML = '';
+      modalMapSlot.appendChild(panelMap.cloneNode(true));
+    }
+
+    modalOverlay.classList.add('entering');
+    modalOverlay.offsetHeight; // force reflow
+    modalOverlay.classList.remove('entering');
+    modalOverlay.classList.add('visible');
+
+    const modal = modalOverlay.querySelector('.travel-modal');
+    if (modal) updateContainer(modal, place);
+
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    if (!modalOverlay) return;
+    modalOverlay.classList.remove('visible');
+    document.body.style.overflow = '';
+  }
+
+  // Modal close handlers
+  document.querySelector('[data-modal-close]')?.addEventListener('click', closeModal);
+  modalOverlay?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // Issue 7A: clean up body overflow on page navigation
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') closeModal();
+  });
+</script>
