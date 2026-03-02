@@ -145,14 +145,21 @@ const placesByRegion = regions.map(region => ({
 </div>
 
 <style>
-  /* Container breaks out of the 640px parent */
+  /* Container breaks out of the 640px parent, but left edge
+     aligns with the main content column for visual consistency.
+     The panel extends to the right beyond the content column. */
   .travel-container {
     width: 100vw;
     position: relative;
     left: 50%;
     transform: translateX(-50%);
     max-width: 1100px;
-    padding: 0 1.5rem;
+    padding-right: 1.5rem;
+    padding-left: clamp(
+      1.5rem,
+      calc((100vw - var(--max-width)) / 2 + 1.5rem),
+      calc((1100px - var(--max-width)) / 2 + 1.5rem)
+    );
   }
 
   .travel-layout {
@@ -430,7 +437,7 @@ const placesByRegion = regions.map(region => ({
   /* Responsive */
   @media (max-width: 768px) {
     .travel-container {
-      padding: 0;
+      padding: 0 1.5rem;
     }
 
     .travel-layout {
@@ -447,6 +454,12 @@ const placesByRegion = regions.map(region => ({
 
     .travel-place {
       padding: 0.5rem 0.6rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .travel-container {
+      padding: 0 1rem;
     }
   }
 </style>
