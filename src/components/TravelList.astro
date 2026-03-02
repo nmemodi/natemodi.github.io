@@ -1,13 +1,14 @@
 ---
 import placesData from '../data/travel-places.json';
-import { landPath, bordersPath } from './world-map-paths.js';
+import { landPath, bordersPath, statesPath, cities } from './world-map-paths.js';
 
 const regions = [
   'US & Canada',
-  'Europe',
-  'Asia Pacific',
   'Central & South America',
+  'Europe',
   'Africa',
+  'Middle East',
+  'Asia Pacific',
 ];
 
 const placesByRegion = regions.map(region => ({
@@ -66,7 +67,9 @@ const placesByRegion = regions.map(region => ({
           >
             <rect x="-180" y="-90" width="360" height="180" class="map-ocean" />
             <path d={landPath} class="map-land" />
+            <path d={statesPath} class="map-states" fill="none" />
             <path d={bordersPath} class="map-borders" fill="none" />
+            <g class="map-cities" data-cities={JSON.stringify(cities)}></g>
             <circle class="map-marker" cx="0" cy="0" r="1.5" />
           </svg>
         </div>
@@ -279,10 +282,30 @@ const placesByRegion = regions.map(region => ({
     stroke-opacity: 0.3;
   }
 
+  .map-states {
+    stroke: var(--color-text-muted);
+    stroke-width: 0.08;
+    stroke-opacity: 0.12;
+  }
+
   .map-borders {
     stroke: var(--color-text-muted);
     stroke-width: 0.15;
     stroke-opacity: 0.2;
+  }
+
+  /* :global() required because these elements are created dynamically via JS */
+  :global(.map-city-dot) {
+    fill: var(--color-text-muted);
+    fill-opacity: 0.5;
+  }
+
+  :global(.map-city-label) {
+    font-size: 1.5px;
+    fill: var(--color-text-muted);
+    fill-opacity: 0.6;
+    font-family: var(--font-sans);
+    pointer-events: none;
   }
 
   .map-marker {
@@ -465,7 +488,7 @@ const placesByRegion = regions.map(region => ({
 </style>
 
 <script>
-  import { formatPopulation, formatElevation, getWeatherIconName, formatTimezone } from './travel-formatters.js';
+  import { formatPopulation, formatElevation, getWeatherIconName, formatTimezone, filterVisibleCities } from './travel-formatters.js';
 
   // Weather SVG icons (trusted, hardcoded)
   const WEATHER_ICONS = {
@@ -479,6 +502,9 @@ const placesByRegion = regions.map(region => ({
 
   const weatherCache = new Map();
   let weatherTimeout = null;
+
+  // Review fix 2A: parse cities JSON once, cache in module-level variable
+  let parsedCities = null;
 
   async function fetchWeather(lat, lng) {
     const key = `${lat},${lng}`;
@@ -516,6 +542,42 @@ const placesByRegion = regions.map(region => ({
     markerEl.setAttribute('cx', lng.toString());
     markerEl.setAttribute('cy', (-lat).toString());
     markerEl.setAttribute('r', (span * 0.04).toString());
+
+    // Render nearby reference cities
+    const citiesGroup = svgEl.querySelector('.map-cities');
+    if (!citiesGroup) return;
+
+    // Parse cities data once from data attribute (review fix 2A)
+    if (!parsedCities) {
+      try {
+        parsedCities = JSON.parse(citiesGroup.dataset.cities || '[]');
+      } catch {
+        parsedCities = [];
+      }
+    }
+
+    citiesGroup.innerHTML = '';
+    const visible = filterVisibleCities(parsedCities, lat, lng, span);
+
+    for (const city of visible) {
+      const cx = city.lng;
+      const cy = -city.lat;
+
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', cx.toString());
+      dot.setAttribute('cy', cy.toString());
+      dot.setAttribute('r', '0.3');
+      dot.classList.add('map-city-dot');
+
+      const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      label.setAttribute('x', (cx + 0.5).toString());
+      label.setAttribute('y', (cy + 0.4).toString());
+      label.classList.add('map-city-label');
+      label.textContent = city.name;
+
+      citiesGroup.appendChild(dot);
+      citiesGroup.appendChild(label);
+    }
   }
 
   /**

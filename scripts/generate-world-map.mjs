@@ -1,14 +1,30 @@
 #!/usr/bin/env node
 
 /**
- * Fetches Natural Earth 110m land boundaries and converts to SVG path data.
+ * Fetches Natural Earth geographic data and converts to SVG path data + city points.
  * Run: node scripts/generate-world-map.mjs
  * Output: src/components/world-map-paths.js
+ *
+ * Data sources (all public domain):
+ *   - 110m land polygons (coastlines)
+ *   - 110m country borders
+ *   - 110m state/province boundary lines
+ *   - 110m populated places (~243 world capitals + major cities)
  */
 
-const GEOJSON_URL = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_land.geojson';
+const NE_BASE = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson';
 
-function coordsToPath(ring, precision = 1) {
+const URLS = {
+  land: `${NE_BASE}/ne_110m_land.geojson`,
+  borders: `${NE_BASE}/ne_110m_admin_0_boundary_lines_land.geojson`,
+  states: `${NE_BASE}/ne_110m_admin_1_states_provinces_lines.geojson`,
+  cities: `${NE_BASE}/ne_110m_populated_places.geojson`,
+};
+
+// ── Coordinate → SVG path helpers ────────────────────────────────
+
+/** Convert a ring of [lng, lat] coords to a closed SVG path (for polygons). */
+function ringToPath(ring, precision = 1) {
   return ring.map((coord, i) => {
     const x = coord[0].toFixed(precision);
     const y = (-coord[1]).toFixed(precision); // invert Y for SVG
@@ -16,75 +32,109 @@ function coordsToPath(ring, precision = 1) {
   }).join('') + 'Z';
 }
 
-function geometryToPath(geometry, precision = 1) {
-  const paths = [];
+/** Convert a line of [lng, lat] coords to an open SVG path (for borders/lines). */
+function lineToPath(coords, precision = 1) {
+  return coords.map((coord, i) => {
+    const x = coord[0].toFixed(precision);
+    const y = (-coord[1]).toFixed(precision);
+    return `${i === 0 ? 'M' : 'L'}${x} ${y}`;
+  }).join('');
+}
 
+/** Convert a Polygon or MultiPolygon geometry to SVG path data. */
+function polygonGeometryToPath(geometry, precision = 1) {
+  const paths = [];
   if (geometry.type === 'Polygon') {
     for (const ring of geometry.coordinates) {
-      paths.push(coordsToPath(ring, precision));
+      paths.push(ringToPath(ring, precision));
     }
   } else if (geometry.type === 'MultiPolygon') {
     for (const polygon of geometry.coordinates) {
       for (const ring of polygon) {
-        paths.push(coordsToPath(ring, precision));
+        paths.push(ringToPath(ring, precision));
       }
     }
   }
-
   return paths.join('');
 }
 
-async function main() {
-  console.log('Fetching Natural Earth 110m land boundaries...');
-  const res = await fetch(GEOJSON_URL);
-  if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
-  const geojson = await res.json();
-
-  console.log(`Processing ${geojson.features.length} features...`);
-
-  let pathData = '';
-  for (const feature of geojson.features) {
-    pathData += geometryToPath(feature.geometry, 1);
-  }
-
-  // Also fetch country borders for a more detailed look
-  console.log('Fetching country borders...');
-  const bordersUrl = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_boundary_lines_land.geojson';
-  const bordersRes = await fetch(bordersUrl);
-  let bordersPath = '';
-  if (bordersRes.ok) {
-    const borders = await bordersRes.json();
-    for (const feature of borders.features) {
-      if (feature.geometry.type === 'LineString') {
-        bordersPath += feature.geometry.coordinates.map((coord, i) => {
-          const x = coord[0].toFixed(1);
-          const y = (-coord[1]).toFixed(1);
-          return `${i === 0 ? 'M' : 'L'}${x} ${y}`;
-        }).join('');
-      } else if (feature.geometry.type === 'MultiLineString') {
-        for (const line of feature.geometry.coordinates) {
-          bordersPath += line.map((coord, i) => {
-            const x = coord[0].toFixed(1);
-            const y = (-coord[1]).toFixed(1);
-            return `${i === 0 ? 'M' : 'L'}${x} ${y}`;
-          }).join('');
-        }
-      }
+/** Convert a LineString or MultiLineString geometry to SVG path data. */
+function lineGeometryToPath(geometry, precision = 1) {
+  const paths = [];
+  if (geometry.type === 'LineString') {
+    paths.push(lineToPath(geometry.coordinates, precision));
+  } else if (geometry.type === 'MultiLineString') {
+    for (const line of geometry.coordinates) {
+      paths.push(lineToPath(line, precision));
     }
   }
+  return paths.join('');
+}
 
+// ── Fetcher ──────────────────────────────────────────────────────
+
+async function fetchJSON(url, label) {
+  console.log(`Fetching ${label}...`);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch ${label}: ${res.status}`);
+  return res.json();
+}
+
+// ── Main ─────────────────────────────────────────────────────────
+
+async function main() {
+  // Fetch all datasets in parallel
+  const [landGeo, bordersGeo, statesGeo, citiesGeo] = await Promise.all([
+    fetchJSON(URLS.land, 'land boundaries'),
+    fetchJSON(URLS.borders, 'country borders'),
+    fetchJSON(URLS.states, 'state/province lines'),
+    fetchJSON(URLS.cities, 'populated places'),
+  ]);
+
+  // Land polygons
+  let landPath = '';
+  for (const feature of landGeo.features) {
+    landPath += polygonGeometryToPath(feature.geometry, 1);
+  }
+
+  // Country borders (line features)
+  let bordersPath = '';
+  for (const feature of bordersGeo.features) {
+    bordersPath += lineGeometryToPath(feature.geometry, 1);
+  }
+
+  // State/province boundary lines
+  let statesPath = '';
+  for (const feature of statesGeo.features) {
+    statesPath += lineGeometryToPath(feature.geometry, 1);
+  }
+
+  // Populated places → JSON array of { name, lat, lng }
+  const cities = citiesGeo.features
+    .filter(f => f.geometry && f.geometry.type === 'Point')
+    .map(f => ({
+      name: f.properties.NAME || f.properties.name || 'Unknown',
+      lat: Math.round(f.geometry.coordinates[1] * 10) / 10,
+      lng: Math.round(f.geometry.coordinates[0] * 10) / 10,
+    }));
+
+  // Write output
   const output = `// Auto-generated by scripts/generate-world-map.mjs
 // Source: Natural Earth 110m (public domain)
-export const landPath = "${pathData}";
+export const landPath = "${landPath}";
 export const bordersPath = "${bordersPath}";
+export const statesPath = "${statesPath}";
+export const cities = ${JSON.stringify(cities)};
 `;
 
   const fs = await import('fs');
   const outputPath = new URL('../src/components/world-map-paths.js', import.meta.url);
   fs.writeFileSync(outputPath, output);
 
-  console.log(`Land path: ${(pathData.length / 1024).toFixed(1)}KB`);
+  console.log(`Land path: ${(landPath.length / 1024).toFixed(1)}KB`);
   console.log(`Borders path: ${(bordersPath.length / 1024).toFixed(1)}KB`);
+  console.log(`States path: ${(statesPath.length / 1024).toFixed(1)}KB`);
+  console.log(`Cities: ${cities.length} entries (${(JSON.stringify(cities).length / 1024).toFixed(1)}KB)`);
   console.log('Output: src/components/world-map-paths.js');
 }
 

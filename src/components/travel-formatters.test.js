@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatPopulation, formatElevation, getWeatherIconName, formatTimezone } from './travel-formatters.js';
+import { formatPopulation, formatElevation, getWeatherIconName, formatTimezone, filterVisibleCities } from './travel-formatters.js';
 
 describe('formatPopulation', () => {
   it('returns dash for null', () => {
@@ -118,5 +118,88 @@ describe('formatTimezone', () => {
 
   it('returns the input for invalid timezone names', () => {
     expect(formatTimezone('Not/A/Timezone')).toBe('Not/A/Timezone');
+  });
+});
+
+describe('filterVisibleCities', () => {
+  // Test cities spread around Auburn, AL (lat: 32.6, lng: -85.5)
+  const cities = [
+    { name: 'Atlanta', lat: 33.7, lng: -84.4 },       // ~1.5° away — visible
+    { name: 'Birmingham', lat: 33.5, lng: -86.8 },     // ~1.5° away — visible
+    { name: 'Montgomery', lat: 32.4, lng: -86.3 },     // ~0.8° away — too close
+    { name: 'Nashville', lat: 36.2, lng: -86.8 },      // ~4° away — visible
+    { name: 'New York', lat: 40.7, lng: -74.0 },       // far away — outside viewBox
+    { name: 'London', lat: 51.5, lng: -0.1 },          // very far — outside viewBox
+    { name: 'Miami', lat: 25.8, lng: -80.2 },          // ~7° lat away — visible
+    { name: 'Chicago', lat: 41.9, lng: -87.6 },        // ~9° lat away — visible
+    { name: 'Dallas', lat: 32.8, lng: -96.8 },         // ~11° lng away — visible
+    { name: 'Denver', lat: 39.7, lng: -105.0 },        // ~20° lng away — at edge
+    { name: 'LA', lat: 34.1, lng: -118.2 },            // too far right — outside
+    { name: 'Jacksonville', lat: 30.3, lng: -81.7 },   // visible
+    { name: 'Memphis', lat: 35.1, lng: -90.0 },        // visible
+  ];
+
+  const lat = 32.6;
+  const lng = -85.5;
+
+  it('returns cities within the viewBox', () => {
+    const result = filterVisibleCities(cities, lat, lng);
+    const names = result.map(c => c.name);
+    expect(names).toContain('Atlanta');
+    expect(names).toContain('Birmingham');
+    expect(names).toContain('Nashville');
+  });
+
+  it('excludes cities outside the viewBox', () => {
+    const result = filterVisibleCities(cities, lat, lng);
+    const names = result.map(c => c.name);
+    expect(names).not.toContain('London');
+    expect(names).not.toContain('LA');
+  });
+
+  it('excludes cities within 1° of the marker', () => {
+    const result = filterVisibleCities(cities, lat, lng);
+    const names = result.map(c => c.name);
+    expect(names).not.toContain('Montgomery');
+  });
+
+  it('caps results at maxCities (default 10)', () => {
+    const result = filterVisibleCities(cities, lat, lng);
+    expect(result.length).toBeLessThanOrEqual(10);
+  });
+
+  it('respects custom maxCities parameter', () => {
+    const result = filterVisibleCities(cities, lat, lng, 20, 3);
+    expect(result.length).toBeLessThanOrEqual(3);
+  });
+
+  it('returns empty array for null/undefined inputs', () => {
+    expect(filterVisibleCities(null, lat, lng)).toEqual([]);
+    expect(filterVisibleCities(undefined, lat, lng)).toEqual([]);
+    expect(filterVisibleCities(cities, null, lng)).toEqual([]);
+    expect(filterVisibleCities(cities, lat, null)).toEqual([]);
+  });
+
+  it('returns empty array for empty cities array', () => {
+    expect(filterVisibleCities([], lat, lng)).toEqual([]);
+  });
+
+  it('works with a small span (zoomed in)', () => {
+    // Small span=5 means viewBox lat range: marker ± (span/2 + margin) = ±4.5°
+    // lng range: marker ± (span + margin) = ±7°
+    const result = filterVisibleCities(cities, lat, lng, 5);
+    const names = result.map(c => c.name);
+    expect(names).toContain('Atlanta');       // ~1.5° away — in range
+    expect(names).toContain('Birmingham');    // ~1.5° away — in range
+    expect(names).toContain('Nashville');     // 3.6° lat away — within 4.5° range
+    expect(names).not.toContain('Miami');     // 6.8° lat away — outside 4.5° range
+    expect(names).not.toContain('Chicago');   // 9.3° lat away — outside
+  });
+
+  it('includes city exactly at the viewBox boundary', () => {
+    // Create a city exactly at the boundary + margin
+    const edgeCity = [{ name: 'Edge', lat: lat + 10 + 2, lng: lng }]; // at span/2 + margin
+    const result = filterVisibleCities(edgeCity, lat, lng);
+    expect(result.length).toBe(1);
   });
 });
