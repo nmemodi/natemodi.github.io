@@ -188,15 +188,12 @@ footer .footer-name {
 
 .post-list a {
   display: block;
-  padding: 0.75rem;
-  margin: -0.75rem;
-  border-radius: 6px;
-  color: var(--color-text);
-  transition: background 0.15s ease;
+  color: var(--color-text-muted);
+  transition: color 0.15s ease;
 }
 
 .post-list a:hover {
-  background: var(--color-code-bg);
+  color: var(--color-text);
   text-decoration: none;
 }
 
