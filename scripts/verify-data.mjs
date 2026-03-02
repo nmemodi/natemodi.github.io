@@ -1,0 +1,11 @@
+import { readFileSync } from 'fs';
+const data = JSON.parse(readFileSync('src/data/travel-places.json', 'utf-8'));
+console.log('Total places:', data.length);
+console.log('With coords:', data.filter(p => p.lat !== null).length);
+console.log('With images:', data.filter(p => p.imageUrl !== null).length);
+console.log('With population:', data.filter(p => p.population !== null).length);
+console.log('With elevation:', data.filter(p => p.elevation !== null).length);
+console.log('With wiki URLs:', data.filter(p => p.wikiUrl !== null).length);
+const regions = {};
+data.forEach(p => regions[p.region] = (regions[p.region] || 0) + 1);
+console.log('By region:', regions);

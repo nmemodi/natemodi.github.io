@@ -5,4 +5,7 @@ export default defineConfig({
   site: 'https://natemodi.com',
   integrations: [mdx()],
   output: 'static',
+  server: {
+    host: '0.0.0.0',
+  },
 });
