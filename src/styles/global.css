@@ -7,7 +7,7 @@
   --color-code-bg: #f5f5f5;
   --font-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Geist Mono', 'SF Mono', Monaco, monospace;
-  --max-width: 640px;
+  --max-width: 660px;
 }
 
 @media (prefers-color-scheme: dark) {
