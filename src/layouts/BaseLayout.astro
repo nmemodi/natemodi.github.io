@@ -39,7 +39,8 @@ const canonicalURL = new URL(currentPath, 'https://natemodi.com');
   <body>
     <header class="top-bar">
       <nav>
-        <a href="/" class={currentPath === '/' ? 'active' : ''}>Home</a>
+        <a href="/" class="logo-link"><img src="/n-logo.png" alt="N" class="nav-logo" /></a>
+        <a href="/" class={currentPath === '/' ? 'active' : ''}>About</a>
         <a href="/blog" class={currentPath.startsWith('/blog') ? 'active' : ''}>Writing</a>
         <a href="/reading" class={currentPath === '/reading' ? 'active' : ''}>Reading</a>
       </nav>
