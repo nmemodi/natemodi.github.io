@@ -118,42 +118,19 @@ function initBookCovers() {
   const mainRect = main.getBoundingClientRect();
   preview.style.left = `${mainRect.right + 40}px`;
 
-  const cache = new Map();
-  let active = null;
-
   document.querySelectorAll('a[href*="amazon.com"]').forEach(link => {
     const match = link.href.match(/\/dp\/(\w+)/);
     if (!match) return;
     const isbn = match[1];
 
     link.addEventListener('mouseenter', () => {
-      if (cache.get(isbn) === false) return;
-
-      active = isbn;
       const rect = link.getBoundingClientRect();
       preview.style.top = `${Math.min(Math.max(rect.top, 80), window.innerHeight - 250)}px`;
-
-      if (cache.get(isbn) === true) {
-        img.src = `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`;
-        img.dataset.isbn = isbn;
-        preview.style.opacity = '1';
-        return;
-      }
-
-      preview.style.opacity = '0';
-      img.dataset.isbn = isbn;
-      img.onload = () => {
-        if (active === isbn) {
-          cache.set(isbn, true);
-          preview.style.opacity = '1';
-        }
-      };
-      img.onerror = () => { cache.set(isbn, false); };
-      img.src = `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`;
+      img.src = `/covers/${isbn}.jpg`;
+      preview.style.opacity = '1';
     });
 
     link.addEventListener('mouseleave', () => {
-      active = null;
       preview.style.opacity = '0';
     });
   });
