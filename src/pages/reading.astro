@@ -85,6 +85,87 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </ul>
 </BaseLayout>
 
+<script is:inline>
+function initBookCovers() {
+  if (!window.matchMedia('(min-width: 1100px)').matches) return;
+
+  const main = document.querySelector('main');
+  if (!main) return;
+
+  if (document.getElementById('book-cover-preview')) return;
+
+  const preview = document.createElement('div');
+  preview.id = 'book-cover-preview';
+  Object.assign(preview.style, {
+    position: 'fixed',
+    pointerEvents: 'none',
+    opacity: '0',
+    transition: 'opacity 0.15s ease',
+    zIndex: '100',
+    transform: 'translateY(-50%)',
+  });
+
+  const img = document.createElement('img');
+  Object.assign(img.style, {
+    width: '140px',
+    height: 'auto',
+    borderRadius: '2px',
+  });
+  img.alt = '';
+  preview.appendChild(img);
+  document.body.appendChild(preview);
+
+  const mainRect = main.getBoundingClientRect();
+  preview.style.left = `${mainRect.right + 40}px`;
+
+  const cache = new Map();
+  let active = null;
+
+  document.querySelectorAll('a[href*="amazon.com"]').forEach(link => {
+    const match = link.href.match(/\/dp\/(\w+)/);
+    if (!match) return;
+    const isbn = match[1];
+
+    link.addEventListener('mouseenter', () => {
+      if (cache.get(isbn) === false) return;
+
+      active = isbn;
+      const rect = link.getBoundingClientRect();
+      preview.style.top = `${Math.min(Math.max(rect.top, 80), window.innerHeight - 250)}px`;
+
+      if (cache.get(isbn) === true) {
+        img.src = `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`;
+        img.dataset.isbn = isbn;
+        preview.style.opacity = '1';
+        return;
+      }
+
+      preview.style.opacity = '0';
+      img.dataset.isbn = isbn;
+      img.onload = () => {
+        if (active === isbn) {
+          cache.set(isbn, true);
+          preview.style.opacity = '1';
+        }
+      };
+      img.onerror = () => { cache.set(isbn, false); };
+      img.src = `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`;
+    });
+
+    link.addEventListener('mouseleave', () => {
+      active = null;
+      preview.style.opacity = '0';
+    });
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initBookCovers);
+} else {
+  initBookCovers();
+}
+</script>
+
 <style>
   ul {
     list-style: disc;
