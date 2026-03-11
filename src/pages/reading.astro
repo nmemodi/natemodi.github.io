@@ -126,8 +126,14 @@ function initBookCovers() {
     link.addEventListener('mouseenter', () => {
       const rect = link.getBoundingClientRect();
       preview.style.top = `${Math.min(Math.max(rect.top, 80), window.innerHeight - 250)}px`;
-      img.src = `/covers/${isbn}.jpg`;
-      preview.style.opacity = '1';
+      const newSrc = `/covers/${isbn}.jpg`;
+      if (img.src.endsWith(newSrc)) {
+        preview.style.opacity = '1';
+      } else {
+        preview.style.opacity = '0';
+        img.onload = () => { preview.style.opacity = '1'; };
+        img.src = newSrc;
+      }
     });
 
     link.addEventListener('mouseleave', () => {
