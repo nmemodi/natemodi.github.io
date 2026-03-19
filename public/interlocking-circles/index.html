@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interlocking Circles</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.17/paper-full.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #111;
+            color: #eee;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #sidebar {
+            width: 260px;
+            padding: 24px 20px;
+            background: #1a1a1a;
+            border-right: 1px solid #333;
+            overflow-y: auto;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        #sidebar h1 {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .hint {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .control-group .val {
+            color: #666;
+            font-variant-numeric: tabular-nums;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .color-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            width: 32px;
+            height: 24px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 2px; }
+
+        .color-hex {
+            font-size: 11px;
+            color: #666;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+
+        .toggle-row { flex-direction: row; }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+        .toggle-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #e63946;
+            cursor: pointer;
+        }
+
+        #weaveControls {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            transition: opacity 0.2s;
+        }
+
+        #weaveControls.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .preset-btn {
+            padding: 4px 10px;
+            font-size: 11px;
+            background: #2a2a2a;
+            color: #ccc;
+            border: 1px solid #444;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .preset-btn:hover { background: #3a3a3a; }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+
+        .btn:hover { opacity: 0.85; }
+
+        .btn-primary {
+            background: #e63946;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #2a2a2a;
+            color: #ccc;
+            border: 1px solid #444;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-row .btn { flex: 1; }
+
+        #canvas-wrap {
+            flex: 1;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+        }
+
+        canvas:active { cursor: grabbing; }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <h1>Interlocking Circles</h1>
+        <p class="hint">Drag circles to reposition. Adjust controls to explore variations.</p>
+
+        <div class="control-group">
+            <label>Circles <span class="val" id="numCirclesVal">2</span></label>
+            <input type="range" id="numCircles" min="2" max="15" value="2" step="1">
+        </div>
+
+        <div class="control-group">
+            <label>Radius <span class="val" id="radiusVal">150</span></label>
+            <input type="range" id="radius" min="30" max="300" value="150">
+        </div>
+
+        <div class="control-group">
+            <label>Stroke <span class="val" id="strokeWidthVal">28</span></label>
+            <input type="range" id="strokeWidth" min="2" max="80" value="28">
+        </div>
+
+        <div class="control-group">
+            <label>Spacing <span class="val" id="spacingVal">110</span></label>
+            <input type="range" id="spacing" min="10" max="400" value="110">
+        </div>
+
+        <div class="control-group toggle-row">
+            <label class="toggle-label">
+                <input type="checkbox" id="weave" checked>
+                <span>Weave</span>
+            </label>
+        </div>
+
+        <div id="weaveControls">
+            <div class="control-group">
+                <label>Overlap <span class="val" id="gapVal">1.5</span></label>
+                <input type="range" id="gap" min="0.5" max="4" value="1.5" step="0.1">
+            </div>
+
+            <div class="control-group">
+                <label>Break <span class="val" id="breakVal">0.7</span></label>
+                <input type="range" id="break" min="0" max="1.5" value="0.7" step="0.05">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Background</label>
+            <div class="color-row">
+                <input type="color" id="bgColor" value="#cc0000">
+                <span class="color-hex" id="bgColorVal">#cc0000</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Stroke Color</label>
+            <div class="color-row">
+                <input type="color" id="fgColor" value="#f0f0f0">
+                <span class="color-hex" id="fgColorVal">#f0f0f0</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Presets</label>
+            <div class="presets">
+                <button class="preset-btn" data-preset="classic">Classic</button>
+                <button class="preset-btn" data-preset="olympic">Olympic</button>
+                <button class="preset-btn" data-preset="trinity">Trinity</button>
+                <button class="preset-btn" data-preset="chain">Chain</button>
+                <button class="preset-btn" data-preset="tight">Tight</button>
+                <button class="preset-btn" data-preset="loose">Loose</button>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-secondary" id="resetBtn">Reset</button>
+            <button class="btn btn-primary" id="exportBtn">Export SVG</button>
+        </div>
+    </div>
+
+    <div id="canvas-wrap">
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <script>
+        paper.install(window);
+
+        const canvasEl = document.getElementById('canvas');
+        const wrap = document.getElementById('canvas-wrap');
+
+        function resizeCanvas() {
+            canvasEl.width = wrap.clientWidth * window.devicePixelRatio;
+            canvasEl.height = wrap.clientHeight * window.devicePixelRatio;
+            canvasEl.style.width = wrap.clientWidth + 'px';
+            canvasEl.style.height = wrap.clientHeight + 'px';
+        }
+
+        resizeCanvas();
+        paper.setup(canvasEl);
+        view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
+
+        // ---- State ----
+        let config = {
+            numCircles: 2,
+            radius: 150,
+            strokeWidth: 28,
+            spacing: 110,
+            weave: true,
+            gap: 1.5,
+            breakWidth: 0.7,
+            bgColor: '#cc0000',
+            fgColor: '#f0f0f0'
+        };
+
+        let positions = [];
+        let dragIdx = null;
+        let dragOffset = null;
+
+        // ---- Presets ----
+        const presets = {
+            classic:  { numCircles: 2, radius: 150, strokeWidth: 28, spacing: 110, weave: true, gap: 1.5, breakWidth: 0.7, bgColor: '#cc0000', fgColor: '#f0f0f0' },
+            olympic:  { numCircles: 5, radius: 70,  strokeWidth: 14, spacing: 80,  weave: true, gap: 1.4, breakWidth: 0.6, bgColor: '#1a1a2e', fgColor: '#e0e0e0' },
+            trinity:  { numCircles: 3, radius: 120, strokeWidth: 24, spacing: 100, weave: true, gap: 1.5, breakWidth: 0.7, bgColor: '#1b4332', fgColor: '#d4a373' },
+            chain:    { numCircles: 4, radius: 80,  strokeWidth: 16, spacing: 90,  weave: true, gap: 1.3, breakWidth: 0.6, bgColor: '#222222', fgColor: '#ffd700' },
+            tight:    { numCircles: 2, radius: 150, strokeWidth: 36, spacing: 70,  weave: true, gap: 1.8, breakWidth: 0.5, bgColor: '#0d1b2a', fgColor: '#e0fbfc' },
+            loose:    { numCircles: 2, radius: 150, strokeWidth: 20, spacing: 180, weave: true, gap: 1.2, breakWidth: 0.8, bgColor: '#2b2d42', fgColor: '#ef233c' },
+        };
+
+        // ---- Geometry helpers ----
+        function circleIntersections(c1, r1, c2, r2) {
+            const dx = c2.x - c1.x;
+            const dy = c2.y - c1.y;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            if (d > r1 + r2 || d < Math.abs(r1 - r2) || d < 1e-6) return [];
+
+            const a = (r1 * r1 - r2 * r2 + d * d) / (2 * d);
+            const h = Math.sqrt(Math.max(0, r1 * r1 - a * a));
+            const mx = c1.x + a * dx / d;
+            const my = c1.y + a * dy / d;
+
+            return [
+                new Point(mx + h * dy / d, my - h * dx / d),
+                new Point(mx - h * dy / d, my + h * dx / d)
+            ];
+        }
+
+        function makeArc(center, radius, fromAngle, toAngle, steps) {
+            steps = steps || 40;
+            const pts = [];
+            for (let i = 0; i <= steps; i++) {
+                const a = fromAngle + (toAngle - fromAngle) * (i / steps);
+                pts.push(new Point(
+                    center.x + radius * Math.cos(a),
+                    center.y + radius * Math.sin(a)
+                ));
+            }
+            return pts;
+        }
+
+        // ---- Layout ----
+        function initPositions() {
+            const cx = view.center.x;
+            const cy = view.center.y;
+            const n = config.numCircles;
+            const sp = config.spacing;
+            positions = [];
+
+            if (n === 2) {
+                positions.push(new Point(cx - sp / 2, cy));
+                positions.push(new Point(cx + sp / 2, cy));
+            } else if (n <= 4) {
+                for (let i = 0; i < n; i++) {
+                    const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+                    positions.push(new Point(
+                        cx + Math.cos(angle) * sp,
+                        cy + Math.sin(angle) * sp
+                    ));
+                }
+            } else if (n <= 6) {
+                // Olympic-style: 3 top, 2-3 bottom
+                const topY = cy - sp * 0.3;
+                const botY = cy + sp * 0.3;
+                const gap = sp * 1.15;
+
+                positions.push(new Point(cx - gap, topY));
+                positions.push(new Point(cx, topY));
+                positions.push(new Point(cx + gap, topY));
+                positions.push(new Point(cx - gap / 2, botY));
+                positions.push(new Point(cx + gap / 2, botY));
+                if (n > 5) {
+                    positions.push(new Point(cx, botY + sp * 0.6));
+                }
+            } else {
+                // Grid layout for 7+: arrange in rows
+                const cols = Math.ceil(Math.sqrt(n * 1.5));
+                const rows = Math.ceil(n / cols);
+                const totalW = (cols - 1) * sp;
+                const totalH = (rows - 1) * sp * 0.85;
+                const startX = cx - totalW / 2;
+                const startY = cy - totalH / 2;
+                let count = 0;
+                for (let row = 0; row < rows && count < n; row++) {
+                    const colsInRow = Math.min(cols, n - count);
+                    const rowOffset = (row % 2 === 1) ? sp * 0.5 : 0;
+                    const rowW = (colsInRow - 1) * sp;
+                    const rowStartX = cx - rowW / 2 + rowOffset;
+                    for (let col = 0; col < colsInRow && count < n; col++) {
+                        positions.push(new Point(
+                            rowStartX + col * sp,
+                            startY + row * sp * 0.85
+                        ));
+                        count++;
+                    }
+                }
+            }
+        }
+
+        // ---- Render ----
+        function draw() {
+            project.clear();
+
+            const r = config.radius;
+            const sw = config.strokeWidth;
+            const gapMul = config.gap;
+
+            // Background
+            const bg = new Path.Rectangle(view.bounds);
+            bg.fillColor = config.bgColor;
+
+            // Base layer: full circles
+            const baseGroup = new Group();
+            for (const pos of positions) {
+                const c = new Path.Circle(pos, r);
+                c.strokeColor = config.fgColor;
+                c.strokeWidth = sw;
+                c.fillColor = null;
+                baseGroup.addChild(c);
+            }
+
+            // Weaving layer (skip entirely when weave is off)
+            if (!config.weave) return;
+
+            const weaveGroup = new Group();
+
+            for (let i = 0; i < positions.length; i++) {
+                for (let j = i + 1; j < positions.length; j++) {
+                    const pts = circleIntersections(positions[i], r, positions[j], r);
+                    if (pts.length < 2) continue;
+
+                    for (let k = 0; k < 2; k++) {
+                        const pt = pts[k];
+                        // Alternate which circle is "over"
+                        const overIdx = (k === 0) ? i : j;
+                        const overCenter = positions[overIdx];
+
+                        const angle = Math.atan2(pt.y - overCenter.y, pt.x - overCenter.x);
+                        const span = (sw * gapMul) / r;
+
+                        const bw = config.breakWidth;
+                        const seamless = bw < 0.05;
+
+                        // Mask: background-colored wide stroke to erase the under circle
+                        const maskSpan = span * (1.0 + bw * 0.3);
+                        const maskPts = makeArc(overCenter, r, angle - maskSpan, angle + maskSpan, 40);
+                        const mask = new Path(maskPts);
+                        mask.strokeColor = config.bgColor;
+                        mask.strokeWidth = seamless ? sw + 6 : sw + sw * bw;
+                        mask.strokeCap = 'square';
+                        weaveGroup.addChild(mask);
+
+                        // Over-segment: redraw the over circle on top
+                        const overSpan = span * 1.1;
+                        const overPts = makeArc(overCenter, r, angle - overSpan, angle + overSpan, 40);
+                        const over = new Path(overPts);
+                        over.strokeColor = config.fgColor;
+                        over.strokeWidth = seamless ? sw + 4 : sw;
+                        over.strokeCap = 'butt';
+                        weaveGroup.addChild(over);
+                    }
+                }
+            }
+        }
+
+        // ---- Interaction ----
+        const tool = new Tool();
+
+        tool.onMouseDown = function(event) {
+            for (let i = positions.length - 1; i >= 0; i--) {
+                if (event.point.getDistance(positions[i]) < config.radius + config.strokeWidth / 2) {
+                    dragIdx = i;
+                    dragOffset = positions[i].subtract(event.point);
+                    return;
+                }
+            }
+        };
+
+        tool.onMouseDrag = function(event) {
+            if (dragIdx !== null) {
+                positions[dragIdx] = event.point.add(dragOffset);
+                draw();
+            }
+        };
+
+        tool.onMouseUp = function() {
+            dragIdx = null;
+        };
+
+        // ---- Controls ----
+        function bindRange(id, prop, isFloat) {
+            const el = document.getElementById(id);
+            const valEl = document.getElementById(id + 'Val');
+            el.addEventListener('input', function() {
+                config[prop] = isFloat ? parseFloat(this.value) : parseInt(this.value);
+                valEl.textContent = this.value;
+                if (prop === 'numCircles' || prop === 'spacing') initPositions();
+                draw();
+            });
+        }
+
+        function bindColor(id, prop) {
+            const el = document.getElementById(id);
+            const valEl = document.getElementById(id + 'Val');
+            el.addEventListener('input', function() {
+                config[prop] = this.value;
+                valEl.textContent = this.value;
+                draw();
+            });
+        }
+
+        function updateWeaveUI() {
+            const wc = document.getElementById('weaveControls');
+            if (config.weave) {
+                wc.classList.remove('disabled');
+            } else {
+                wc.classList.add('disabled');
+            }
+        }
+
+        function syncUI() {
+            for (const [id, prop, isFloat] of [
+                ['numCircles', 'numCircles'], ['radius', 'radius'],
+                ['strokeWidth', 'strokeWidth'], ['spacing', 'spacing'],
+                ['gap', 'gap', true], ['break', 'breakWidth', true]
+            ]) {
+                document.getElementById(id).value = config[prop];
+                document.getElementById(id + 'Val').textContent = config[prop];
+            }
+            for (const [id, prop] of [['bgColor', 'bgColor'], ['fgColor', 'fgColor']]) {
+                document.getElementById(id).value = config[prop];
+                document.getElementById(id + 'Val').textContent = config[prop];
+            }
+            document.getElementById('weave').checked = config.weave;
+            updateWeaveUI();
+        }
+
+        bindRange('numCircles', 'numCircles');
+        bindRange('radius', 'radius');
+        bindRange('strokeWidth', 'strokeWidth');
+        bindRange('spacing', 'spacing');
+        bindRange('gap', 'gap', true);
+        bindRange('break', 'breakWidth', true);
+        bindColor('bgColor', 'bgColor');
+        bindColor('fgColor', 'fgColor');
+
+        document.getElementById('weave').addEventListener('change', function() {
+            config.weave = this.checked;
+            updateWeaveUI();
+            draw();
+        });
+
+        // Presets
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const p = presets[this.dataset.preset];
+                if (!p) return;
+                Object.assign(config, p);
+                syncUI();
+                initPositions();
+                draw();
+            });
+        });
+
+        // Reset
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            Object.assign(config, presets.classic);
+            syncUI();
+            initPositions();
+            draw();
+        });
+
+        // Export SVG
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            const svg = project.exportSVG({ asString: true });
+            const blob = new Blob([svg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'interlocking-circles.svg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Resize
+        window.addEventListener('resize', function() {
+            resizeCanvas();
+            view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
+            initPositions();
+            draw();
+        });
+
+        // Go
+        initPositions();
+        draw();
+    </script>
+</body>
+</html>
