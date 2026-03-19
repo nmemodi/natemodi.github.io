@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logo Tools</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #ccc;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+  }
+
+  h1 {
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #555;
+    margin-bottom: 3rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #222;
+    max-width: 720px;
+    width: 100%;
+  }
+
+  .tile {
+    aspect-ratio: 1;
+    background: #111;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s ease;
+  }
+
+  a.tile {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  a.tile:hover {
+    background: #181818;
+  }
+
+  a.tile:hover .tile-icon {
+    opacity: 1;
+  }
+
+  a.tile:hover .tile-label {
+    color: #fff;
+  }
+
+  .tile-icon {
+    width: 80px;
+    height: 80px;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  .tile-label {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #666;
+    transition: color 0.3s ease;
+  }
+
+  .tile.empty .tile-icon {
+    opacity: 0.15;
+  }
+
+  .tile.empty .tile-label {
+    color: #333;
+  }
+
+  .tile.empty:hover {
+    background: #111;
+  }
+
+  .tile.empty:hover .tile-icon {
+    opacity: 0.15;
+  }
+
+  .tile.empty:hover .tile-label {
+    color: #333;
+  }
+
+  @media (max-width: 540px) {
+    .grid { max-width: 360px; }
+    .tile-icon { width: 56px; height: 56px; }
+    .tile-label { font-size: 0.55rem; }
+    body { padding: 2rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Logo Tools</h1>
+
+<div class="grid">
+
+  <!-- 1. Line Warp -->
+  <a class="tile" href="/line-warp/">
+    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.8">
+      <line x1="0" y1="8" x2="80" y2="8"/>
+      <line x1="0" y1="16" x2="30" y2="16"/>
+      <path d="M30 16 Q40 6 50 16" fill="none"/>
+      <line x1="50" y1="16" x2="80" y2="16"/>
+      <line x1="0" y1="24" x2="25" y2="24"/>
+      <path d="M25 24 Q40 8 55 24" fill="none"/>
+      <line x1="55" y1="24" x2="80" y2="24"/>
+      <line x1="0" y1="32" x2="22" y2="32"/>
+      <path d="M22 32 Q40 10 58 32" fill="none"/>
+      <line x1="58" y1="32" x2="80" y2="32"/>
+      <line x1="0" y1="40" x2="20" y2="40"/>
+      <path d="M20 40 Q40 12 60 40" fill="none"/>
+      <line x1="60" y1="40" x2="80" y2="40"/>
+      <line x1="0" y1="48" x2="22" y2="48"/>
+      <path d="M22 48 Q40 14 58 48" fill="none"/>
+      <line x1="58" y1="48" x2="80" y2="48"/>
+      <line x1="0" y1="56" x2="25" y2="56"/>
+      <path d="M25 56 Q40 20 55 56" fill="none"/>
+      <line x1="55" y1="56" x2="80" y2="56"/>
+      <line x1="0" y1="64" x2="30" y2="64"/>
+      <path d="M30 64 Q40 40 50 64" fill="none"/>
+      <line x1="50" y1="64" x2="80" y2="64"/>
+      <line x1="0" y1="72" x2="80" y2="72"/>
+    </svg>
+    <span class="tile-label">Line Warp</span>
+  </a>
+
+  <!-- 2. Letter Maker -->
+  <a class="tile" href="/letter-maker/">
+    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.8">
+      <line x1="20" y1="64" x2="40" y2="16"/>
+      <line x1="40" y1="16" x2="60" y2="64"/>
+      <line x1="28" y1="46" x2="52" y2="46"/>
+      <rect x="12" y="12" width="56" height="56" rx="2" stroke-dasharray="2 3" opacity="0.3"/>
+    </svg>
+    <span class="tile-label">Letter Maker</span>
+  </a>
+
+  <!-- 3. Interlocking Circles -->
+  <a class="tile" href="/interlocking-circles/">
+    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.8">
+      <circle cx="32" cy="32" r="18"/>
+      <circle cx="48" cy="32" r="18"/>
+      <circle cx="40" cy="46" r="18"/>
+    </svg>
+    <span class="tile-label">Interlocking Circles</span>
+  </a>
+
+  <!-- 4. Parallel Letters -->
+  <a class="tile" href="/parallel-letters/">
+    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.8">
+      <line x1="16" y1="20" x2="16" y2="60"/>
+      <line x1="24" y1="20" x2="24" y2="60"/>
+      <line x1="32" y1="20" x2="32" y2="60"/>
+      <line x1="40" y1="20" x2="40" y2="60"/>
+      <line x1="48" y1="20" x2="48" y2="60"/>
+      <line x1="56" y1="20" x2="56" y2="60"/>
+      <line x1="64" y1="20" x2="64" y2="60"/>
+      <path d="M20 24 L40 24 L40 40 L24 40 L24 56 L44 56" stroke-width="3" opacity="0.4"/>
+    </svg>
+    <span class="tile-label">Parallel Letters</span>
+  </a>
+
+  <!-- 5–9: Coming soon -->
+  <div class="tile empty">
+    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.5">
+      <line x1="36" y1="28" x2="36" y2="52"/>
+      <line x1="44" y1="28" x2="44" y2="52"/>
+      <line x1="28" y1="36" x2="52" y2="36"/>
+      <line x1="28" y1="44" x2="52" y2="44"/>
+    </svg>
+    <span class="tile-label">&mdash;</span>
+  </div>
+
+  <div class="tile empty">
+    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.5">
+      <circle cx="40" cy="40" r="16"/>
+      <circle cx="40" cy="40" r="8"/>
+      <circle cx="40" cy="40" r="2"/>
+    </svg>
+    <span class="tile-label">&mdash;</span>
+  </div>
+
+  <div class="tile empty">
+    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.5">
+      <rect x="24" y="24" width="32" height="32" rx="1"/>
+      <rect x="30" y="30" width="20" height="20" rx="1"/>
+      <rect x="36" y="36" width="8" height="8" rx="1"/>
+    </svg>
+    <span class="tile-label">&mdash;</span>
+  </div>
+
+  <div class="tile empty">
+    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.5">
+      <polygon points="40,20 58,52 22,52"/>
+      <polygon points="40,30 52,48 28,48"/>
+    </svg>
+    <span class="tile-label">&mdash;</span>
+  </div>
+
+  <div class="tile empty">
+    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.5">
+      <path d="M20 60 Q30 20 40 40 Q50 60 60 20"/>
+    </svg>
+    <span class="tile-label">&mdash;</span>
+  </div>
+
+</div>
+
+</body>
+</html>
