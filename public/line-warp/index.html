@@ -15,138 +15,34 @@
 <meta name="twitter:description" content="Create logos by displacing horizontal lines with a letter heightmap.">
 <meta name="twitter:image" content="https://natemodi.com/line-warp/og-image.png">
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
+<link rel="stylesheet" href="/shared/tools-shared.css">
 <style>
-  * { margin: 0; box-sizing: border-box; }
-  body {
-    display: flex;
-    min-height: 100vh;
-    background: #e8e4e0;
-    font-family: -apple-system, system-ui, sans-serif;
-    color: #333;
-  }
-  .sidebar {
-    width: 280px;
-    padding: 24px 20px;
-    background: #fff;
-    border-right: 1px solid #ddd;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  .sidebar h1 {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-  .sidebar p { font-size: 12px; color: #888; }
-  .control { display: flex; flex-direction: column; gap: 4px; }
-  .control label {
-    font-size: 12px;
-    font-weight: 600;
-    display: flex;
-    justify-content: space-between;
-  }
-  .control label span { font-weight: 400; color: #999; }
-  .control input[type="range"] { width: 100%; accent-color: #333; }
-  .control input[type="text"] {
-    padding: 6px 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    font-family: inherit;
-    text-align: center;
-    width: 100%;
-  }
-  .control select {
-    padding: 6px 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 13px;
-    font-family: inherit;
-    background: #fff;
-  }
-  .row { display: flex; gap: 8px; }
-  .row .control { flex: 1; }
-  hr { border: none; border-top: 1px solid #eee; }
-  .main {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
-  }
-  canvas {
-    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
-    border-radius: 4px;
-    max-width: 100%;
-    max-height: 80vh;
-  }
-  .actions { display: flex; gap: 8px; margin-top: auto; }
-  .actions button {
-    flex: 1;
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background: #fff;
-    font-size: 13px;
-    font-family: inherit;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .actions button:hover { background: #f5f5f5; }
-  .actions button.primary {
-    background: #333;
-    color: #fff;
-    border-color: #333;
-  }
-  .actions button.primary:hover { background: #555; }
-  .checkbox-control {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-  .checkbox-control input { accent-color: #333; }
-  .sidebar-footer {
-    font-size: 11px;
-    color: #aaa;
-    text-align: center;
-    margin-top: 8px;
-  }
-  .sidebar-footer a { color: #aaa; text-decoration: none; }
-  .sidebar-footer a:hover { color: #666; }
-  @media (max-width: 700px) {
-    body { flex-direction: column; }
-    .sidebar {
-      width: 100%;
-      border-right: none;
-      border-bottom: 1px solid #ddd;
-      max-height: 50vh;
-    }
-    .main { padding: 20px; }
-  }
+  /* Tool-specific overrides only */
+  canvas { box-shadow: var(--shadow-canvas); }
 </style>
 </head>
 <body>
 
-<div class="sidebar">
-  <div>
-    <h1>Line Warp</h1>
-    <p>Create logos from displaced lines</p>
+<div class="tool-sidebar">
+  <div class="tool-header">
+    <a href="/tools/" class="tool-header__back" aria-label="Back to tools">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 12L6 8l4-4"/>
+      </svg>
+    </a>
+    <h1 class="tool-header__title">Line Warp</h1>
   </div>
 
-  <hr>
+  <p class="tool-hint">Create logos from displaced lines</p>
 
-  <div class="control">
+  <div class="control-group">
     <label>Letter</label>
     <input type="text" id="letter" value="S" maxlength="2">
   </div>
 
   <div class="row">
-    <div class="control">
-      <label>Font <span id="fontVal"></span></label>
+    <div class="control-group">
+      <label>Font</label>
       <select id="font">
         <option value="Helvetica Neue">Helvetica Neue</option>
         <option value="Arial Black">Arial Black</option>
@@ -156,8 +52,8 @@
         <option value="Times New Roman">Times New Roman</option>
       </select>
     </div>
-    <div class="control">
-      <label>Weight <span id="weightVal"></span></label>
+    <div class="control-group">
+      <label>Weight</label>
       <select id="fontWeight">
         <option value="900" selected>900 (Black)</option>
         <option value="800">800 (Extra Bold)</option>
@@ -167,92 +63,83 @@
     </div>
   </div>
 
-  <div class="control">
-    <label>Rotation <span id="rotationVal"></span></label>
+  <div class="control-group">
+    <label>Rotation <span class="val" id="rotationVal"></span></label>
     <input type="range" id="rotation" min="0" max="359" value="0" step="1">
   </div>
 
   <div class="row">
-    <div class="control">
-      <label>Offset X <span id="offsetXVal"></span></label>
+    <div class="control-group">
+      <label>Offset X <span class="val" id="offsetXVal"></span></label>
       <input type="range" id="offsetX" min="-200" max="200" value="0" step="1">
     </div>
-    <div class="control">
-      <label>Offset Y <span id="offsetYVal"></span></label>
+    <div class="control-group">
+      <label>Offset Y <span class="val" id="offsetYVal"></span></label>
       <input type="range" id="offsetY" min="-200" max="200" value="0" step="1">
     </div>
   </div>
 
-  <hr>
-
-  <div class="control">
-    <label>Lines <span id="linesVal"></span></label>
+  <div class="control-group">
+    <label>Lines <span class="val" id="linesVal"></span></label>
     <input type="range" id="lines" min="5" max="25" value="13" step="1">
   </div>
 
-  <div class="control">
-    <label>Displacement <span id="dispVal"></span></label>
+  <div class="control-group">
+    <label>Displacement <span class="val" id="dispVal"></span></label>
     <input type="range" id="displacement" min="0" max="150" value="65" step="1">
   </div>
 
-  <div class="control">
-    <label>Blur (Smoothing) <span id="blurVal"></span></label>
+  <div class="control-group">
+    <label>Blur (Smoothing) <span class="val" id="blurVal"></span></label>
     <input type="range" id="blur" min="5" max="60" value="28" step="1">
   </div>
 
-  <div class="control">
-    <label>Ridge <span id="ridgeVal"></span></label>
+  <div class="control-group">
+    <label>Ridge <span class="val" id="ridgeVal"></span></label>
     <input type="range" id="ridge" min="0" max="100" value="0" step="1">
   </div>
 
-  <div class="control">
-    <label>Gap Ratio <span id="gapVal"></span></label>
+  <div class="control-group">
+    <label>Gap Ratio <span class="val" id="gapVal"></span></label>
     <input type="range" id="gap" min="0.1" max="0.7" value="0.35" step="0.01">
   </div>
 
-  <div class="control">
-    <label>Letter Size <span id="letterSizeVal"></span></label>
+  <div class="control-group">
+    <label>Letter Size <span class="val" id="letterSizeVal"></span></label>
     <input type="range" id="letterSize" min="0.3" max="1.0" value="0.72" step="0.01">
   </div>
 
-  <div class="control">
-    <label>Margin <span id="marginVal"></span></label>
+  <div class="control-group">
+    <label>Margin <span class="val" id="marginVal"></span></label>
     <input type="range" id="margin" min="0" max="80" value="25" step="1">
   </div>
 
-  <div class="control">
-    <label>Corner Radius <span id="radiusVal"></span></label>
+  <div class="control-group">
+    <label>Corner Radius <span class="val" id="radiusVal"></span></label>
     <input type="range" id="radius" min="0" max="40" value="10" step="1">
   </div>
 
-  <hr>
-
-  <label class="checkbox-control">
-    <input type="checkbox" id="showMap"> Show displacement map
-  </label>
-
-  <label class="checkbox-control">
-    <input type="checkbox" id="invert"> Invert colors
-  </label>
-
-  <div class="actions">
-    <button onclick="resetDefaults()">Reset</button>
-    <button class="primary" onclick="downloadPNG()">Download PNG</button>
+  <div class="check-row">
+    <input type="checkbox" id="showMap">
+    <label for="showMap">Show displacement map</label>
   </div>
 
-  <div class="actions">
-    <button onclick="downloadSVG()">Download SVG</button>
+  <div class="check-row">
+    <input type="checkbox" id="invert">
+    <label for="invert">Invert colors</label>
   </div>
 
-  <div class="sidebar-footer">
-    <a href="https://github.com/nmemodi/line-warp" target="_blank">GitHub</a> · MIT License
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="resetDefaults()">Reset</button>
+    <button class="btn btn-primary btn-export">Export</button>
   </div>
 </div>
 
-<div class="main">
+<div class="tool-canvas tool-canvas--centered">
   <canvas id="canvas"></canvas>
 </div>
 
+<script src="/shared/tools-export.js"></script>
 <script>
 const SIZE = 800;
 const canvas = document.getElementById('canvas');
@@ -623,7 +510,7 @@ function generateSVGPaths(p, dispData) {
   return paths;
 }
 
-function downloadSVG() {
+function generateSVG() {
   const p = getParams();
   const dispData = createDisplacementMap(p);
   const paths = generateSVGPaths(p, dispData);
@@ -636,27 +523,90 @@ function downloadSVG() {
     svg += `  <path d="${d}" fill="${fg}"/>\n`;
   });
   svg += `</svg>`;
-
-  const blob = new Blob([svg], { type: 'image/svg+xml' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `line-warp-${p.letter.toLowerCase()}.svg`;
-  a.click();
-  URL.revokeObjectURL(url);
+  return svg;
 }
 
-function downloadPNG() {
-  const a = document.createElement('a');
-  a.href = canvas.toDataURL('image/png');
-  a.download = `line-warp-${getParams().letter.toLowerCase()}.png`;
-  a.click();
+// --- renderToCanvas for ToolExporter ---
+function renderToCanvas(exportCtx, width, height, opts) {
+  const p = getParams();
+  const dispData = createDisplacementMap(p);
+  const scale = width / SIZE;
+
+  const bg = opts && opts.transparent ? 'transparent' : (p.invert ? '#000' : '#fff');
+  const fg = p.invert ? '#fff' : '#000';
+
+  if (bg !== 'transparent') {
+    exportCtx.fillStyle = bg;
+    exportCtx.fillRect(0, 0, width, height);
+  }
+
+  if (p.showMap) {
+    // For displacement map view, just scale the main canvas
+    exportCtx.drawImage(canvas, 0, 0, width, height);
+    return;
+  }
+
+  exportCtx.save();
+  exportCtx.scale(scale, scale);
+
+  const totalH = SIZE - 2 * p.margin;
+  const spacing = totalH / p.numLines;
+  const gapSize = spacing * p.gapRatio;
+  const bandH = spacing - gapSize;
+  const xStart = p.margin;
+  const xEnd = SIZE - p.margin;
+  const step = 1;
+  const r = Math.min(p.radius, bandH / 2, (xEnd - xStart) / 4);
+
+  exportCtx.fillStyle = fg;
+
+  for (let i = 0; i < p.numLines; i++) {
+    const baseY = p.margin + i * spacing + spacing / 2;
+    const topY = baseY - bandH / 2;
+    const botY = baseY + bandH / 2;
+
+    const dTL = getHeight(dispData, xStart, topY) * p.maxDisp;
+    const dTR = getHeight(dispData, xEnd, topY) * p.maxDisp;
+    const dBL = getHeight(dispData, xStart, botY) * p.maxDisp;
+    const dBR = getHeight(dispData, xEnd, botY) * p.maxDisp;
+
+    exportCtx.beginPath();
+    exportCtx.moveTo(xStart, topY - dTL + r);
+    exportCtx.quadraticCurveTo(xStart, topY - dTL, xStart + r, topY - getHeight(dispData, xStart + r, topY) * p.maxDisp);
+    for (let x = xStart + r + step; x <= xEnd - r; x += step) {
+      exportCtx.lineTo(x, topY - getHeight(dispData, x, topY) * p.maxDisp);
+    }
+    exportCtx.lineTo(xEnd - r, topY - getHeight(dispData, xEnd - r, topY) * p.maxDisp);
+    exportCtx.quadraticCurveTo(xEnd, topY - dTR, xEnd, topY - dTR + r);
+    exportCtx.lineTo(xEnd, botY - dBR - r);
+    exportCtx.quadraticCurveTo(xEnd, botY - dBR, xEnd - r, botY - getHeight(dispData, xEnd - r, botY) * p.maxDisp);
+    for (let x = xEnd - r - step; x >= xStart + r; x -= step) {
+      exportCtx.lineTo(x, botY - getHeight(dispData, x, botY) * p.maxDisp);
+    }
+    exportCtx.lineTo(xStart + r, botY - getHeight(dispData, xStart + r, botY) * p.maxDisp);
+    exportCtx.quadraticCurveTo(xStart, botY - dBL, xStart, botY - dBL - r);
+    exportCtx.closePath();
+    exportCtx.fill();
+  }
+
+  exportCtx.restore();
 }
 
 // --- Wire up controls ---
 Object.values(controls).forEach(el => {
   el.addEventListener('input', () => { updateLabels(); render(); });
   el.addEventListener('change', () => { updateLabels(); render(); });
+});
+
+// --- Export via shared ToolExporter ---
+new ToolExporter({
+  toolName: 'line-warp',
+  getCanvas: () => canvas,
+  getSVG: () => generateSVG(),
+  renderToCanvas: renderToCanvas,
+  getBackgroundColor: () => getParams().invert ? '#000000' : '#ffffff',
+  baseWidth: SIZE,
+  baseHeight: SIZE,
 });
 
 // Initial render

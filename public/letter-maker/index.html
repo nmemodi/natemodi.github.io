@@ -3,132 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Line Letter</title>
+<title>Letter Maker</title>
+<link rel="stylesheet" href="/shared/tools-shared.css">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: #1a1a1a; color: #eee;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    display: flex; height: 100vh; overflow: hidden;
-  }
-  #sidebar {
-    width: 280px; min-width: 280px;
-    background: #222; border-right: 1px solid #333;
-    padding: 20px; overflow-y: auto;
-    display: flex; flex-direction: column; gap: 18px;
-  }
-  #sidebar h1 { font-size: 15px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #888; }
-  .section { display: flex; flex-direction: column; gap: 8px; }
-  .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #666; font-weight: 600; }
-  .row { display: flex; gap: 8px; align-items: center; }
-  .row label { font-size: 12px; color: #aaa; min-width: 72px; }
-  input[type="text"] {
-    background: #333; color: #eee; border: 1px solid #555; border-radius: 4px;
-    padding: 8px 12px; font-size: 20px; font-weight: 700; text-align: center;
-    width: 100%; text-transform: uppercase;
-  }
-  input[type="text"]:focus { outline: none; border-color: #888; }
-  input[type="range"] { flex: 1; accent-color: #888; cursor: pointer; }
-  .color-input {
-    width: 36px; height: 28px; border: 1px solid #555; border-radius: 4px;
-    background: none; cursor: pointer; padding: 0;
-  }
-  .val { font-size: 11px; color: #666; min-width: 30px; text-align: right; font-variant-numeric: tabular-nums; }
-  .letter-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 3px; }
-  .letter-btn {
-    padding: 5px 0; border-radius: 4px; border: 1px solid #444;
-    background: #2a2a2a; color: #ccc; font-size: 12px; font-weight: 600;
-    cursor: pointer; text-align: center; transition: all 0.1s;
-  }
-  .letter-btn:hover { background: #444; color: #fff; }
-  .letter-btn.active { background: #555; border-color: #777; color: #fff; }
-  .btn-row { display: flex; gap: 6px; }
-  .btn-action {
-    flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #444;
-    background: #2a2a2a; color: #ccc; font-size: 12px; font-weight: 500;
-    cursor: pointer; transition: all 0.15s;
-  }
-  .btn-action:hover { background: #444; border-color: #666; color: #fff; }
-  #canvas-area {
-    flex: 1; display: flex; align-items: center; justify-content: center;
-    background: #181818; overflow: hidden;
-  }
-  canvas { box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+  canvas { box-shadow: var(--shadow-canvas); }
 </style>
 </head>
 <body>
 
-<div id="sidebar">
-  <h1>Line Letter</h1>
+<div class="tool-sidebar">
+  <div class="tool-header">
+    <a href="/tools/" class="tool-header__back" aria-label="Back to tools">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 12L6 8l4-4"/>
+      </svg>
+    </a>
+    <h1 class="tool-header__title">Letter Maker</h1>
+  </div>
 
-  <div class="section">
+  <div class="control-group">
     <div class="section-label">Character</div>
     <input type="text" id="charInput" value="G" maxlength="1">
   </div>
 
-  <div class="section">
+  <div class="control-group">
     <div class="section-label">Quick Pick</div>
-    <div class="letter-grid" id="letterGrid"></div>
+    <div class="picker-grid picker-grid--letters" id="letterGrid"></div>
   </div>
 
-  <div class="section">
+  <div class="control-group">
     <div class="section-label">Colors</div>
-    <div class="row">
+    <div class="color-row">
       <label>Background</label>
-      <input type="color" class="color-input" id="bgColor" value="#000000">
+      <input type="color" id="bgColor" value="#000000">
     </div>
-    <div class="row">
+    <div class="color-row">
       <label>Shape</label>
-      <input type="color" class="color-input" id="fgColor" value="#ffffff">
+      <input type="color" id="fgColor" value="#ffffff">
     </div>
   </div>
 
-  <div class="section">
+  <div class="control-group">
     <div class="section-label">Shape</div>
-    <div class="row">
-      <label>Corner</label>
-      <input type="range" id="cornerRadius" min="0" max="50" value="22">
-      <span class="val" id="cornerRadiusVal">22%</span>
-    </div>
-    <div class="row">
-      <label>Padding</label>
-      <input type="range" id="padding" min="0" max="25" value="8">
-      <span class="val" id="paddingVal">8%</span>
-    </div>
+    <label>
+      Corner
+      <span class="control-val" id="cornerRadiusVal">22%</span>
+    </label>
+    <input type="range" id="cornerRadius" min="0" max="50" value="22">
+    <label>
+      Padding
+      <span class="control-val" id="paddingVal">8%</span>
+    </label>
+    <input type="range" id="padding" min="0" max="25" value="8">
   </div>
 
-  <div class="section">
+  <div class="control-group">
     <div class="section-label">Line Cuts</div>
-    <div class="row">
-      <label>Width</label>
-      <input type="range" id="lineWidth" min="5" max="45" value="22">
-      <span class="val" id="lineWidthVal">22%</span>
-    </div>
-    <div class="row">
-      <label>Depth</label>
-      <input type="range" id="depthMult" min="30" max="200" value="100">
-      <span class="val" id="depthMultVal">100%</span>
-    </div>
+    <label>
+      Width
+      <span class="control-val" id="lineWidthVal">22%</span>
+    </label>
+    <input type="range" id="lineWidth" min="5" max="45" value="22">
+    <label>
+      Depth
+      <span class="control-val" id="depthMultVal">100%</span>
+    </label>
+    <input type="range" id="depthMult" min="30" max="200" value="100">
   </div>
 
-  <div class="section">
+  <div class="control-group">
     <div class="section-label">Export</div>
-    <div class="row">
-      <label>Size</label>
-      <input type="range" id="canvasSize" min="400" max="2400" step="100" value="800">
-      <span class="val" id="canvasSizeVal">800</span>
-    </div>
-    <div class="btn-row">
-      <button class="btn-action" id="downloadPNG">PNG</button>
-      <button class="btn-action" id="downloadSVG">SVG</button>
-    </div>
+    <button class="btn btn-primary btn-full btn-export">Export</button>
   </div>
 </div>
 
-<div id="canvas-area">
+<div class="tool-canvas tool-canvas--centered">
   <canvas id="c" width="800" height="800"></canvas>
 </div>
 
+<script src="/shared/tools-export.js"></script>
 <script>
 // ─── Letter cut definitions ───
 // Each cut is a path: array of [x,y] points in 0-1 normalized coords.
@@ -196,6 +149,15 @@ const ctx = canvas.getContext('2d');
 function draw() {
   const s = state.size;
   canvas.width = s; canvas.height = s;
+  renderToCanvas(ctx, s, s, { transparent: false });
+
+  const canvasArea = document.querySelector('.tool-canvas');
+  const maxD = Math.min(canvasArea.clientWidth * 0.9, canvasArea.clientHeight * 0.9, 700);
+  canvas.style.width = maxD + 'px'; canvas.style.height = maxD + 'px';
+}
+
+function renderToCanvas(c, w, h, opts) {
+  const s = w;
   const pad = s * state.padding;
   const ss = s - pad * 2;
   const r = state.cornerRadius * ss / 2;
@@ -204,17 +166,19 @@ function draw() {
   const dm = state.depthMult;
 
   // Background
-  ctx.fillStyle = state.bgColor;
-  ctx.fillRect(0, 0, s, s);
+  if (!opts || !opts.transparent) {
+    c.fillStyle = state.bgColor;
+    c.fillRect(0, 0, s, s);
+  }
 
   // Rounded square
-  ctx.fillStyle = state.fgColor;
-  roundRect(ctx, pad, pad, ss, ss, r);
-  ctx.fill();
+  c.fillStyle = state.fgColor;
+  roundRect(c, pad, pad, ss, ss, r);
+  c.fill();
 
   // Draw cuts
   const cuts = CUTS[state.letter] || [];
-  ctx.fillStyle = state.bgColor;
+  c.fillStyle = state.bgColor;
 
   for (const cut of cuts) {
     // Apply depth multiplier — scale interior points away from center
@@ -239,20 +203,17 @@ function draw() {
         let top = Math.min(y1, y2), bot = Math.max(y1, y2);
         if (Math.min(y1n, y2n) <= 0.001) top = 0; else top -= hw;
         if (Math.max(y1n, y2n) >= 0.999) bot = s; else bot += hw;
-        ctx.fillRect(x - hw, top, lw, bot - top);
+        c.fillRect(x - hw, top, lw, bot - top);
       } else {
         // Horizontal segment
         const y = (y1 + y2) / 2;
         let left = Math.min(x1, x2), right = Math.max(x1, x2);
         if (Math.min(x1n, x2n) <= 0.001) left = 0; else left -= hw;
         if (Math.max(x1n, x2n) >= 0.999) right = s; else right += hw;
-        ctx.fillRect(left, y - hw, right - left, lw);
+        c.fillRect(left, y - hw, right - left, lw);
       }
     }
   }
-
-  const maxD = Math.min(window.innerWidth - 310, window.innerHeight - 40, 700);
-  canvas.style.width = maxD + 'px'; canvas.style.height = maxD + 'px';
 }
 
 function roundRect(c, x, y, w, h, r) {
@@ -316,10 +277,10 @@ const grid = document.getElementById('letterGrid');
 
 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('').forEach(ch => {
   const btn = document.createElement('button');
-  btn.className = 'letter-btn' + (ch === state.letter ? ' active' : '');
+  btn.className = 'picker-btn' + (ch === state.letter ? ' active' : '');
   btn.textContent = ch;
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.letter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.picker-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     state.letter = ch; charInput.value = ch; draw();
   });
@@ -331,7 +292,7 @@ charInput.addEventListener('input', () => {
   charInput.value = v;
   if (v) {
     state.letter = v;
-    document.querySelectorAll('.letter-btn').forEach(b => b.classList.toggle('active', b.textContent === v));
+    document.querySelectorAll('.picker-btn').forEach(b => b.classList.toggle('active', b.textContent === v));
     draw();
   }
 });
@@ -349,24 +310,19 @@ wireSlider('cornerRadius', 'cornerRadius', v => v/100, '%');
 wireSlider('padding', 'padding', v => v/100, '%');
 wireSlider('lineWidth', 'lineWidth', v => v/100, '%');
 wireSlider('depthMult', 'depthMult', v => v/100, '%');
-wireSlider('canvasSize', 'size', v => v, '');
 
 document.getElementById('bgColor').addEventListener('input', e => { state.bgColor = e.target.value; draw(); });
 document.getElementById('fgColor').addEventListener('input', e => { state.fgColor = e.target.value; draw(); });
 
-document.getElementById('downloadPNG').addEventListener('click', () => {
-  const a = document.createElement('a');
-  a.download = `letter-${state.letter}.png`;
-  a.href = canvas.toDataURL('image/png');
-  a.click();
-});
-document.getElementById('downloadSVG').addEventListener('click', () => {
-  const blob = new Blob([generateSVG()], { type: 'image/svg+xml' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.download = `letter-${state.letter}.svg`;
-  a.href = url; a.click();
-  URL.revokeObjectURL(url);
+// ─── Export ───
+new ToolExporter({
+  toolName: 'letter-maker',
+  getCanvas: () => canvas,
+  getSVG: () => generateSVG(),
+  renderToCanvas: (c, w, h, opts) => renderToCanvas(c, w, h, opts),
+  getBackgroundColor: () => state.bgColor,
+  baseWidth: 800,
+  baseHeight: 800,
 });
 
 window.addEventListener('resize', draw);

@@ -3,265 +3,112 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Parallel Letter Generator</title>
+<title>Parallel Letters</title>
+<link rel="stylesheet" href="/shared/tools-shared.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Aldrich&family=Audiowide&family=Baumans&family=Black+Ops+One&family=Electrolize&family=Exo+2:wght@100..900&family=Michroma&family=Orbitron:wght@400..900&family=Rajdhani:wght@300..700&family=Russo+One&family=Share+Tech&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #0a0a0a;
-    color: #ccc;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem 1rem;
-  }
-
-  h1 {
-    font-size: 1.2rem;
-    font-weight: 300;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 1.5rem;
-    color: #666;
-  }
-
-  .app {
-    display: flex;
-    gap: 1.5rem;
-    align-items: flex-start;
-    max-width: 1100px;
-    width: 100%;
-  }
-
-  .sidebar {
-    width: 260px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .canvas-wrap {
-    flex: 1;
-    min-width: 0;
-    border: 1px solid #222;
-    border-radius: 6px;
-    overflow: hidden;
-    line-height: 0;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
-  }
-
-  canvas {
-    width: 100%;
-    height: auto;
-  }
-
-  .control-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .control-group label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #666;
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-  }
-
-  .range-val {
-    color: #999;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .control-group input[type="text"],
-  .control-group select {
-    background: #161616;
-    border: 1px solid #333;
-    color: #ddd;
-    padding: 7px 10px;
-    border-radius: 5px;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.15s;
-    width: 100%;
-  }
-
-  .control-group input[type="text"]:focus,
-  .control-group select:focus {
-    border-color: #555;
-  }
-
+  /* Tool-specific overrides only */
   .char-input {
     font-size: 1.5rem !important;
     text-align: center;
     font-weight: 700;
     padding: 4px 10px !important;
   }
-
-  .control-group input[type="range"] {
-    width: 100%;
-    accent-color: #e63946;
-    cursor: pointer;
-  }
-
-  .color-row {
-    display: flex;
-    gap: 6px;
-  }
-
-  .color-row input[type="color"] {
-    flex: 1;
-    height: 34px;
-    border: 1px solid #333;
-    border-radius: 5px;
-    padding: 2px;
-    background: #161616;
-    cursor: pointer;
-  }
-
-  .color-row input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
-  .color-row input[type="color"]::-webkit-color-swatch { border-radius: 3px; border: none; }
-
-  .buttons {
-    display: flex;
-    gap: 0.6rem;
-  }
-
-  button {
-    flex: 1;
-    background: #1a1a1a;
-    color: #ccc;
-    border: 1px solid #333;
-    padding: 10px 16px;
-    border-radius: 5px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.15s;
-    letter-spacing: 0.03em;
-  }
-
-  button:hover {
-    background: #252525;
-    border-color: #555;
-    color: #fff;
-  }
-
-  @media (max-width: 700px) {
-    .app {
-      flex-direction: column;
-    }
-    .sidebar {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-    }
-    .sidebar .buttons {
-      grid-column: 1 / -1;
-    }
-  }
 </style>
 </head>
 <body>
 
-<h1>Parallel Letter</h1>
+<div class="tool-sidebar">
+  <div class="tool-header">
+    <a href="/tools/" class="tool-header__back" aria-label="Back to tools">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 12L6 8l4-4"/>
+      </svg>
+    </a>
+    <h1 class="tool-header__title">Parallel Letters</h1>
+  </div>
 
-<div class="app">
-  <div class="sidebar">
-    <div class="control-group">
-      <label>Character</label>
-      <input type="text" id="char" value="G" maxlength="2" class="char-input">
+  <div class="control-group">
+    <div class="section-label">Character</div>
+    <input type="text" id="char" value="G" maxlength="2" class="char-input">
+  </div>
+
+  <div class="control-group">
+    <div class="section-label">Typography</div>
+    <label>Font</label>
+    <select id="font">
+      <option value="Orbitron" selected>Orbitron</option>
+      <option value="Audiowide">Audiowide</option>
+      <option value="Russo One">Russo One</option>
+      <option value="Exo 2">Exo 2</option>
+      <option value="Black Ops One">Black Ops One</option>
+      <option value="Rajdhani">Rajdhani</option>
+      <option value="Share Tech">Share Tech</option>
+      <option value="Baumans">Baumans</option>
+      <option value="Electrolize">Electrolize</option>
+      <option value="Michroma">Michroma</option>
+      <option value="Aldrich">Aldrich</option>
+      <option value="Arial Black">Arial Black</option>
+      <option value="Impact">Impact</option>
+      <option value="Georgia">Georgia</option>
+      <option value="Courier New">Courier New</option>
+    </select>
+    <label>Weight</label>
+    <select id="weight">
+      <option value="100">Thin</option>
+      <option value="300">Light</option>
+      <option value="400">Regular</option>
+      <option value="700">Bold</option>
+      <option value="900" selected>Black</option>
+    </select>
+    <label>Corners</label>
+    <select id="join">
+      <option value="round" selected>Round</option>
+      <option value="miter">Sharp</option>
+      <option value="bevel">Bevel</option>
+    </select>
+  </div>
+
+  <div class="control-group">
+    <div class="section-label">Lines</div>
+    <label>Count <span class="control-val" id="numLinesVal">5</span></label>
+    <input type="range" id="numLines" min="1" max="40" value="5">
+    <label>Thickness <span class="control-val" id="thicknessVal">2</span></label>
+    <input type="range" id="thickness" min="0.5" max="10" step="0.5" value="2">
+    <label>Gap <span class="control-val" id="gapVal">6</span></label>
+    <input type="range" id="gap" min="1" max="40" step="0.5" value="6">
+  </div>
+
+  <div class="control-group">
+    <div class="section-label">Canvas</div>
+    <label>Size <span class="control-val" id="sizeVal">800</span></label>
+    <input type="range" id="size" min="400" max="2400" step="100" value="800">
+  </div>
+
+  <div class="control-group">
+    <div class="section-label">Colors</div>
+    <div class="color-row">
+      <input type="color" id="bgColor" value="#e63946">
+      <span class="color-hex">Background</span>
     </div>
-
-    <div class="control-group">
-      <label>Font</label>
-      <select id="font">
-        <option value="Orbitron" selected>Orbitron</option>
-        <option value="Audiowide">Audiowide</option>
-        <option value="Russo One">Russo One</option>
-        <option value="Exo 2">Exo 2</option>
-        <option value="Black Ops One">Black Ops One</option>
-        <option value="Rajdhani">Rajdhani</option>
-        <option value="Share Tech">Share Tech</option>
-        <option value="Baumans">Baumans</option>
-        <option value="Electrolize">Electrolize</option>
-        <option value="Michroma">Michroma</option>
-        <option value="Aldrich">Aldrich</option>
-        <option value="Arial Black">Arial Black</option>
-        <option value="Impact">Impact</option>
-        <option value="Georgia">Georgia</option>
-        <option value="Courier New">Courier New</option>
-      </select>
-    </div>
-
-    <div class="control-group">
-      <label>Weight</label>
-      <select id="weight">
-        <option value="100">Thin</option>
-        <option value="300">Light</option>
-        <option value="400">Regular</option>
-        <option value="700">Bold</option>
-        <option value="900" selected>Black</option>
-      </select>
-    </div>
-
-    <div class="control-group">
-      <label>Corners</label>
-      <select id="join">
-        <option value="round" selected>Round</option>
-        <option value="miter">Sharp</option>
-        <option value="bevel">Bevel</option>
-      </select>
-    </div>
-
-    <div class="control-group">
-      <label>Lines <span class="range-val" id="numLinesVal">5</span></label>
-      <input type="range" id="numLines" min="1" max="40" value="5">
-    </div>
-
-    <div class="control-group">
-      <label>Thickness <span class="range-val" id="thicknessVal">2</span></label>
-      <input type="range" id="thickness" min="0.5" max="10" step="0.5" value="2">
-    </div>
-
-    <div class="control-group">
-      <label>Gap <span class="range-val" id="gapVal">6</span></label>
-      <input type="range" id="gap" min="1" max="40" step="0.5" value="6">
-    </div>
-
-    <div class="control-group">
-      <label>Size <span class="range-val" id="sizeVal">800</span></label>
-      <input type="range" id="size" min="400" max="2400" step="100" value="800">
-    </div>
-
-    <div class="control-group">
-      <label>Colors</label>
-      <div class="color-row">
-        <input type="color" id="bgColor" value="#e63946" title="Background">
-        <input type="color" id="lineColor" value="#ffffff" title="Lines">
-      </div>
-    </div>
-
-    <div class="buttons">
-      <button id="downloadPNG">Download PNG</button>
-      <button id="downloadSVG">Download SVG</button>
+    <div class="color-row">
+      <input type="color" id="lineColor" value="#ffffff">
+      <span class="color-hex">Lines</span>
     </div>
   </div>
 
-  <div class="canvas-wrap">
-    <canvas id="canvas" width="800" height="800"></canvas>
+  <div class="control-group">
+    <button class="btn btn-primary btn-full btn-export" id="openExport">Export</button>
   </div>
 </div>
 
+<div class="tool-canvas tool-canvas--centered">
+  <canvas id="canvas" width="800" height="800"></canvas>
+</div>
+
+<script src="/shared/tools-export.js"></script>
 <script>
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -342,8 +189,8 @@ function computeLayout(char, font, weight, numLines, lineThickness, gapSize, can
   return { fontSize, drawX, drawY };
 }
 
-// ─── Main render ───
-function render() {
+// ─── Render to arbitrary context (used by both display + export) ───
+function renderToCtx(targetCtx, size, opts = {}) {
   const char          = charInput.value || 'G';
   const font          = fontSelect.value;
   const weight        = weightSelect.value;
@@ -352,20 +199,12 @@ function render() {
   const gapSize       = parseFloat(gapEl.value);
   const bgColor       = bgColorEl.value;
   const lineColor     = lineColorEl.value;
-  const size          = parseInt(sizeEl.value);
   const joinStyle     = joinSelect.value;
 
-  // HiDPI: scale canvas backing store for sharp rendering
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width  = size * dpr;
-  canvas.height = size * dpr;
-  canvas.style.width  = '100%';   // CSS size stays flexible
-  canvas.style.aspectRatio = '1';
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-  // Background
-  ctx.fillStyle = bgColor;
-  ctx.fillRect(0, 0, size, size);
+  if (!opts.transparent) {
+    targetCtx.fillStyle = bgColor;
+    targetCtx.fillRect(0, 0, size, size);
+  }
 
   if (!char.trim()) return;
 
@@ -375,49 +214,55 @@ function render() {
   const { fontSize, drawX, drawY } = layout;
   const step = lineThickness + gapSize;
 
-  ctx.font         = `${weight} ${fontSize}px "${font}"`;
-  ctx.textBaseline = 'alphabetic';
-  ctx.lineJoin     = joinStyle;
-  ctx.lineCap      = joinStyle === 'round' ? 'round' : 'butt';
-  if (joinStyle === 'miter') ctx.miterLimit = 20;
+  targetCtx.font         = `${weight} ${fontSize}px "${font}"`;
+  targetCtx.textBaseline = 'alphabetic';
+  targetCtx.lineJoin     = joinStyle;
+  targetCtx.lineCap      = joinStyle === 'round' ? 'round' : 'butt';
+  if (joinStyle === 'miter') targetCtx.miterLimit = 20;
 
   // Draw rings from outermost to innermost
   for (let i = numLines - 1; i >= 0; i--) {
     // Stroke with line color
-    ctx.lineWidth   = 2 * (i * step + lineThickness);
-    ctx.strokeStyle = lineColor;
-    ctx.strokeText(char, drawX, drawY);
+    targetCtx.lineWidth   = 2 * (i * step + lineThickness);
+    targetCtx.strokeStyle = lineColor;
+    targetCtx.strokeText(char, drawX, drawY);
 
     // Erase inner portion with background
     const eraseW = 2 * i * step;
     if (eraseW > 0) {
-      ctx.lineWidth   = eraseW;
-      ctx.strokeStyle = bgColor;
-      ctx.strokeText(char, drawX, drawY);
+      targetCtx.lineWidth   = eraseW;
+      targetCtx.strokeStyle = bgColor;
+      targetCtx.strokeText(char, drawX, drawY);
     }
   }
 
   // Fill interior with background (hollow letter)
-  ctx.fillStyle = bgColor;
-  ctx.fillText(char, drawX, drawY);
+  targetCtx.fillStyle = bgColor;
+  targetCtx.fillText(char, drawX, drawY);
 }
 
-// ─── Download PNG ───
-document.getElementById('downloadPNG').addEventListener('click', () => {
-  const char = charInput.value || 'G';
-  const link = document.createElement('a');
-  link.download = `parallel-${char}.png`;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-});
+// ─── Main render (to display canvas) ───
+function render() {
+  const size = parseInt(sizeEl.value);
 
-// ─── Download SVG ───
+  // HiDPI: scale canvas backing store for sharp rendering
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width  = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width  = '100%';
+  canvas.style.aspectRatio = '1';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  renderToCtx(ctx, size);
+}
+
+// ─── Generate SVG string ───
 function escapeXml(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 
-document.getElementById('downloadSVG').addEventListener('click', () => {
+function generateSVG() {
   const char          = charInput.value || 'G';
   const font          = fontSelect.value;
   const weight        = weightSelect.value;
@@ -431,7 +276,7 @@ document.getElementById('downloadSVG').addEventListener('click', () => {
   const step          = lineThickness + gapSize;
 
   const layout = computeLayout(char, font, weight, numLines, lineThickness, gapSize, size);
-  if (!layout) return;
+  if (!layout) return '';
   const { fontSize, drawX, drawY } = layout;
 
   const fontUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@${weight}&amp;display=swap`;
@@ -457,13 +302,20 @@ document.getElementById('downloadSVG').addEventListener('click', () => {
   svg += `<text ${textAttr} fill="${bgColor}" stroke="none">${escaped}</text>\n`;
   svg += `</svg>`;
 
-  const blob = new Blob([svg], { type: 'image/svg+xml' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.download = `parallel-${char}.svg`;
-  link.href = url;
-  link.click();
-  URL.revokeObjectURL(url);
+  return svg;
+}
+
+// ─── ToolExporter integration ───
+new ToolExporter({
+  toolName: 'parallel-letters',
+  getCanvas: () => canvas,
+  getSVG: () => generateSVG(),
+  renderToCanvas: (exportCtx, w, h, { transparent }) => {
+    renderToCtx(exportCtx, w, { transparent });
+  },
+  getBackgroundColor: () => bgColorEl.value,
+  baseWidth: parseInt(sizeEl.value),
+  baseHeight: parseInt(sizeEl.value),
 });
 
 // ─── Event listeners ───

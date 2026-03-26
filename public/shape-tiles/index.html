@@ -4,103 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shape Tiles</title>
+    <link rel="stylesheet" href="/shared/tools-shared.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #111;
-            color: #eee;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        #sidebar {
-            width: 260px;
-            padding: 24px 20px;
-            background: #1a1a1a;
-            border-right: 1px solid #333;
-            overflow-y: auto;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-
-        #sidebar h1 {
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-        }
-
-        .hint {
-            font-size: 11px;
-            color: #666;
-            line-height: 1.5;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .control-group label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #999;
-        }
-
-        .control-group .val {
-            color: #666;
-            font-variant-numeric: tabular-nums;
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 4px;
-            background: #333;
-            border-radius: 2px;
-            outline: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
-            background: #fff;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .color-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        input[type="color"] {
-            -webkit-appearance: none;
-            width: 32px;
-            height: 24px;
-            border: 1px solid #444;
-            border-radius: 4px;
-            background: none;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
-        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 2px; }
-
-        .color-hex {
-            font-size: 11px;
-            color: #666;
-            font-family: 'SF Mono', 'Fira Code', monospace;
-        }
-
         .shape-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -109,91 +14,38 @@
 
         .shape-btn {
             aspect-ratio: 1;
-            background: #252525;
+            background: var(--color-bg-elevated);
             border: 2px solid transparent;
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 0;
-            transition: all 0.15s;
+            transition: all var(--ease-default);
         }
 
-        .shape-btn:hover { background: #333; }
-        .shape-btn.active { border-color: #e63946; background: #2a2020; }
+        .shape-btn:hover { background: var(--color-bg-hover); }
+        .shape-btn.active { border-color: var(--color-accent); background: #2a2020; }
 
         .shape-btn canvas {
             width: 65%;
             height: 65%;
             pointer-events: none;
         }
-
-        .presets {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .preset-btn {
-            padding: 4px 10px;
-            font-size: 11px;
-            background: #2a2a2a;
-            color: #ccc;
-            border: 1px solid #444;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .preset-btn:hover { background: #3a3a3a; }
-
-        .btn {
-            width: 100%;
-            padding: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: opacity 0.15s;
-        }
-
-        .btn:hover { opacity: 0.85; }
-
-        .btn-primary {
-            background: #e63946;
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #2a2a2a;
-            color: #ccc;
-            border: 1px solid #444;
-        }
-
-        .btn-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-row .btn { flex: 1; }
-
-        #canvas-wrap {
-            flex: 1;
-            position: relative;
-        }
-
-        canvas#canvas {
-            width: 100%;
-            height: 100%;
-        }
     </style>
 </head>
 <body>
-    <div id="sidebar">
-        <h1>Shape Tiles</h1>
-        <p class="hint">Pick a shape. The pattern tiles automatically with halves at edges and quarters at corners.</p>
+    <div class="tool-sidebar">
+        <div class="tool-header">
+            <a href="/tools/" class="tool-header__back" aria-label="Back to tools">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 12L6 8l4-4"/>
+                </svg>
+            </a>
+            <h1 class="tool-header__title">Shape Tiles</h1>
+        </div>
+        <p class="tool-hint">Pick a shape. The pattern tiles automatically with halves at edges and quarters at corners.</p>
 
         <div class="control-group">
             <label>Shape</label>
@@ -243,16 +95,18 @@
             </div>
         </div>
 
+        <button class="btn btn-primary btn-full btn-export">Export</button>
         <div class="btn-row">
-            <button class="btn btn-secondary" id="exportPng">PNG</button>
-            <button class="btn btn-primary" id="exportSvg">SVG</button>
+            <button class="btn btn-secondary" id="resetBtn">Reset</button>
+            <button class="btn btn-secondary" id="randomBtn">Randomize</button>
         </div>
     </div>
 
-    <div id="canvas-wrap">
+    <div class="tool-canvas tool-canvas--fill">
         <canvas id="canvas"></canvas>
     </div>
 
+    <script src="/shared/tools-export.js"></script>
     <script>
         // ===== Shape Helpers =====
         function polyPoints(n, r, rot) {
@@ -516,7 +370,7 @@
         ];
 
         // ===== Config =====
-        var config = {
+        var DEFAULT_CONFIG = {
             shape: 'circle',
             size: 120,
             gap: 16,
@@ -524,6 +378,8 @@
             bgColor: '#cc0000',
             fgColor: '#f0f0f0'
         };
+
+        var config = Object.assign({}, DEFAULT_CONFIG);
 
         // ===== Presets =====
         var PRESETS = {
@@ -537,7 +393,7 @@
 
         // ===== Canvas Setup =====
         var canvas = document.getElementById('canvas');
-        var wrap = document.getElementById('canvas-wrap');
+        var wrap = document.querySelector('.tool-canvas');
         var ctx = canvas.getContext('2d');
 
         // ===== Render =====
@@ -582,6 +438,67 @@
                     ctx.restore();
                 }
             }
+        }
+
+        // ===== Render to export canvas =====
+        function renderToExportCanvas(expCtx, w, h, opts) {
+            var shape = SHAPES.find(function(s) { return s.id === config.shape; });
+            if (!shape) return;
+
+            var r = config.size / 2;
+            var spacing = config.size + config.gap;
+            var rot = config.rotation * Math.PI / 180;
+
+            expCtx.fillStyle = config.fgColor;
+
+            var cx = w / 2;
+            var cy = h / 2;
+            var nx = Math.ceil(w / spacing / 2) + 2;
+            var ny = Math.ceil(h / spacing / 2) + 2;
+
+            for (var iy = -ny; iy <= ny; iy++) {
+                for (var ix = -nx; ix <= nx; ix++) {
+                    var x = cx + ix * spacing;
+                    var y = cy + iy * spacing;
+                    expCtx.save();
+                    expCtx.translate(x, y);
+                    expCtx.rotate(rot);
+                    shape.draw(expCtx, r);
+                    expCtx.restore();
+                }
+            }
+        }
+
+        // ===== Export SVG (returns string) =====
+        function exportSVG() {
+            var w = wrap.clientWidth;
+            var h = wrap.clientHeight;
+            var shape = SHAPES.find(function(s) { return s.id === config.shape; });
+            if (!shape) return '';
+
+            var r = config.size / 2;
+            var spacing = config.size + config.gap;
+            var rotDeg = config.rotation;
+
+            var elements = '';
+            var cx = w / 2;
+            var cy = h / 2;
+            var nx = Math.ceil(w / spacing / 2) + 2;
+            var ny = Math.ceil(h / spacing / 2) + 2;
+
+            for (var iy = -ny; iy <= ny; iy++) {
+                for (var ix = -nx; ix <= nx; ix++) {
+                    var x = (cx + ix * spacing).toFixed(1);
+                    var y = (cy + iy * spacing).toFixed(1);
+                    var transform = 'translate(' + x + ',' + y + ')';
+                    if (rotDeg !== 0) transform += ' rotate(' + rotDeg + ')';
+                    elements += '<g transform="' + transform + '">' + shape.svg(r, config.fgColor) + '</g>\n';
+                }
+            }
+
+            return '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">\n' +
+                '<rect width="' + w + '" height="' + h + '" fill="' + config.bgColor + '"/>\n' +
+                '<g>\n' + elements + '</g>\n</svg>';
         }
 
         // ===== Shape Picker =====
@@ -673,56 +590,33 @@
             });
         });
 
-        // ===== Export PNG =====
-        document.getElementById('exportPng').addEventListener('click', function() {
-            var a = document.createElement('a');
-            a.href = canvas.toDataURL('image/png');
-            a.download = 'shape-tiles.png';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+        // Reset
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            Object.assign(config, DEFAULT_CONFIG);
+            syncUI();
+            render();
         });
 
-        // ===== Export SVG =====
-        document.getElementById('exportSvg').addEventListener('click', function() {
-            var w = wrap.clientWidth;
-            var h = wrap.clientHeight;
-            var shape = SHAPES.find(function(s) { return s.id === config.shape; });
-            if (!shape) return;
+        // Randomize
+        document.getElementById('randomBtn').addEventListener('click', function() {
+            var shapeIdx = Math.floor(Math.random() * SHAPES.length);
+            config.shape = SHAPES[shapeIdx].id;
+            config.size = 30 + Math.floor(Math.random() * 270);
+            config.gap = Math.floor(Math.random() * 120);
+            config.rotation = Math.floor(Math.random() * 360);
+            config.bgColor = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+            config.fgColor = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+            syncUI();
+            render();
+        });
 
-            var r = config.size / 2;
-            var spacing = config.size + config.gap;
-            var rotDeg = config.rotation;
-
-            var elements = '';
-            var cx = w / 2;
-            var cy = h / 2;
-            var nx = Math.ceil(w / spacing / 2) + 2;
-            var ny = Math.ceil(h / spacing / 2) + 2;
-
-            for (var iy = -ny; iy <= ny; iy++) {
-                for (var ix = -nx; ix <= nx; ix++) {
-                    var x = (cx + ix * spacing).toFixed(1);
-                    var y = (cy + iy * spacing).toFixed(1);
-                    var transform = 'translate(' + x + ',' + y + ')';
-                    if (rotDeg !== 0) transform += ' rotate(' + rotDeg + ')';
-                    elements += '<g transform="' + transform + '">' + shape.svg(r, config.fgColor) + '</g>\n';
-                }
-            }
-
-            var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">\n' +
-                '<rect width="' + w + '" height="' + h + '" fill="' + config.bgColor + '"/>\n' +
-                '<g>\n' + elements + '</g>\n</svg>';
-
-            var blob = new Blob([svg], { type: 'image/svg+xml' });
-            var url = URL.createObjectURL(blob);
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = 'shape-tiles.svg';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+        // ===== ToolExporter =====
+        new ToolExporter({
+            toolName: 'shape-tiles',
+            getCanvas: function() { return canvas; },
+            getSVG: exportSVG,
+            renderToCanvas: renderToExportCanvas,
+            getBackgroundColor: function() { return config.bgColor; }
         });
 
         // ===== Resize =====

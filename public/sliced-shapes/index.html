@@ -4,335 +4,178 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sliced Shapes</title>
+<link rel="stylesheet" href="/shared/tools-shared.css">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-    background: #111;
-    color: #eee;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
-}
-
-#sidebar {
-    width: 270px;
-    padding: 24px 20px;
-    background: #1a1a1a;
-    border-right: 1px solid #333;
-    overflow-y: auto;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-#sidebar h1 {
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-}
-
-.hint {
-    font-size: 11px;
-    color: #666;
-    line-height: 1.5;
-}
-
-.control-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.control-group label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: #999;
-}
-
-.control-group .val {
-    color: #666;
-    font-variant-numeric: tabular-nums;
-}
-
-input[type="range"] {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 4px;
-    background: #333;
-    border-radius: 2px;
-    outline: none;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
-    background: #fff;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-select {
-    width: 100%;
-    padding: 6px 8px;
-    font-size: 12px;
-    background: #2a2a2a;
-    color: #ccc;
-    border: 1px solid #444;
-    border-radius: 4px;
-    outline: none;
-    cursor: pointer;
-}
-
-.color-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-input[type="color"] {
-    -webkit-appearance: none;
-    width: 32px;
-    height: 24px;
-    border: 1px solid #444;
-    border-radius: 4px;
-    background: none;
-    cursor: pointer;
-    padding: 0;
-}
-
-input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
-input[type="color"]::-webkit-color-swatch { border: none; border-radius: 2px; }
-
-.color-hex {
-    font-size: 11px;
-    color: #666;
-    font-family: 'SF Mono', 'Fira Code', monospace;
-}
-
-.presets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.preset-btn {
-    padding: 4px 10px;
-    font-size: 11px;
-    background: #2a2a2a;
-    color: #ccc;
-    border: 1px solid #444;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.15s;
-}
-
-.preset-btn:hover { background: #3a3a3a; }
-
-.btn {
-    width: 100%;
-    padding: 10px;
-    font-size: 13px;
-    font-weight: 500;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: opacity 0.15s;
-}
-
-.btn:hover { opacity: 0.85; }
-
-.btn-primary {
-    background: #e63946;
-    color: white;
-}
-
-.btn-secondary {
-    background: #2a2a2a;
-    color: #ccc;
-    border: 1px solid #444;
-}
-
-.btn-row {
-    display: flex;
-    gap: 8px;
-}
-
-.btn-row .btn { flex: 1; }
-
-.section-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: #555;
-    margin-top: 4px;
-}
-
-#canvas-wrap {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-}
-
-canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
+    /* Tool-specific overrides only */
+    select {
+        width: 100%;
+        padding: 6px 8px;
+        font-size: var(--text-xs);
+        background: var(--color-surface);
+        color: var(--color-text-muted);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        outline: none;
+        cursor: pointer;
+    }
 </style>
 </head>
 <body>
-<div id="sidebar">
-    <h1>Sliced Shapes</h1>
-    <p class="hint">Shapes bisected by curved lines at varying angles. Adjust controls to explore.</p>
+    <div class="tool-sidebar">
+        <div class="tool-header">
+            <a href="/tools/" class="tool-header__back" aria-label="Back to tools">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 12L6 8l4-4"/>
+                </svg>
+            </a>
+            <h1 class="tool-header__title">Sliced Shapes</h1>
+        </div>
+        <p class="tool-hint">Shapes bisected by curved lines at varying angles. Adjust controls to explore.</p>
 
-    <span class="section-label">Layout</span>
+        <div class="section-label">Layout</div>
 
-    <div class="control-group">
-        <label>Count <span class="val" id="countVal">3</span></label>
-        <input type="range" id="count" min="1" max="12" value="3" step="1">
-    </div>
+        <div class="control-group">
+            <label>Count <span class="val" id="countVal">3</span></label>
+            <input type="range" id="count" min="1" max="12" value="3" step="1">
+        </div>
 
-    <div class="control-group">
-        <label>Shape</label>
-        <select id="shape">
-            <option value="circle" selected>Circle</option>
-            <option value="square">Square</option>
-            <option value="rounded-square">Rounded Square</option>
-            <option value="diamond">Diamond</option>
-            <option value="triangle">Triangle</option>
-            <option value="inverted-triangle">Inverted Triangle</option>
-            <option value="pentagon">Pentagon</option>
-            <option value="hexagon">Hexagon</option>
-            <option value="heptagon">Heptagon</option>
-            <option value="octagon">Octagon</option>
-            <option value="star-4">Star (4)</option>
-            <option value="star-5">Star (5)</option>
-            <option value="star-6">Star (6)</option>
-            <option value="cross">Cross</option>
-            <option value="semicircle">Semicircle</option>
-            <option value="oval">Oval</option>
-            <option value="teardrop">Teardrop</option>
-            <option value="shield">Shield</option>
-        </select>
-    </div>
+        <div class="control-group">
+            <label>Shape</label>
+            <select id="shape">
+                <option value="circle" selected>Circle</option>
+                <option value="square">Square</option>
+                <option value="rounded-square">Rounded Square</option>
+                <option value="diamond">Diamond</option>
+                <option value="triangle">Triangle</option>
+                <option value="inverted-triangle">Inverted Triangle</option>
+                <option value="pentagon">Pentagon</option>
+                <option value="hexagon">Hexagon</option>
+                <option value="heptagon">Heptagon</option>
+                <option value="octagon">Octagon</option>
+                <option value="star-4">Star (4)</option>
+                <option value="star-5">Star (5)</option>
+                <option value="star-6">Star (6)</option>
+                <option value="cross">Cross</option>
+                <option value="semicircle">Semicircle</option>
+                <option value="oval">Oval</option>
+                <option value="teardrop">Teardrop</option>
+                <option value="shield">Shield</option>
+            </select>
+        </div>
 
-    <div class="control-group">
-        <label>Size <span class="val" id="sizeVal">100</span></label>
-        <input type="range" id="size" min="30" max="250" value="100">
-    </div>
+        <div class="control-group">
+            <label>Size <span class="val" id="sizeVal">100</span></label>
+            <input type="range" id="size" min="30" max="250" value="100">
+        </div>
 
-    <div class="control-group">
-        <label>Spacing <span class="val" id="spacingVal">220</span></label>
-        <input type="range" id="spacing" min="40" max="400" value="220">
-    </div>
+        <div class="control-group">
+            <label>Spacing <span class="val" id="spacingVal">220</span></label>
+            <input type="range" id="spacing" min="40" max="400" value="220">
+        </div>
 
-    <span class="section-label">Slice</span>
+        <div class="section-label">Slice</div>
 
-    <div class="control-group">
-        <label>Curve Type</label>
-        <select id="curveType">
-            <option value="arc" selected>Arc</option>
-            <option value="sine">Sine Wave</option>
-            <option value="straight">Straight</option>
-            <option value="s-curve">S-Curve</option>
-            <option value="zigzag">Zigzag</option>
-        </select>
-    </div>
+        <div class="control-group">
+            <label>Curve Type</label>
+            <select id="curveType">
+                <option value="arc" selected>Arc</option>
+                <option value="sine">Sine Wave</option>
+                <option value="straight">Straight</option>
+                <option value="s-curve">S-Curve</option>
+                <option value="zigzag">Zigzag</option>
+            </select>
+        </div>
 
-    <div class="control-group">
-        <label>Base Angle <span class="val" id="baseAngleVal">0</span>&deg;</label>
-        <input type="range" id="baseAngle" min="-180" max="180" value="0" step="1">
-    </div>
+        <div class="control-group">
+            <label>Base Angle <span class="val" id="baseAngleVal">0</span>&deg;</label>
+            <input type="range" id="baseAngle" min="-180" max="180" value="0" step="1">
+        </div>
 
-    <div class="control-group">
-        <label>Angle Spread <span class="val" id="angleSpreadVal">25</span>&deg;</label>
-        <input type="range" id="angleSpread" min="0" max="90" value="25" step="1">
-    </div>
+        <div class="control-group">
+            <label>Angle Spread <span class="val" id="angleSpreadVal">25</span>&deg;</label>
+            <input type="range" id="angleSpread" min="0" max="90" value="25" step="1">
+        </div>
 
-    <div class="control-group">
-        <label>Curvature <span class="val" id="curvatureVal">0.35</span></label>
-        <input type="range" id="curvature" min="0" max="1" value="0.35" step="0.01">
-    </div>
+        <div class="control-group">
+            <label>Curvature <span class="val" id="curvatureVal">0.35</span></label>
+            <input type="range" id="curvature" min="0" max="1" value="0.35" step="0.01">
+        </div>
 
-    <div class="control-group">
-        <label>Gap Width <span class="val" id="gapWidthVal">8</span></label>
-        <input type="range" id="gapWidth" min="1" max="40" value="8" step="0.5">
-    </div>
+        <div class="control-group">
+            <label>Gap Width <span class="val" id="gapWidthVal">8</span></label>
+            <input type="range" id="gapWidth" min="1" max="40" value="8" step="0.5">
+        </div>
 
-    <div class="control-group">
-        <label>Line Width <span class="val" id="lineWidthVal">0</span></label>
-        <input type="range" id="lineWidth" min="0" max="8" value="0" step="0.5">
-    </div>
+        <div class="control-group">
+            <label>Line Width <span class="val" id="lineWidthVal">0</span></label>
+            <input type="range" id="lineWidth" min="0" max="8" value="0" step="0.5">
+        </div>
 
-    <div class="control-group">
-        <label>Taper <span class="val" id="taperVal">0</span></label>
-        <input type="range" id="taper" min="0" max="1" value="0" step="0.01">
-    </div>
+        <div class="control-group">
+            <label>Taper <span class="val" id="taperVal">0</span></label>
+            <input type="range" id="taper" min="0" max="1" value="0" step="0.01">
+        </div>
 
-    <div class="control-group">
-        <label>Offset <span class="val" id="sliceOffsetVal">0</span></label>
-        <input type="range" id="sliceOffset" min="-0.5" max="0.5" value="0" step="0.01">
-    </div>
+        <div class="control-group">
+            <label>Offset <span class="val" id="sliceOffsetVal">0</span></label>
+            <input type="range" id="sliceOffset" min="-0.5" max="0.5" value="0" step="0.01">
+        </div>
 
-    <span class="section-label">Style</span>
+        <div class="section-label">Style</div>
 
-    <div class="control-group">
-        <label>Background</label>
-        <div class="color-row">
-            <input type="color" id="bgColor" value="#c8c8c8">
-            <span class="color-hex" id="bgColorVal">#c8c8c8</span>
+        <div class="control-group">
+            <label>Background</label>
+            <div class="color-row">
+                <input type="color" id="bgColor" value="#c8c8c8">
+                <span class="color-hex" id="bgColorVal">#c8c8c8</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Shape Fill</label>
+            <div class="color-row">
+                <input type="color" id="fillColor" value="#2a2a2a">
+                <span class="color-hex" id="fillColorVal">#2a2a2a</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Line Color</label>
+            <div class="color-row">
+                <input type="color" id="lineColor" value="#000000">
+                <span class="color-hex" id="lineColorVal">#000000</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Presets</label>
+            <div class="presets">
+                <button class="preset-btn" data-preset="modernist">Modernist</button>
+                <button class="preset-btn" data-preset="zen">Zen</button>
+                <button class="preset-btn" data-preset="brutalist">Brutalist</button>
+                <button class="preset-btn" data-preset="ribbon">Ribbon</button>
+                <button class="preset-btn" data-preset="lattice">Lattice</button>
+                <button class="preset-btn" data-preset="bauhaus">Bauhaus</button>
+                <button class="preset-btn" data-preset="sashimi">Sashimi</button>
+                <button class="preset-btn" data-preset="eclipse">Eclipse</button>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-secondary" id="randomBtn">Randomize</button>
+            <button class="btn btn-primary btn-export" id="openExport">Export</button>
         </div>
     </div>
 
-    <div class="control-group">
-        <label>Shape Fill</label>
-        <div class="color-row">
-            <input type="color" id="fillColor" value="#2a2a2a">
-            <span class="color-hex" id="fillColorVal">#2a2a2a</span>
-        </div>
+    <div class="tool-canvas tool-canvas--fill">
+        <canvas id="canvas"></canvas>
     </div>
 
-    <div class="control-group">
-        <label>Line Color</label>
-        <div class="color-row">
-            <input type="color" id="lineColor" value="#000000">
-            <span class="color-hex" id="lineColorVal">#000000</span>
-        </div>
-    </div>
-
-    <div class="control-group">
-        <label>Presets</label>
-        <div class="presets">
-            <button class="preset-btn" data-preset="modernist">Modernist</button>
-            <button class="preset-btn" data-preset="zen">Zen</button>
-            <button class="preset-btn" data-preset="brutalist">Brutalist</button>
-            <button class="preset-btn" data-preset="ribbon">Ribbon</button>
-            <button class="preset-btn" data-preset="lattice">Lattice</button>
-            <button class="preset-btn" data-preset="bauhaus">Bauhaus</button>
-            <button class="preset-btn" data-preset="sashimi">Sashimi</button>
-            <button class="preset-btn" data-preset="eclipse">Eclipse</button>
-        </div>
-    </div>
-
-    <div class="btn-row">
-        <button class="btn btn-secondary" id="randomBtn">Randomize</button>
-        <button class="btn btn-primary" id="exportBtn">Export SVG</button>
-    </div>
-    <button class="btn btn-secondary" id="exportPngBtn">Export PNG</button>
-</div>
-
-<div id="canvas-wrap">
-    <canvas id="canvas"></canvas>
-</div>
-
-<script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const wrap = document.getElementById('canvas-wrap');
+    <script src="/shared/tools-export.js"></script>
+    <script>
+const canvasEl = document.getElementById('canvas');
+const ctx = canvasEl.getContext('2d');
+const wrap = document.querySelector('.tool-canvas');
 
 // ---- State ----
 const S = {
@@ -368,10 +211,10 @@ const presets = {
 // ---- Resize ----
 const dpr = window.devicePixelRatio || 1;
 function resize() {
-    canvas.width = wrap.clientWidth * dpr;
-    canvas.height = wrap.clientHeight * dpr;
-    canvas.style.width = wrap.clientWidth + 'px';
-    canvas.style.height = wrap.clientHeight + 'px';
+    canvasEl.width = wrap.clientWidth * dpr;
+    canvasEl.height = wrap.clientHeight * dpr;
+    canvasEl.style.width = wrap.clientWidth + 'px';
+    canvasEl.style.height = wrap.clientHeight + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     draw();
 }
@@ -495,8 +338,6 @@ function star(p, points, outerR, innerR) {
 }
 
 // ---- Slice curve generation ----
-// Returns a polyline [{x,y},...] that goes from left to right across the shape
-// in local coords, before rotation. The line spans from -extent to +extent on x.
 function sliceCurve(type, extent, curvature, offset, numPoints) {
     numPoints = numPoints || 80;
     const pts = [];
@@ -504,20 +345,18 @@ function sliceCurve(type, extent, curvature, offset, numPoints) {
     const off = offset * extent;
 
     for (let i = 0; i <= numPoints; i++) {
-        const t = i / numPoints;           // 0..1
-        const x = -extent + t * 2 * extent; // -extent..+extent
+        const t = i / numPoints;
+        const x = -extent + t * 2 * extent;
         let y = off;
 
         switch (type) {
             case 'arc':
-                // Quadratic arc: parabola
                 y += amp * (1 - (2 * t - 1) * (2 * t - 1));
                 break;
             case 'sine':
                 y += amp * Math.sin(t * Math.PI);
                 break;
             case 'straight':
-                // flat line (offset only)
                 break;
             case 's-curve':
                 y += amp * Math.sin(t * Math.PI * 2 - Math.PI);
@@ -552,37 +391,31 @@ function draw() {
 
     for (let i = 0; i < n; i++) {
         const cx = startX + i * sp;
-        // Per-shape angle
         const angleDeg = S.baseAngle + (n > 1
             ? (i - (n - 1) / 2) * (S.angleSpread * 2 / Math.max(n - 1, 1))
             : 0);
         const angle = angleDeg * Math.PI / 180;
 
-        drawSlicedShape(cx, cy, r, angle, i, n);
+        drawSlicedShape(ctx, cx, cy, r, angle, i, n);
     }
 }
 
-function drawSlicedShape(cx, cy, r, angle, idx, total) {
-    const extent = r * 1.5; // curve extends well beyond shape
+function drawSlicedShape(drawCtx, cx, cy, r, angle, idx, total) {
+    const extent = r * 1.5;
     const halfGap = S.gapWidth / 2;
     const curve = sliceCurve(S.curveType, extent, S.curvature, S.sliceOffset, 80);
 
-    ctx.save();
-    ctx.translate(cx, cy);
+    drawCtx.save();
+    drawCtx.translate(cx, cy);
 
-    // Draw shape, clipped to each half
     for (let side = -1; side <= 1; side += 2) {
-        ctx.save();
+        drawCtx.save();
 
-        // Build clipping region: one side of the curve
-        ctx.beginPath();
-        // Massive rect on one side, bounded by the offset curve
         const sign = side;
         const farY = sign * (r * 3);
 
-        ctx.rotate(angle);
+        drawCtx.rotate(angle);
 
-        // Trace the curve offset by halfGap
         const offsetCurve = curve.map((pt, i) => {
             const t = i / curve.length;
             const taperMul = 1 - S.taper * (1 - Math.sin(t * Math.PI));
@@ -590,53 +423,190 @@ function drawSlicedShape(cx, cy, r, angle, idx, total) {
             return { x: pt.x, y: pt.y + sign * g };
         });
 
-        ctx.moveTo(offsetCurve[0].x, offsetCurve[0].y);
+        drawCtx.beginPath();
+        drawCtx.moveTo(offsetCurve[0].x, offsetCurve[0].y);
         for (let j = 1; j < offsetCurve.length; j++) {
-            ctx.lineTo(offsetCurve[j].x, offsetCurve[j].y);
+            drawCtx.lineTo(offsetCurve[j].x, offsetCurve[j].y);
         }
-        // Close off to far side
-        ctx.lineTo(extent, farY);
-        ctx.lineTo(-extent, farY);
-        ctx.closePath();
+        drawCtx.lineTo(extent, farY);
+        drawCtx.lineTo(-extent, farY);
+        drawCtx.closePath();
 
-        ctx.rotate(-angle);
+        drawCtx.rotate(-angle);
 
-        ctx.clip();
+        drawCtx.clip();
 
-        // Draw the shape
         const sp = shapePath(S.shape, r);
-        ctx.fillStyle = S.fillColor;
-        ctx.fill(sp);
+        drawCtx.fillStyle = S.fillColor;
+        drawCtx.fill(sp);
 
-        ctx.restore();
+        drawCtx.restore();
     }
 
-    // Draw visible line along the slice curve (if lineWidth > 0)
     if (S.lineWidth > 0) {
-        ctx.save();
-        ctx.rotate(angle);
+        drawCtx.save();
+        drawCtx.rotate(angle);
 
-        // Clip to shape so line doesn't extend beyond
         const clipShape = shapePath(S.shape, r);
-        ctx.save();
-        ctx.rotate(-angle);
-        ctx.clip(clipShape);
-        ctx.rotate(angle);
+        drawCtx.save();
+        drawCtx.rotate(-angle);
+        drawCtx.clip(clipShape);
+        drawCtx.rotate(angle);
 
-        ctx.beginPath();
-        ctx.moveTo(curve[0].x, curve[0].y);
+        drawCtx.beginPath();
+        drawCtx.moveTo(curve[0].x, curve[0].y);
         for (let j = 1; j < curve.length; j++) {
-            ctx.lineTo(curve[j].x, curve[j].y);
+            drawCtx.lineTo(curve[j].x, curve[j].y);
         }
-        ctx.strokeStyle = S.lineColor;
-        ctx.lineWidth = S.lineWidth;
-        ctx.lineCap = 'round';
-        ctx.stroke();
+        drawCtx.strokeStyle = S.lineColor;
+        drawCtx.lineWidth = S.lineWidth;
+        drawCtx.lineCap = 'round';
+        drawCtx.stroke();
 
-        ctx.restore();
+        drawCtx.restore();
     }
 
-    ctx.restore();
+    drawCtx.restore();
+}
+
+// ---- Render to arbitrary canvas (for export) ----
+function renderToExportCanvas(exportCtx, w, h, opts) {
+    if (!opts.transparent) {
+        exportCtx.fillStyle = S.bgColor;
+        exportCtx.fillRect(0, 0, w, h);
+    }
+
+    const n = S.count;
+    const r = S.size;
+    const sp = S.spacing;
+    const totalW = (n - 1) * sp;
+    const startX = w / 2 - totalW / 2;
+    const cy = h / 2;
+
+    for (let i = 0; i < n; i++) {
+        const cx = startX + i * sp;
+        const angleDeg = S.baseAngle + (n > 1
+            ? (i - (n - 1) / 2) * (S.angleSpread * 2 / Math.max(n - 1, 1))
+            : 0);
+        const angle = angleDeg * Math.PI / 180;
+
+        drawSlicedShape(exportCtx, cx, cy, r, angle, i, n);
+    }
+}
+
+// ---- SVG generation ----
+function generateSVG() {
+    const W = wrap.clientWidth;
+    const H = wrap.clientHeight;
+    let svgParts = [];
+    svgParts.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`);
+    svgParts.push(`<rect width="${W}" height="${H}" fill="${S.bgColor}"/>`);
+
+    const n = S.count;
+    const r = S.size;
+    const sp = S.spacing;
+    const totalW = (n - 1) * sp;
+    const startX = W / 2 - totalW / 2;
+    const cy = H / 2;
+    const extent = r * 1.5;
+    const halfGap = S.gapWidth / 2;
+
+    for (let i = 0; i < n; i++) {
+        const cx = startX + i * sp;
+        const angleDeg = S.baseAngle + (n > 1
+            ? (i - (n - 1) / 2) * (S.angleSpread * 2 / Math.max(n - 1, 1))
+            : 0);
+
+        const curve = sliceCurve(S.curveType, extent, S.curvature, S.sliceOffset, 80);
+        const shapeD = svgShapePath(S.shape, r);
+        const clipId1 = `clip-${i}-top`;
+        const clipId2 = `clip-${i}-bot`;
+
+        for (let side = -1; side <= 1; side += 2) {
+            const clipId = side === -1 ? clipId1 : clipId2;
+            const farY = side * (r * 3);
+            const offsetCurve = curve.map((pt, j) => {
+                const t = j / curve.length;
+                const taperMul = 1 - S.taper * (1 - Math.sin(t * Math.PI));
+                const g = halfGap * taperMul;
+                return { x: pt.x, y: pt.y + side * g };
+            });
+
+            let clipD = `M${offsetCurve[0].x.toFixed(2)},${offsetCurve[0].y.toFixed(2)}`;
+            for (let j = 1; j < offsetCurve.length; j++) {
+                clipD += `L${offsetCurve[j].x.toFixed(2)},${offsetCurve[j].y.toFixed(2)}`;
+            }
+            clipD += `L${extent},${farY}L${-extent},${farY}Z`;
+
+            svgParts.push(`<defs><clipPath id="${clipId}" transform="translate(${cx},${cy}) rotate(${angleDeg})">`);
+            svgParts.push(`<path d="${clipD}"/>`);
+            svgParts.push(`</clipPath></defs>`);
+            svgParts.push(`<path d="${shapeD}" fill="${S.fillColor}" transform="translate(${cx},${cy})" clip-path="url(#${clipId})"/>`);
+        }
+    }
+
+    svgParts.push('</svg>');
+    return svgParts.join('\n');
+}
+
+function svgShapePath(type, r) {
+    switch (type) {
+        case 'circle':
+            return `M${-r},0A${r},${r},0,1,1,${r},0A${r},${r},0,1,1,${-r},0Z`;
+        case 'square':
+            return `M${-r},${-r}H${r}V${r}H${-r}Z`;
+        case 'rounded-square': {
+            const cr = r * 0.2;
+            return `M${-r+cr},${-r}H${r-cr}Q${r},${-r},${r},${-r+cr}V${r-cr}Q${r},${r},${r-cr},${r}H${-r+cr}Q${-r},${r},${-r},${r-cr}V${-r+cr}Q${-r},${-r},${-r+cr},${-r}Z`;
+        }
+        case 'diamond':
+            return `M0,${-r}L${r},0L0,${r}L${-r},0Z`;
+        case 'oval':
+            return `M${-r},0A${r},${r*0.7},0,1,1,${r},0A${r},${r*0.7},0,1,1,${-r},0Z`;
+        default: {
+            let pts = [];
+            const info = {
+                'triangle': [3, -Math.PI/2],
+                'inverted-triangle': [3, Math.PI/2],
+                'pentagon': [5, -Math.PI/2],
+                'hexagon': [6, 0],
+                'heptagon': [7, -Math.PI/2],
+                'octagon': [8, Math.PI/8],
+            };
+            if (info[type]) {
+                const [n, sa] = info[type];
+                for (let i = 0; i < n; i++) {
+                    const a = sa + (i / n) * Math.PI * 2;
+                    pts.push([Math.cos(a) * r, Math.sin(a) * r]);
+                }
+            } else if (type.startsWith('star-')) {
+                const n = parseInt(type.split('-')[1]);
+                const inner = type === 'star-6' ? r * 0.5 : r * 0.45;
+                for (let i = 0; i < n * 2; i++) {
+                    const a = -Math.PI/2 + (i / (n*2)) * Math.PI * 2;
+                    const rad = i % 2 === 0 ? r : inner;
+                    pts.push([Math.cos(a) * rad, Math.sin(a) * rad]);
+                }
+            } else if (type === 'cross') {
+                const a = r * 0.35;
+                pts = [[-a,-r],[a,-r],[a,-a],[r,-a],[r,a],[a,a],[a,r],[-a,r],[-a,a],[-r,a],[-r,-a],[-a,-a]];
+            } else if (type === 'semicircle') {
+                return `M${-r},0A${r},${r},0,0,1,${r},0Z`;
+            } else if (type === 'teardrop') {
+                return `M0,${-r}C${r*0.6},${-r},${r},${-r*0.4},${r},0A${r},${r},0,0,1,${-r},0C${-r},${-r*0.4},${-r*0.6},${-r},0,${-r}Z`;
+            } else if (type === 'shield') {
+                return `M${-r},${-r}H${r}V${r*0.2}Q${r},${r*0.7},0,${r}Q${-r},${r*0.7},${-r},${r*0.2}Z`;
+            } else {
+                return `M${-r},0A${r},${r},0,1,1,${r},0A${r},${r},0,1,1,${-r},0Z`;
+            }
+            if (pts.length) {
+                let d = `M${pts[0][0].toFixed(2)},${pts[0][1].toFixed(2)}`;
+                for (let i = 1; i < pts.length; i++) d += `L${pts[i][0].toFixed(2)},${pts[i][1].toFixed(2)}`;
+                return d + 'Z';
+            }
+            return '';
+        }
+    }
 }
 
 // ---- Controls ----
@@ -731,7 +701,6 @@ document.getElementById('randomBtn').addEventListener('click', function() {
     S.taper = +(Math.random() * 0.8).toFixed(2);
     S.sliceOffset = +((Math.random() - 0.5) * 0.3).toFixed(2);
 
-    // Random colors - sometimes light bg/dark fill, sometimes inverted
     if (Math.random() > 0.5) {
         const hue = Math.floor(Math.random() * 360);
         const light = 70 + Math.floor(Math.random() * 25);
@@ -759,144 +728,29 @@ function hslToHex(h, s, l) {
     return '#' + f(0) + f(8) + f(4);
 }
 
-// ---- Export SVG ----
-document.getElementById('exportBtn').addEventListener('click', function() {
-    const W = wrap.clientWidth;
-    const H = wrap.clientHeight;
-    let svgParts = [];
-    svgParts.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`);
-    svgParts.push(`<rect width="${W}" height="${H}" fill="${S.bgColor}"/>`);
+// ---- Export setup ----
+const exportW = 800;
+const exportH = 800;
 
-    const n = S.count;
-    const r = S.size;
-    const sp = S.spacing;
-    const totalW = (n - 1) * sp;
-    const startX = W / 2 - totalW / 2;
-    const cy = H / 2;
-    const extent = r * 1.5;
-    const halfGap = S.gapWidth / 2;
-
-    for (let i = 0; i < n; i++) {
-        const cx = startX + i * sp;
-        const angleDeg = S.baseAngle + (n > 1
-            ? (i - (n - 1) / 2) * (S.angleSpread * 2 / Math.max(n - 1, 1))
-            : 0);
-
-        const curve = sliceCurve(S.curveType, extent, S.curvature, S.sliceOffset, 80);
-        const shapeD = svgShapePath(S.shape, r);
-        const clipId1 = `clip-${i}-top`;
-        const clipId2 = `clip-${i}-bot`;
-
-        for (let side = -1; side <= 1; side += 2) {
-            const clipId = side === -1 ? clipId1 : clipId2;
-            const farY = side * (r * 3);
-            const offsetCurve = curve.map((pt, j) => {
-                const t = j / curve.length;
-                const taperMul = 1 - S.taper * (1 - Math.sin(t * Math.PI));
-                const g = halfGap * taperMul;
-                return { x: pt.x, y: pt.y + side * g };
-            });
-
-            let clipD = `M${offsetCurve[0].x.toFixed(2)},${offsetCurve[0].y.toFixed(2)}`;
-            for (let j = 1; j < offsetCurve.length; j++) {
-                clipD += `L${offsetCurve[j].x.toFixed(2)},${offsetCurve[j].y.toFixed(2)}`;
-            }
-            clipD += `L${extent},${farY}L${-extent},${farY}Z`;
-
-            svgParts.push(`<defs><clipPath id="${clipId}" transform="translate(${cx},${cy}) rotate(${angleDeg})">`);
-            svgParts.push(`<path d="${clipD}"/>`);
-            svgParts.push(`</clipPath></defs>`);
-            svgParts.push(`<path d="${shapeD}" fill="${S.fillColor}" transform="translate(${cx},${cy})" clip-path="url(#${clipId})"/>`);
-        }
+new ToolExporter({
+    toolName: 'sliced-shapes',
+    getCanvas: () => canvasEl,
+    getSVG: generateSVG,
+    getBackgroundColor: () => S.bgColor,
+    baseWidth: exportW,
+    baseHeight: exportH,
+    renderToCanvas: (expCtx, w, h, opts) => {
+        const scaleX = w / exportW;
+        const scaleY = h / exportH;
+        expCtx.save();
+        expCtx.scale(scaleX, scaleY);
+        renderToExportCanvas(expCtx, exportW, exportH, opts);
+        expCtx.restore();
     }
-
-    svgParts.push('</svg>');
-    const blob = new Blob([svgParts.join('\n')], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'sliced-shapes.svg';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
 });
-
-// ---- Export PNG ----
-document.getElementById('exportPngBtn').addEventListener('click', function() {
-    const dataUrl = canvas.toDataURL('image/png');
-    const a = document.createElement('a');
-    a.href = dataUrl;
-    a.download = 'sliced-shapes.png';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-});
-
-function svgShapePath(type, r) {
-    switch (type) {
-        case 'circle':
-            return `M${-r},0A${r},${r},0,1,1,${r},0A${r},${r},0,1,1,${-r},0Z`;
-        case 'square':
-            return `M${-r},${-r}H${r}V${r}H${-r}Z`;
-        case 'rounded-square': {
-            const cr = r * 0.2;
-            return `M${-r+cr},${-r}H${r-cr}Q${r},${-r},${r},${-r+cr}V${r-cr}Q${r},${r},${r-cr},${r}H${-r+cr}Q${-r},${r},${-r},${r-cr}V${-r+cr}Q${-r},${-r},${-r+cr},${-r}Z`;
-        }
-        case 'diamond':
-            return `M0,${-r}L${r},0L0,${r}L${-r},0Z`;
-        case 'oval':
-            return `M${-r},0A${r},${r*0.7},0,1,1,${r},0A${r},${r*0.7},0,1,1,${-r},0Z`;
-        default: {
-            // Generate polygon-based SVG path
-            let pts = [];
-            const info = {
-                'triangle': [3, -Math.PI/2],
-                'inverted-triangle': [3, Math.PI/2],
-                'pentagon': [5, -Math.PI/2],
-                'hexagon': [6, 0],
-                'heptagon': [7, -Math.PI/2],
-                'octagon': [8, Math.PI/8],
-            };
-            if (info[type]) {
-                const [n, sa] = info[type];
-                for (let i = 0; i < n; i++) {
-                    const a = sa + (i / n) * Math.PI * 2;
-                    pts.push([Math.cos(a) * r, Math.sin(a) * r]);
-                }
-            } else if (type.startsWith('star-')) {
-                const n = parseInt(type.split('-')[1]);
-                const inner = type === 'star-6' ? r * 0.5 : r * 0.45;
-                for (let i = 0; i < n * 2; i++) {
-                    const a = -Math.PI/2 + (i / (n*2)) * Math.PI * 2;
-                    const rad = i % 2 === 0 ? r : inner;
-                    pts.push([Math.cos(a) * rad, Math.sin(a) * rad]);
-                }
-            } else if (type === 'cross') {
-                const a = r * 0.35;
-                pts = [[-a,-r],[a,-r],[a,-a],[r,-a],[r,a],[a,a],[a,r],[-a,r],[-a,a],[-r,a],[-r,-a],[-a,-a]];
-            } else if (type === 'semicircle') {
-                // Approximate with arc
-                return `M${-r},0A${r},${r},0,0,1,${r},0Z`;
-            } else if (type === 'teardrop') {
-                return `M0,${-r}C${r*0.6},${-r},${r},${-r*0.4},${r},0A${r},${r},0,0,1,${-r},0C${-r},${-r*0.4},${-r*0.6},${-r},0,${-r}Z`;
-            } else if (type === 'shield') {
-                return `M${-r},${-r}H${r}V${r*0.2}Q${r},${r*0.7},0,${r}Q${-r},${r*0.7},${-r},${r*0.2}Z`;
-            } else {
-                return `M${-r},0A${r},${r},0,1,1,${r},0A${r},${r},0,1,1,${-r},0Z`;
-            }
-            if (pts.length) {
-                let d = `M${pts[0][0].toFixed(2)},${pts[0][1].toFixed(2)}`;
-                for (let i = 1; i < pts.length; i++) d += `L${pts[i][0].toFixed(2)},${pts[i][1].toFixed(2)}`;
-                return d + 'Z';
-            }
-            return '';
-        }
-    }
-}
 
 // ---- Init ----
 resize();
-</script>
+    </script>
 </body>
 </html>
