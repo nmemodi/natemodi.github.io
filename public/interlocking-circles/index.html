@@ -4,126 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interlocking Circles</title>
+    <link rel="stylesheet" href="/shared/tools-shared.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.17/paper-full.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #111;
-            color: #eee;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        #sidebar {
-            width: 260px;
-            padding: 24px 20px;
-            background: #1a1a1a;
-            border-right: 1px solid #333;
-            overflow-y: auto;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-
-        #sidebar h1 {
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-        }
-
-        .hint {
-            font-size: 11px;
-            color: #666;
-            line-height: 1.5;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .control-group label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #999;
-        }
-
-        .control-group .val {
-            color: #666;
-            font-variant-numeric: tabular-nums;
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 4px;
-            background: #333;
-            border-radius: 2px;
-            outline: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
-            background: #fff;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .color-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        input[type="color"] {
-            -webkit-appearance: none;
-            width: 32px;
-            height: 24px;
-            border: 1px solid #444;
-            border-radius: 4px;
-            background: none;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
-        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 2px; }
-
-        .color-hex {
-            font-size: 11px;
-            color: #666;
-            font-family: 'SF Mono', 'Fira Code', monospace;
-        }
-
-        .toggle-row { flex-direction: row; }
-
-        .toggle-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: #ccc;
-            cursor: pointer;
-        }
-
-        .toggle-label input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            accent-color: #e63946;
-            cursor: pointer;
-        }
-
         #weaveControls {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 16px;
             transition: opacity 0.2s;
         }
 
@@ -132,64 +19,7 @@
             pointer-events: none;
         }
 
-        .presets {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .preset-btn {
-            padding: 4px 10px;
-            font-size: 11px;
-            background: #2a2a2a;
-            color: #ccc;
-            border: 1px solid #444;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .preset-btn:hover { background: #3a3a3a; }
-
-        .btn {
-            width: 100%;
-            padding: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: opacity 0.15s;
-        }
-
-        .btn:hover { opacity: 0.85; }
-
-        .btn-primary {
-            background: #e63946;
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #2a2a2a;
-            color: #ccc;
-            border: 1px solid #444;
-        }
-
-        .btn-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-row .btn { flex: 1; }
-
-        #canvas-wrap {
-            flex: 1;
-            position: relative;
-        }
-
         canvas {
-            width: 100%;
-            height: 100%;
             cursor: grab;
         }
 
@@ -197,9 +27,16 @@
     </style>
 </head>
 <body>
-    <div id="sidebar">
-        <h1>Interlocking Circles</h1>
-        <p class="hint">Drag circles to reposition. Adjust controls to explore variations.</p>
+    <div class="tool-sidebar">
+        <div class="tool-header">
+            <a href="/tools/" class="tool-header__back" aria-label="Back to tools">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 12L6 8l4-4"/>
+                </svg>
+            </a>
+            <h1 class="tool-header__title">Interlocking Circles</h1>
+        </div>
+        <p class="tool-hint">Drag circles to reposition. Adjust controls to explore variations.</p>
 
         <div class="control-group">
             <label>Circles <span class="val" id="numCirclesVal">2</span></label>
@@ -222,7 +59,7 @@
         </div>
 
         <div class="control-group toggle-row">
-            <label class="toggle-label">
+            <label class="toggle-row">
                 <input type="checkbox" id="weave" checked>
                 <span>Weave</span>
             </label>
@@ -270,19 +107,20 @@
 
         <div class="btn-row">
             <button class="btn btn-secondary" id="resetBtn">Reset</button>
-            <button class="btn btn-primary" id="exportBtn">Export SVG</button>
+            <button class="btn btn-primary btn-export" id="openExport">Export</button>
         </div>
     </div>
 
-    <div id="canvas-wrap">
+    <div class="tool-canvas tool-canvas--fill">
         <canvas id="canvas"></canvas>
     </div>
 
+    <script src="/shared/tools-export.js"></script>
     <script>
         paper.install(window);
 
         const canvasEl = document.getElementById('canvas');
-        const wrap = document.getElementById('canvas-wrap');
+        const wrap = document.querySelector('.tool-canvas');
 
         function resizeCanvas() {
             canvasEl.width = wrap.clientWidth * window.devicePixelRatio;
@@ -308,6 +146,7 @@
             fgColor: '#f0f0f0'
         };
 
+        let currentBgColor = config.bgColor;
         let positions = [];
         let dragIdx = null;
         let dragOffset = null;
@@ -418,6 +257,9 @@
             const r = config.radius;
             const sw = config.strokeWidth;
             const gapMul = config.gap;
+
+            // Keep currentBgColor in sync
+            currentBgColor = config.bgColor;
 
             // Background
             const bg = new Path.Rectangle(view.bounds);
@@ -584,18 +426,23 @@
             draw();
         });
 
-        // Export SVG
-        document.getElementById('exportBtn').addEventListener('click', function() {
-            const svg = project.exportSVG({ asString: true });
-            const blob = new Blob([svg], { type: 'image/svg+xml' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'interlocking-circles.svg';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+        // Export
+        new ToolExporter({
+            toolName: 'interlocking-circles',
+            getCanvas: () => document.querySelector('canvas'),
+            getSVG: () => {
+                const svgEl = paper.project.exportSVG({ asString: false });
+                const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                bg.setAttribute('width', '100%');
+                bg.setAttribute('height', '100%');
+                bg.setAttribute('fill', currentBgColor);
+                svgEl.insertBefore(bg, svgEl.firstChild);
+                return new XMLSerializer().serializeToString(svgEl);
+            },
+            getBackgroundColor: () => currentBgColor,
+            paperProject: paper.project,
+            baseWidth: 800,
+            baseHeight: 800
         });
 
         // Resize
@@ -609,6 +456,14 @@
         // Go
         initPositions();
         draw();
+
+        // Paper.js needs a re-render after layout settles
+        requestAnimationFrame(function() {
+            resizeCanvas();
+            view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
+            initPositions();
+            draw();
+        });
     </script>
 </body>
 </html>
