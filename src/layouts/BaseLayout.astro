@@ -44,12 +44,10 @@ const canonicalURL = new URL(currentPath, 'https://natemodi.com');
         <a href="/blog" class={currentPath.startsWith('/blog') ? 'active' : ''}>Writing</a>
         <a href="/reading" class={currentPath === '/reading' ? 'active' : ''}>Reading</a>
         <div class="nav-dropdown">
-          <span class={currentPath.startsWith('/line-warp') || currentPath.startsWith('/slept-on') ? 'active' : ''}>Etc.</span>
+          <span class={currentPath.startsWith('/logo') || currentPath.startsWith('/slept-on') ? 'active' : ''}>Etc.</span>
           <div class="nav-dropdown-menu">
-            <a href="/line-warp">Line Warp</a>
+            <a href="/logo">Logo Lab</a>
             <a href="/slept-on">Slept On</a>
-            <span class="nav-dropdown-disabled">Vector Plus</span>
-            <span class="nav-dropdown-disabled">NFT CLI</span>
           </div>
         </div>
       </nav>
