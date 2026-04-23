@@ -4,109 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Slash Mark</title>
+    <link rel="stylesheet" href="/shared/tools-shared.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #111;
-            color: #eee;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        #sidebar {
-            width: 260px;
-            padding: 24px 20px;
-            background: #1a1a1a;
-            border-right: 1px solid #333;
-            overflow-y: auto;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        #sidebar h1 {
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-        }
-
-        .hint {
-            font-size: 11px;
-            color: #666;
-            line-height: 1.5;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .control-group label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #999;
-        }
-
-        .control-group .val {
-            color: #666;
-            font-variant-numeric: tabular-nums;
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 4px;
-            background: #333;
-            border-radius: 2px;
-            outline: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
-            background: #fff;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .color-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        input[type="color"] {
-            -webkit-appearance: none;
-            width: 32px;
-            height: 24px;
-            border: 1px solid #444;
-            border-radius: 4px;
-            background: none;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
-        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 2px; }
-
-        .color-hex {
-            font-size: 11px;
-            color: #666;
-            font-family: 'SF Mono', 'Fira Code', monospace;
+        /* Tool-specific overrides only */
+        .shape-btn.active {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+            color: #fff;
         }
 
         .link-label {
             display: flex;
             align-items: center;
             gap: 4px;
-            font-size: 10px;
-            color: #555;
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
             cursor: pointer;
             margin-left: auto;
         }
@@ -114,95 +26,22 @@
         .link-label input[type="checkbox"] {
             width: 12px;
             height: 12px;
-            accent-color: #e63946;
+            accent-color: var(--color-accent);
             cursor: pointer;
-        }
-
-        .presets {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .preset-btn, .shape-btn {
-            padding: 4px 10px;
-            font-size: 11px;
-            background: #2a2a2a;
-            color: #ccc;
-            border: 1px solid #444;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .preset-btn:hover, .shape-btn:hover { background: #3a3a3a; }
-
-        .shape-btn.active {
-            background: #e63946;
-            border-color: #e63946;
-            color: #fff;
-        }
-
-        .btn {
-            padding: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: opacity 0.15s;
-        }
-
-        .btn:hover { opacity: 0.85; }
-
-        .btn-primary {
-            background: #e63946;
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #2a2a2a;
-            color: #ccc;
-            border: 1px solid #444;
-        }
-
-        .btn-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-row .btn { flex: 1; }
-
-        .section-label {
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: #444;
-            margin-top: 6px;
-        }
-
-        #canvas-wrap {
-            flex: 1;
-            position: relative;
-        }
-
-        canvas {
-            width: 100%;
-            height: 100%;
-        }
-
-        @media (max-width: 600px) {
-            body { flex-direction: column; }
-            #sidebar { width: 100%; height: auto; max-height: 40vh; flex-direction: row; flex-wrap: wrap; }
-            #canvas-wrap { flex: 1; min-height: 50vh; }
         }
     </style>
 </head>
 <body>
-    <div id="sidebar">
-        <h1>Slash Mark</h1>
-        <p class="hint">Tapered parallel lines through geometric shapes. Adjust controls to explore variations.</p>
+    <div class="tool-sidebar">
+        <div class="tool-header">
+            <a href="/tools/" class="tool-header__back" aria-label="Back to tools">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 12L6 8l4-4"/>
+                </svg>
+            </a>
+            <h1 class="tool-header__title">Slash Mark</h1>
+        </div>
+        <p class="tool-hint">Tapered parallel lines through geometric shapes. Adjust controls to explore variations.</p>
 
         <div class="section-label">Lines</div>
 
@@ -240,10 +79,10 @@
 
         <div class="control-group">
             <div class="presets">
-                <button class="shape-btn active" data-shape="circle">Circle</button>
-                <button class="shape-btn" data-shape="square">Square</button>
-                <button class="shape-btn" data-shape="hexagon">Hex</button>
-                <button class="shape-btn" data-shape="triangle">Tri</button>
+                <button class="preset-btn shape-btn active" data-shape="circle">Circle</button>
+                <button class="preset-btn shape-btn" data-shape="square">Square</button>
+                <button class="preset-btn shape-btn" data-shape="hexagon">Hex</button>
+                <button class="preset-btn shape-btn" data-shape="triangle">Tri</button>
             </div>
         </div>
 
@@ -299,15 +138,15 @@
 
         <div class="btn-row">
             <button class="btn btn-secondary" id="resetBtn">Reset</button>
-            <button class="btn btn-primary" id="exportSvgBtn">SVG</button>
-            <button class="btn btn-primary" id="exportPngBtn">PNG</button>
+            <button class="btn btn-primary btn-export" id="openExport">Export</button>
         </div>
     </div>
 
-    <div id="canvas-wrap">
+    <div class="tool-canvas tool-canvas--fill">
         <canvas id="canvas"></canvas>
     </div>
 
+    <script src="/shared/tools-export.js"></script>
     <script>
         // ---- State ----
         const config = {
@@ -336,7 +175,7 @@
 
         // ---- Canvas setup ----
         const canvasEl = document.getElementById('canvas');
-        const wrap = document.getElementById('canvas-wrap');
+        const wrap = document.querySelector('.tool-canvas');
 
         function setupCanvas() {
             const dpr = window.devicePixelRatio || 1;
@@ -482,16 +321,13 @@
             const { ctx, w, h } = setupCanvas();
             const cx = w / 2, cy = h / 2;
 
-            // Background
             ctx.fillStyle = config.bgColor;
             ctx.fillRect(0, 0, w, h);
 
-            // Shape
             const shapePath = getShapePath(config.shape, cx, cy, config.shapeSize);
             ctx.fillStyle = config.shapeColor;
             ctx.fill(shapePath);
 
-            // Lines
             const { lines, perpX, perpY } = computeLines(cx, cy);
             ctx.fillStyle = config.lineColor;
             for (const line of lines) {
@@ -499,8 +335,28 @@
             }
         }
 
-        // ---- SVG export ----
-        function exportSVG() {
+        // ---- Render to arbitrary canvas (for export) ----
+        function renderToExportCanvas(ctx, w, h, opts) {
+            const cx = w / 2, cy = h / 2;
+
+            if (!opts.transparent) {
+                ctx.fillStyle = config.bgColor;
+                ctx.fillRect(0, 0, w, h);
+            }
+
+            const shapePath = getShapePath(config.shape, cx, cy, config.shapeSize);
+            ctx.fillStyle = config.shapeColor;
+            ctx.fill(shapePath);
+
+            const { lines, perpX, perpY } = computeLines(cx, cy);
+            ctx.fillStyle = config.lineColor;
+            for (const line of lines) {
+                drawTaperedLine(ctx, line, config.lineWidth, config.taper, perpX, perpY);
+            }
+        }
+
+        // ---- SVG generation ----
+        function generateSVG() {
             const pad = 30;
             const sz = config.shapeSize + pad;
             const vw = sz * 2, vh = sz * 2;
@@ -542,52 +398,7 @@
             }
 
             svg += '</svg>';
-
-            const blob = new Blob([svg], { type: 'image/svg+xml' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'slash-mark.svg';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        // ---- PNG export ----
-        function exportPNG() {
-            const pad = 30;
-            const sz = config.shapeSize + pad;
-            const canvasSize = sz * 2;
-            const scale = 4;
-            const tmp = document.createElement('canvas');
-            tmp.width = canvasSize * scale;
-            tmp.height = canvasSize * scale;
-            const tctx = tmp.getContext('2d');
-            tctx.scale(scale, scale);
-
-            const cx = canvasSize / 2, cy = canvasSize / 2;
-
-            tctx.fillStyle = config.bgColor;
-            tctx.fillRect(0, 0, canvasSize, canvasSize);
-
-            const shapePath = getShapePath(config.shape, cx, cy, config.shapeSize);
-            tctx.fillStyle = config.shapeColor;
-            tctx.fill(shapePath);
-
-            const { lines, perpX, perpY } = computeLines(cx, cy);
-            tctx.fillStyle = config.lineColor;
-            for (const line of lines) {
-                drawTaperedLine(tctx, line, config.lineWidth, config.taper, perpX, perpY);
-            }
-
-            const url = tmp.toDataURL('image/png');
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'slash-mark.png';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            return svg;
         }
 
         // ---- Controls ----
@@ -628,7 +439,6 @@
         bindColor('shapeColor', 'shapeColor');
         bindColor('lineColor', 'lineColor');
 
-        // Line color manual change unlinks from bg
         document.getElementById('lineColor').addEventListener('input', function () {
             if (this.value !== config.bgColor) {
                 config.matchBg = false;
@@ -683,7 +493,7 @@
         }
 
         // Presets
-        document.querySelectorAll('.preset-btn').forEach(btn => {
+        document.querySelectorAll('.preset-btn:not(.shape-btn)').forEach(btn => {
             btn.addEventListener('click', function () {
                 const p = presets[this.dataset.preset];
                 if (!p) return;
@@ -700,12 +510,31 @@
             draw();
         });
 
-        // Export
-        document.getElementById('exportSvgBtn').addEventListener('click', exportSVG);
-        document.getElementById('exportPngBtn').addEventListener('click', exportPNG);
-
         // Resize
         window.addEventListener('resize', draw);
+
+        // ---- Export setup ----
+        const pad = 30;
+        const exportSize = () => (config.shapeSize + pad) * 2;
+
+        new ToolExporter({
+            toolName: 'slash-mark',
+            getCanvas: () => canvasEl,
+            getSVG: generateSVG,
+            getBackgroundColor: () => config.bgColor,
+            baseWidth: exportSize(),
+            baseHeight: exportSize(),
+            renderToCanvas: (ctx, w, h, opts) => {
+                // Re-compute base size for export
+                const sz = exportSize();
+                const scaleX = w / sz;
+                const scaleY = h / sz;
+                ctx.save();
+                ctx.scale(scaleX, scaleY);
+                renderToExportCanvas(ctx, sz, sz, opts);
+                ctx.restore();
+            }
+        });
 
         // Go
         draw();
