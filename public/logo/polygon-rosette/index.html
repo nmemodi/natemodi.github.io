@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polygon Rosette</title>
+    <link rel="stylesheet" href="/shared/tools-shared.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.17/paper-full.min.js"></script>
+    <style>
+        #weaveControls {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            transition: opacity 0.2s;
+        }
+
+        #weaveControls.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <aside class="tool-sidebar">
+        <div class="tool-header">
+            <a href="/logo/" class="tool-header__back" aria-label="Back to tools">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 12L6 8l4-4"/>
+                </svg>
+            </a>
+            <h1 class="tool-header__title">Polygon Rosette</h1>
+        </div>
+        <p class="tool-hint">Lattice patterns from concentric polygons with woven diagonal connections.</p>
+
+        <div class="control-group">
+            <label>Sides <span class="val" id="sidesVal">10</span></label>
+            <input type="range" id="sides" min="3" max="24" value="10" step="1">
+        </div>
+
+        <div class="control-group">
+            <label>Outer Radius <span class="val" id="outerRadiusVal">250</span></label>
+            <input type="range" id="outerRadius" min="80" max="400" value="250">
+        </div>
+
+        <div class="control-group">
+            <label>Inner Ratio <span class="val" id="innerRatioVal">0.58</span></label>
+            <input type="range" id="innerRatio" min="0.10" max="0.95" value="0.58" step="0.01">
+        </div>
+
+        <div class="control-group">
+            <label>Skip <span class="val" id="skipVal">2</span></label>
+            <input type="range" id="skip" min="1" max="5" value="2" step="1">
+        </div>
+
+        <div class="control-group">
+            <label>Stroke <span class="val" id="strokeWidthVal">5</span></label>
+            <input type="range" id="strokeWidth" min="1" max="30" value="5">
+        </div>
+
+        <div class="control-group">
+            <label>Rotation <span class="val" id="rotationVal">0</span>&deg;</label>
+            <input type="range" id="rotation" min="0" max="360" value="0" step="0.5">
+        </div>
+
+        <div class="control-group toggle-row">
+            <label class="toggle-label">
+                <input type="checkbox" id="showOuter" checked>
+                <span>Outer Ring</span>
+            </label>
+        </div>
+
+        <div class="control-group toggle-row">
+            <label class="toggle-label">
+                <input type="checkbox" id="showInner" checked>
+                <span>Inner Ring</span>
+            </label>
+        </div>
+
+        <div class="control-group toggle-row">
+            <label class="toggle-label">
+                <input type="checkbox" id="weave">
+                <span>Weave</span>
+            </label>
+        </div>
+
+        <div id="weaveControls">
+            <div class="control-group">
+                <label>Gap <span class="val" id="gapVal">1.8</span></label>
+                <input type="range" id="gap" min="0.5" max="4.0" value="1.8" step="0.1">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Background</label>
+            <div class="color-row">
+                <input type="color" id="bgColor" value="#cc0000">
+                <span class="color-hex" id="bgColorVal">#cc0000</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Stroke Color</label>
+            <div class="color-row">
+                <input type="color" id="fgColor" value="#f0f0f0">
+                <span class="color-hex" id="fgColorVal">#f0f0f0</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Presets</label>
+            <div class="presets">
+                <button class="preset-btn" data-preset="rosette">Rosette</button>
+                <button class="preset-btn" data-preset="hexStar">Hex Star</button>
+                <button class="preset-btn" data-preset="celtic">Celtic</button>
+                <button class="preset-btn" data-preset="crown">Crown</button>
+                <button class="preset-btn" data-preset="simple">Simple</button>
+                <button class="preset-btn" data-preset="twisted">Twisted</button>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-export" id="openExport">Export</button>
+        <button class="btn btn-secondary" id="resetBtn">Reset</button>
+    </aside>
+
+    <div class="tool-canvas tool-canvas--fill">
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <script src="/shared/tools-export.js"></script>
+    <script>
+        paper.install(window);
+
+        const canvasEl = document.getElementById('canvas');
+        const wrap = document.querySelector('.tool-canvas');
+
+        function resizeCanvas() {
+            canvasEl.width = wrap.clientWidth * window.devicePixelRatio;
+            canvasEl.height = wrap.clientHeight * window.devicePixelRatio;
+            canvasEl.style.width = wrap.clientWidth + 'px';
+            canvasEl.style.height = wrap.clientHeight + 'px';
+        }
+
+        resizeCanvas();
+        paper.setup(canvasEl);
+        view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
+
+        // ---- State ----
+        let config = {
+            sides: 10,
+            outerRadius: 250,
+            innerRatio: 0.58,
+            skip: 2,
+            strokeWidth: 5,
+            rotation: 0,
+            showOuter: true,
+            showInner: true,
+            weave: false,
+            gap: 1.8,
+            bgColor: '#cc0000',
+            fgColor: '#f0f0f0'
+        };
+
+        // ---- Presets ----
+        const presets = {
+            rosette: { sides: 10, outerRadius: 250, innerRatio: 0.58, skip: 2, strokeWidth: 5, rotation: 0, showOuter: true, showInner: true, weave: false, gap: 1.8, bgColor: '#cc0000', fgColor: '#f0f0f0' },
+            hexStar: { sides: 6, outerRadius: 280, innerRatio: 0.50, skip: 2, strokeWidth: 6, rotation: 0, showOuter: true, showInner: true, weave: false, gap: 2.0, bgColor: '#1a1a2e', fgColor: '#e0e0e0' },
+            celtic:  { sides: 8, outerRadius: 260, innerRatio: 0.50, skip: 2, strokeWidth: 8, rotation: 0, showOuter: true, showInner: true, weave: true, gap: 2.2, bgColor: '#1b4332', fgColor: '#d4a373' },
+            crown:   { sides: 16, outerRadius: 280, innerRatio: 0.65, skip: 3, strokeWidth: 3, rotation: 0, showOuter: true, showInner: true, weave: false, gap: 1.5, bgColor: '#0d1b2a', fgColor: '#e0fbfc' },
+            simple:  { sides: 10, outerRadius: 260, innerRatio: 0.60, skip: 1, strokeWidth: 3, rotation: 0, showOuter: true, showInner: true, weave: false, gap: 1.5, bgColor: '#222222', fgColor: '#ffffff' },
+            twisted: { sides: 12, outerRadius: 260, innerRatio: 0.42, skip: 3, strokeWidth: 4, rotation: 15, showOuter: true, showInner: true, weave: true, gap: 2.0, bgColor: '#2b2d42', fgColor: '#ef233c' },
+        };
+
+        // ---- Geometry ----
+        function polyVerts(cx, cy, r, n, rotDeg) {
+            const verts = [];
+            const rot = rotDeg * Math.PI / 180;
+            for (let i = 0; i < n; i++) {
+                const a = (i / n) * Math.PI * 2 - Math.PI / 2 + rot;
+                verts.push(new Point(cx + r * Math.cos(a), cy + r * Math.sin(a)));
+            }
+            return verts;
+        }
+
+        function segIntersect(p1, p2, p3, p4) {
+            const d1x = p2.x - p1.x, d1y = p2.y - p1.y;
+            const d2x = p4.x - p3.x, d2y = p4.y - p3.y;
+            const cross = d1x * d2y - d1y * d2x;
+            if (Math.abs(cross) < 1e-10) return null;
+            const dx = p3.x - p1.x, dy = p3.y - p1.y;
+            const t = (dx * d2y - dy * d2x) / cross;
+            const u = (dx * d1y - dy * d1x) / cross;
+            if (t > 0.02 && t < 0.98 && u > 0.02 && u < 0.98) {
+                return {
+                    point: new Point(p1.x + t * d1x, p1.y + t * d1y),
+                    t, u
+                };
+            }
+            return null;
+        }
+
+        // ---- Render ----
+        function draw() {
+            project.clear();
+
+            const cx = view.center.x;
+            const cy = view.center.y;
+            const n = config.sides;
+            const R = config.outerRadius;
+            const r = R * config.innerRatio;
+            const skip = Math.min(config.skip, Math.floor(n / 2));
+            const sw = config.strokeWidth;
+
+            // Background
+            new Path.Rectangle({ rectangle: view.bounds, fillColor: config.bgColor });
+
+            // Vertices
+            const outer = polyVerts(cx, cy, R, n, 0);
+            const inner = polyVerts(cx, cy, r, n, config.rotation);
+
+            // Build diagonal segments
+            const rightDiags = [];
+            const leftDiags = [];
+            for (let i = 0; i < n; i++) {
+                rightDiags.push([outer[i], inner[(i + skip) % n]]);
+                leftDiags.push([outer[i], inner[((i - skip) % n + n) % n]]);
+            }
+
+            // Check for degenerate case: skip makes right and left identical
+            // (happens when skip = 0 or skip = n, which we prevent, but also
+            //  when the polygon is so small that all diags overlap)
+            const isDegen = skip === 0;
+
+            // --- Base layer ---
+
+            // Outer polygon
+            if (config.showOuter) {
+                const p = new Path();
+                outer.forEach(v => p.add(v));
+                p.closed = true;
+                p.strokeColor = config.fgColor;
+                p.strokeWidth = sw;
+                p.fillColor = null;
+                p.strokeJoin = 'miter';
+            }
+
+            // Inner polygon
+            if (config.showInner) {
+                const p = new Path();
+                inner.forEach(v => p.add(v));
+                p.closed = true;
+                p.strokeColor = config.fgColor;
+                p.strokeWidth = sw;
+                p.fillColor = null;
+                p.strokeJoin = 'miter';
+            }
+
+            // Right diagonals
+            for (const seg of rightDiags) {
+                const p = new Path.Line(seg[0], seg[1]);
+                p.strokeColor = config.fgColor;
+                p.strokeWidth = sw;
+            }
+
+            // Left diagonals (skip if degenerate)
+            if (!isDegen) {
+                for (const seg of leftDiags) {
+                    const p = new Path.Line(seg[0], seg[1]);
+                    p.strokeColor = config.fgColor;
+                    p.strokeWidth = sw;
+                }
+            }
+
+            // --- Weave layer ---
+            if (!config.weave || isDegen) return;
+
+            // Find all intersections between right and left diagonals
+            // Group crossings per right-diagonal so we can alternate properly
+            const crossingsPerRight = rightDiags.map(() => []);
+
+            for (let ri = 0; ri < n; ri++) {
+                for (let li = 0; li < n; li++) {
+                    const ix = segIntersect(
+                        rightDiags[ri][0], rightDiags[ri][1],
+                        leftDiags[li][0], leftDiags[li][1]
+                    );
+                    if (!ix) continue;
+                    crossingsPerRight[ri].push({ li, point: ix.point, t: ix.t, u: ix.u });
+                }
+                // Sort by parameter along the right diagonal
+                crossingsPerRight[ri].sort((a, b) => a.t - b.t);
+            }
+
+            // Also find intersections between diagonals and polygon edges
+            // (for weaving diags over/under the rings)
+            const edgeSegs = [];
+            if (config.showOuter) {
+                for (let i = 0; i < n; i++) {
+                    edgeSegs.push([outer[i], outer[(i + 1) % n], 'outer']);
+                }
+            }
+            if (config.showInner) {
+                for (let i = 0; i < n; i++) {
+                    edgeSegs.push([inner[i], inner[(i + 1) % n], 'inner']);
+                }
+            }
+
+            // Apply weave at diagonal-diagonal crossings
+            for (let ri = 0; ri < n; ri++) {
+                crossingsPerRight[ri].forEach((crossing, idx) => {
+                    // Alternate: even index = right over, odd = left over
+                    const rightOver = idx % 2 === 0;
+
+                    const overSeg = rightOver ? rightDiags[ri] : leftDiags[crossing.li];
+                    const dir = overSeg[1].subtract(overSeg[0]).normalize();
+                    const maskLen = sw * config.gap;
+
+                    // Mask: erase both lines at crossing with background color
+                    const mask = new Path.Line(
+                        crossing.point.subtract(dir.multiply(maskLen)),
+                        crossing.point.add(dir.multiply(maskLen))
+                    );
+                    mask.strokeColor = config.bgColor;
+                    mask.strokeWidth = sw * 2.5;
+                    mask.strokeCap = 'square';
+
+                    // Over: redraw the over line segment
+                    const overLen = maskLen * 1.15;
+                    const over = new Path.Line(
+                        crossing.point.subtract(dir.multiply(overLen)),
+                        crossing.point.add(dir.multiply(overLen))
+                    );
+                    over.strokeColor = config.fgColor;
+                    over.strokeWidth = sw;
+                    over.strokeCap = 'butt';
+                });
+            }
+
+            // Weave diagonals with polygon edges
+            const allDiags = [...rightDiags, ...leftDiags];
+            for (const diag of allDiags) {
+                for (const edge of edgeSegs) {
+                    const ix = segIntersect(diag[0], diag[1], edge[0], edge[1]);
+                    if (!ix) continue;
+
+                    // Polygon edges go OVER the diagonals (they form the frame)
+                    const edgeDir = edge[1].subtract(edge[0]).normalize();
+                    const maskLen = sw * config.gap * 0.8;
+
+                    const mask = new Path.Line(
+                        ix.point.subtract(edgeDir.multiply(maskLen)),
+                        ix.point.add(edgeDir.multiply(maskLen))
+                    );
+                    mask.strokeColor = config.bgColor;
+                    mask.strokeWidth = sw * 2.5;
+                    mask.strokeCap = 'square';
+
+                    const over = new Path.Line(
+                        ix.point.subtract(edgeDir.multiply(maskLen * 1.15)),
+                        ix.point.add(edgeDir.multiply(maskLen * 1.15))
+                    );
+                    over.strokeColor = config.fgColor;
+                    over.strokeWidth = sw;
+                    over.strokeCap = 'butt';
+                }
+            }
+        }
+
+        // ---- Controls ----
+        function bindRange(id, prop, isFloat) {
+            const el = document.getElementById(id);
+            const valEl = document.getElementById(id + 'Val');
+            el.addEventListener('input', function() {
+                config[prop] = isFloat ? parseFloat(this.value) : parseInt(this.value);
+                valEl.textContent = this.value;
+
+                // Update skip max when sides change
+                if (prop === 'sides') {
+                    const maxSkip = Math.floor(config.sides / 2);
+                    const skipEl = document.getElementById('skip');
+                    skipEl.max = maxSkip;
+                    if (config.skip > maxSkip) {
+                        config.skip = maxSkip;
+                        skipEl.value = maxSkip;
+                        document.getElementById('skipVal').textContent = maxSkip;
+                    }
+                }
+
+                draw();
+            });
+        }
+
+        function bindColor(id, prop) {
+            const el = document.getElementById(id);
+            const valEl = document.getElementById(id + 'Val');
+            el.addEventListener('input', function() {
+                config[prop] = this.value;
+                valEl.textContent = this.value;
+                draw();
+            });
+        }
+
+        function updateWeaveUI() {
+            const wc = document.getElementById('weaveControls');
+            if (config.weave) {
+                wc.classList.remove('disabled');
+            } else {
+                wc.classList.add('disabled');
+            }
+        }
+
+        function syncUI() {
+            for (const [id, prop, isFloat] of [
+                ['sides', 'sides'], ['outerRadius', 'outerRadius'],
+                ['innerRatio', 'innerRatio', true], ['skip', 'skip'],
+                ['strokeWidth', 'strokeWidth'], ['rotation', 'rotation', true],
+                ['gap', 'gap', true]
+            ]) {
+                document.getElementById(id).value = config[prop];
+                document.getElementById(id + 'Val').textContent = config[prop];
+            }
+
+            // Update skip max
+            const maxSkip = Math.floor(config.sides / 2);
+            document.getElementById('skip').max = maxSkip;
+
+            for (const [id, prop] of [['bgColor', 'bgColor'], ['fgColor', 'fgColor']]) {
+                document.getElementById(id).value = config[prop];
+                document.getElementById(id + 'Val').textContent = config[prop];
+            }
+
+            document.getElementById('showOuter').checked = config.showOuter;
+            document.getElementById('showInner').checked = config.showInner;
+            document.getElementById('weave').checked = config.weave;
+            updateWeaveUI();
+        }
+
+        bindRange('sides', 'sides');
+        bindRange('outerRadius', 'outerRadius');
+        bindRange('innerRatio', 'innerRatio', true);
+        bindRange('skip', 'skip');
+        bindRange('strokeWidth', 'strokeWidth');
+        bindRange('rotation', 'rotation', true);
+        bindRange('gap', 'gap', true);
+        bindColor('bgColor', 'bgColor');
+        bindColor('fgColor', 'fgColor');
+
+        document.getElementById('showOuter').addEventListener('change', function() {
+            config.showOuter = this.checked;
+            draw();
+        });
+
+        document.getElementById('showInner').addEventListener('change', function() {
+            config.showInner = this.checked;
+            draw();
+        });
+
+        document.getElementById('weave').addEventListener('change', function() {
+            config.weave = this.checked;
+            updateWeaveUI();
+            draw();
+        });
+
+        // Presets
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const p = presets[this.dataset.preset];
+                if (!p) return;
+                Object.assign(config, p);
+                syncUI();
+                draw();
+            });
+        });
+
+        // Reset
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            Object.assign(config, presets.rosette);
+            syncUI();
+            draw();
+        });
+
+        // ---- Export ----
+        new ToolExporter({
+            toolName: 'polygon-rosette',
+            getCanvas: () => document.querySelector('canvas'),
+            getSVG: () => {
+                const svgEl = paper.project.exportSVG({ asString: false });
+                const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                bg.setAttribute('width', '100%');
+                bg.setAttribute('height', '100%');
+                bg.setAttribute('fill', config.bgColor);
+                svgEl.insertBefore(bg, svgEl.firstChild);
+                return new XMLSerializer().serializeToString(svgEl);
+            },
+            getBackgroundColor: () => config.bgColor,
+            paperProject: paper.project,
+            baseWidth: 800,
+            baseHeight: 800
+        });
+
+        // Resize
+        window.addEventListener('resize', function() {
+            resizeCanvas();
+            view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
+            draw();
+        });
+
+        // Go
+        updateWeaveUI();
+        draw();
+
+        // Paper.js needs a re-render after layout settles
+        requestAnimationFrame(function() {
+            resizeCanvas();
+            view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
+            draw();
+        });
+    </script>
+<script src="/logo/nav.js"></script>
+</body>
+</html>
