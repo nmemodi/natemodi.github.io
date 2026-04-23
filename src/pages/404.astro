@@ -1,0 +1,168 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404 — Nat Emodi">
+  <canvas id="warp" width="800" height="400"></canvas>
+
+  <p class="msg">
+    You've wandered off. Try <a href="/">Home</a>, <a href="/blog">Writing</a>, or <a href="/reading">Reading</a>.
+  </p>
+</BaseLayout>
+
+<style>
+  #warp {
+    display: block;
+    width: 100%;
+    max-width: 680px;
+    height: auto;
+    margin: 2rem 0 1rem;
+    cursor: crosshair;
+  }
+  .msg {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+</style>
+
+<script>
+  const canvas = document.getElementById('warp') as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d')!;
+  const W = canvas.width;
+  const H = canvas.height;
+
+  // Render sharp "404" mask
+  const mask = document.createElement('canvas');
+  mask.width = W;
+  mask.height = H;
+  const mctx = mask.getContext('2d')!;
+  mctx.fillStyle = '#000';
+  mctx.fillRect(0, 0, W, H);
+  mctx.fillStyle = '#fff';
+  mctx.font = '900 340px Helvetica Neue, Arial Black, sans-serif';
+  mctx.textAlign = 'center';
+  mctx.textBaseline = 'middle';
+  (mctx as any).letterSpacing = '24px';
+  mctx.fillText('404', W / 2, H / 2 + 12);
+  const maskData = mctx.getImageData(0, 0, W, H).data;
+
+  // Smooth heightmap: blurred mask
+  const smooth = document.createElement('canvas');
+  smooth.width = W;
+  smooth.height = H;
+  const sctx = smooth.getContext('2d')!;
+  sctx.filter = 'blur(14px)';
+  sctx.drawImage(mask, 0, 0);
+  const smoothData = sctx.getImageData(0, 0, W, H).data;
+
+  // Ridge heightmap: distance field (Chamfer 3-4)
+  const inside = new Uint8Array(W * H);
+  for (let i = 0; i < W * H; i++) inside[i] = maskData[i * 4] > 127 ? 1 : 0;
+  const INF = 1e9;
+  const dist = new Float32Array(W * H);
+  for (let i = 0; i < W * H; i++) dist[i] = inside[i] ? INF : 0;
+  for (let y = 1; y < H - 1; y++) {
+    for (let x = 1; x < W - 1; x++) {
+      const idx = y * W + x;
+      if (!inside[idx]) continue;
+      let d = dist[idx];
+      d = Math.min(d, dist[(y - 1) * W + (x - 1)] + 4);
+      d = Math.min(d, dist[(y - 1) * W + x] + 3);
+      d = Math.min(d, dist[(y - 1) * W + (x + 1)] + 4);
+      d = Math.min(d, dist[y * W + (x - 1)] + 3);
+      dist[idx] = d;
+    }
+  }
+  for (let y = H - 2; y >= 1; y--) {
+    for (let x = W - 2; x >= 1; x--) {
+      const idx = y * W + x;
+      if (!inside[idx]) continue;
+      let d = dist[idx];
+      d = Math.min(d, dist[(y + 1) * W + (x + 1)] + 4);
+      d = Math.min(d, dist[(y + 1) * W + x] + 3);
+      d = Math.min(d, dist[(y + 1) * W + (x - 1)] + 4);
+      d = Math.min(d, dist[y * W + (x + 1)] + 3);
+      dist[idx] = d;
+    }
+  }
+  let maxD = 0;
+  for (let i = 0; i < W * H; i++) if (dist[i] !== INF && dist[i] > maxD) maxD = dist[i];
+  const ridge = document.createElement('canvas');
+  ridge.width = W;
+  ridge.height = H;
+  const rctx = ridge.getContext('2d')!;
+  const ridgeImg = rctx.createImageData(W, H);
+  for (let i = 0; i < W * H; i++) {
+    const v = Math.round((dist[i] === INF || maxD === 0 ? 0 : dist[i] / maxD) * 255);
+    ridgeImg.data[i * 4] = v;
+    ridgeImg.data[i * 4 + 1] = v;
+    ridgeImg.data[i * 4 + 2] = v;
+    ridgeImg.data[i * 4 + 3] = 255;
+  }
+  rctx.putImageData(ridgeImg, 0, 0);
+  const ridgeBlur = document.createElement('canvas');
+  ridgeBlur.width = W;
+  ridgeBlur.height = H;
+  const rbctx = ridgeBlur.getContext('2d')!;
+  rbctx.filter = 'blur(3px)';
+  rbctx.drawImage(ridge, 0, 0);
+  const ridgeData = rbctx.getImageData(0, 0, W, H).data;
+
+  // Blend: 90% ridge, 10% smooth
+  const t = 0.9;
+  const heightData = new Uint8Array(W * H);
+  for (let i = 0; i < W * H; i++) {
+    heightData[i] = Math.round(smoothData[i * 4] * (1 - t) + ridgeData[i * 4] * t);
+  }
+
+  const sample = (x: number, y: number) => {
+    const ix = Math.max(0, Math.min(W - 1, Math.floor(x)));
+    const iy = Math.max(0, Math.min(H - 1, Math.floor(y)));
+    return heightData[iy * W + ix] / 255;
+  };
+
+  let mx = -9999, my = -9999;
+  canvas.addEventListener('mousemove', (e) => {
+    const r = canvas.getBoundingClientRect();
+    mx = ((e.clientX - r.left) / r.width) * W;
+    my = ((e.clientY - r.top) / r.height) * H;
+  });
+  canvas.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
+
+  const lines = 16;
+  const baseDisp = 65;
+
+  function draw() {
+    ctx.fillStyle = '#111';
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+
+    const spacing = H / (lines + 1);
+    for (let i = 1; i <= lines; i++) {
+      const y0 = i * spacing;
+      ctx.beginPath();
+      for (let x = 0; x <= W; x += 2) {
+        const h = sample(x, y0);
+        let disp = h * baseDisp;
+
+        // Mouse ripple
+        const dx = x - mx;
+        const dy = y0 - my;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 140) {
+          disp += Math.cos(dist * 0.05) * (1 - dist / 140) * 18;
+        }
+
+        const y = y0 - disp;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+</script>
