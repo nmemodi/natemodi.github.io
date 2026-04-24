@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
-   LOGO TOOLS — Inter-tool Navigation ("Contact Sheet")
-   Renders a 3x3 swatch of all tools in the sidebar footer,
-   wires keyboard shortcuts: ← → cycle, 1–9 jump, T index.
+   LOGO TOOLS — Switcher Dropdown
+   Enhances the tool-header title into a dropdown trigger.
+   Keyboard: ← → cycle, 1–9 jump, T to /logo/, Esc to close panel.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -61,7 +61,6 @@
   function toolPath(slug) { return INDEX_PATH + slug + '/'; }
 
   function currentIndex() {
-    // URL is /logo/<slug>/... — pick the segment after "logo".
     const parts = location.pathname.replace(/^\/|\/$/g, '').split('/');
     const i = parts.indexOf('logo');
     const slug = i >= 0 ? parts[i + 1] : parts[0];
@@ -74,49 +73,84 @@
     location.href = toolPath(TOOLS[idx].slug);
   }
 
+  let header, button, panel;
+  let open = false;
+
+  function setOpen(next) {
+    if (next === open) return;
+    open = next;
+    header.classList.toggle('is-open', open);
+    button.setAttribute('aria-expanded', String(open));
+  }
+
   function render() {
-    const container = document.querySelector('.tool-nav');
-    if (!container) return;
-    const current = currentIndex();
+    header = document.querySelector('.tool-header');
+    if (!header) return;
 
-    const label = document.createElement('div');
-    label.className = 'tool-nav__label';
-    label.innerHTML =
-      '<span>All Tools</span>' +
-      '<a href="' + INDEX_PATH + '" class="tool-nav__label-link" aria-label="Open tools index">Index</a>';
+    const curIdx = currentIndex();
+    const curName = curIdx >= 0 ? TOOLS[curIdx].name
+                                : (header.querySelector('.tool-header__title') || {}).textContent || 'Tools';
 
-    const grid = document.createElement('div');
-    grid.className = 'tool-nav__grid';
+    // Replace header contents with the switcher.
+    header.innerHTML = '';
+    header.classList.add('tool-switcher');
+
+    button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'tool-switcher__button';
+    button.setAttribute('aria-haspopup', 'listbox');
+    button.setAttribute('aria-expanded', 'false');
+    button.innerHTML =
+      '<span class="tool-switcher__title">' + curName + '</span>' +
+      '<svg class="tool-switcher__chev" viewBox="0 0 12 12" fill="none" ' +
+        'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" ' +
+        'stroke-linejoin="round" aria-hidden="true">' +
+        '<path d="M3 4.75L6 7.75L9 4.75"/></svg>';
+
+    panel = document.createElement('div');
+    panel.className = 'tool-switcher__panel';
+    panel.setAttribute('role', 'listbox');
 
     TOOLS.forEach((t, i) => {
-      const a = document.createElement('a');
-      a.href = toolPath(t.slug);
-      a.className = 'tool-nav__tile' + (i === current ? ' is-current' : '');
-      a.setAttribute('aria-label', t.name);
-      a.setAttribute('data-name', t.name);
-      a.setAttribute('data-key', String(i + 1));
-      a.innerHTML = t.svg;
-      grid.appendChild(a);
+      const item = document.createElement('a');
+      item.href = toolPath(t.slug);
+      item.className = 'tool-switcher__item' + (i === curIdx ? ' is-current' : '');
+      item.setAttribute('role', 'option');
+      item.setAttribute('aria-selected', i === curIdx ? 'true' : 'false');
+      item.innerHTML =
+        '<span class="tool-switcher__glyph">' + t.svg + '</span>' +
+        '<span class="tool-switcher__name">' + t.name + '</span>' +
+        '<kbd class="tool-switcher__key">' + (i + 1) + '</kbd>';
+      panel.appendChild(item);
     });
 
-    const hint = document.createElement('div');
-    hint.className = 'tool-nav__hint';
-    hint.innerHTML =
-      '<kbd>←</kbd><kbd>→</kbd>' +
-      '<span class="tool-nav__sep">·</span>' +
-      '<kbd>1</kbd><span class="tool-nav__dash">–</span><kbd>9</kbd>' +
-      '<span class="tool-nav__sep">·</span>' +
-      '<kbd>T</kbd>';
+    header.appendChild(button);
+    header.appendChild(panel);
 
-    container.appendChild(label);
-    container.appendChild(grid);
-    container.appendChild(hint);
+    // Open / close behavior.
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setOpen(!open);
+    });
+    document.addEventListener('click', (e) => {
+      if (open && !header.contains(e.target)) setOpen(false);
+    });
+    // Also close after internal nav click (before the browser navigates).
+    panel.addEventListener('click', () => setOpen(false));
   }
 
   function handleKey(e) {
-    // Ignore while typing in any input-like control.
+    // Ignore while typing in inputs.
     const t = e.target;
     if (t && t.matches && t.matches('input, textarea, select, [contenteditable="true"]')) return;
+
+    // Esc always closes the panel.
+    if (e.key === 'Escape' && open) {
+      setOpen(false);
+      e.preventDefault();
+      return;
+    }
+
     if (e.metaKey || e.ctrlKey || e.altKey) return;
 
     const cur = currentIndex();
