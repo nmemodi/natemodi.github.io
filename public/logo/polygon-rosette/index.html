@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Polygon Rosette</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="stylesheet" href="/shared/tools-shared.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.17/paper-full.min.js"></script>
     <style>
@@ -57,26 +58,20 @@
             <input type="range" id="rotation" min="0" max="360" value="0" step="0.5">
         </div>
 
-        <div class="control-group toggle-row">
-            <label class="toggle-label">
-                <input type="checkbox" id="showOuter" checked>
-                <span>Outer Ring</span>
-            </label>
-        </div>
+        <label class="toggle-row">
+            <input type="checkbox" id="showOuter" checked>
+            <span>Outer Ring</span>
+        </label>
 
-        <div class="control-group toggle-row">
-            <label class="toggle-label">
-                <input type="checkbox" id="showInner" checked>
-                <span>Inner Ring</span>
-            </label>
-        </div>
+        <label class="toggle-row">
+            <input type="checkbox" id="showInner" checked>
+            <span>Inner Ring</span>
+        </label>
 
-        <div class="control-group toggle-row">
-            <label class="toggle-label">
-                <input type="checkbox" id="weave">
-                <span>Weave</span>
-            </label>
-        </div>
+        <label class="toggle-row">
+            <input type="checkbox" id="weave">
+            <span>Weave</span>
+        </label>
 
         <div id="weaveControls">
             <div class="control-group">
@@ -132,16 +127,13 @@
         const canvasEl = document.getElementById('canvas');
         const wrap = document.querySelector('.tool-canvas');
 
+        paper.setup(canvasEl);
+
         function resizeCanvas() {
-            canvasEl.width = wrap.clientWidth * window.devicePixelRatio;
-            canvasEl.height = wrap.clientHeight * window.devicePixelRatio;
-            canvasEl.style.width = wrap.clientWidth + 'px';
-            canvasEl.style.height = wrap.clientHeight + 'px';
+            view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
         }
 
         resizeCanvas();
-        paper.setup(canvasEl);
-        view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
 
         // ---- State ----
         let config = {
@@ -547,7 +539,6 @@
         // Resize
         window.addEventListener('resize', function() {
             resizeCanvas();
-            view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
             draw();
         });
 
@@ -558,7 +549,6 @@
         // Paper.js needs a re-render after layout settles
         requestAnimationFrame(function() {
             resizeCanvas();
-            view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
             draw();
             pm.decode();
         });

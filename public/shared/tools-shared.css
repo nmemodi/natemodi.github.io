@@ -504,7 +504,7 @@ input[type="number"]:focus {
 }
 
 .toggle-row span {
-  font-size: var(--text-md);
+  font-size: var(--text-base);
   color: var(--color-text-secondary);
 }
 

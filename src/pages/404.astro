@@ -122,6 +122,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return heightData[iy * W + ix] / 255;
   };
 
+  // Site is hard-locked to light mode (see global.css).
+  const bgColor = '#fdfdfc';
+  const strokeColor = '#111';
+
   let mx = -9999, my = -9999;
   canvas.addEventListener('mousemove', (e) => {
     const r = canvas.getBoundingClientRect();
@@ -134,9 +138,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const baseDisp = 65;
 
   function draw() {
-    ctx.fillStyle = '#fdfdfc';
+    ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, W, H);
-    ctx.strokeStyle = '#111';
+    ctx.strokeStyle = strokeColor;
     ctx.lineWidth = 2;
     ctx.lineCap = 'round';
 

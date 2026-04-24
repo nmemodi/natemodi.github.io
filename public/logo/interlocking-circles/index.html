@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interlocking Circles</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="stylesheet" href="/shared/tools-shared.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.17/paper-full.min.js"></script>
     <style>
@@ -53,12 +54,10 @@
             <input type="range" id="spacing" min="10" max="400" value="110">
         </div>
 
-        <div class="control-group toggle-row">
-            <label class="toggle-row">
-                <input type="checkbox" id="weave" checked>
-                <span>Weave</span>
-            </label>
-        </div>
+        <label class="toggle-row">
+            <input type="checkbox" id="weave" checked>
+            <span>Weave</span>
+        </label>
 
         <div id="weaveControls">
             <div class="control-group">
@@ -121,16 +120,13 @@
         const canvasEl = document.getElementById('canvas');
         const wrap = document.querySelector('.tool-canvas');
 
+        paper.setup(canvasEl);
+
         function resizeCanvas() {
-            canvasEl.width = wrap.clientWidth * window.devicePixelRatio;
-            canvasEl.height = wrap.clientHeight * window.devicePixelRatio;
-            canvasEl.style.width = wrap.clientWidth + 'px';
-            canvasEl.style.height = wrap.clientHeight + 'px';
+            view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
         }
 
         resizeCanvas();
-        paper.setup(canvasEl);
-        view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
 
         // ---- State ----
         let config = {
@@ -493,7 +489,6 @@
         // Resize
         window.addEventListener('resize', function() {
             resizeCanvas();
-            view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
             initPositions();
             draw();
         });
@@ -505,7 +500,6 @@
         // Paper.js needs a re-render after layout settles
         requestAnimationFrame(function() {
             resizeCanvas();
-            view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
             initPositions();
             draw();
             pm.decode();
