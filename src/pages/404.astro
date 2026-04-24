@@ -122,14 +122,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return heightData[iy * W + ix] / 255;
   };
 
-  const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
-  let bgColor = '#fff', strokeColor = '#1a1a1a';
-  const applyTheme = () => {
-    if (darkQuery.matches) { bgColor = '#111'; strokeColor = '#e5e5e5'; }
-    else { bgColor = '#fff'; strokeColor = '#1a1a1a'; }
-  };
-  applyTheme();
-  darkQuery.addEventListener('change', applyTheme);
+  // Site is hard-locked to light mode (see global.css).
+  const bgColor = '#fdfdfc';
+  const strokeColor = '#111';
 
   let mx = -9999, my = -9999;
   canvas.addEventListener('mousemove', (e) => {

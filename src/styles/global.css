@@ -1,24 +1,14 @@
 :root {
-  --color-text: #1a1a1a;
-  --color-text-muted: #666;
-  --color-bg: #fff;
+  --color-text: #111;
+  --color-text-muted: #8a8a87;
+  --color-bg: #fdfdfc;
   --color-accent: #0066cc;
-  --color-border: #eee;
-  --color-code-bg: #f5f5f5;
+  --color-border: #e4e3df;
+  --color-code-bg: #f4f3f1;
   --font-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Geist Mono', 'SF Mono', Monaco, monospace;
   --max-width: 660px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-text: #e5e5e5;
-    --color-text-muted: #999;
-    --color-bg: #111;
-    --color-accent: #4d9fff;
-    --color-border: #333;
-    --color-code-bg: #1a1a1a;
-  }
+  color-scheme: light;
 }
 
 * {
@@ -210,23 +200,11 @@ nav a.active {
 }
 
 .status-char:hover {
-  color: #fff;
+  color: var(--color-text);
 }
 
 .status svg:hover {
-  color: #fff;
-}
-
-@media (prefers-color-scheme: light) {
-  .status svg:hover {
-    color: #000;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  .status-char:hover {
-    color: #000;
-  }
+  color: var(--color-text);
 }
 
 /* Footer */

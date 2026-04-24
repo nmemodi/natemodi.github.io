@@ -1,34 +1,41 @@
 /* ═══════════════════════════════════════════════════════════════
    LOGO TOOLS — Shared Design System
-   A unified stylesheet for all logo generator tools.
+   Light-first palette. Dark remains available for future use via
+   [data-theme="dark"] on <html> or <body>. Embedded mode (tool
+   page rendered inside an iframe on /logo/) is signalled by
+   [data-embedded="true"] which hides permalink chrome.
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── Design Tokens ── */
+/* ── Inter + SF Mono fallback — consolidated here so tools no longer
+   need to pull their own Google Fonts link. ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Archivo+Black&display=swap');
+
+/* ── Design Tokens — LIGHT (default) ── */
 :root {
   /* Colors */
-  --color-bg-body:        #0e0e0e;
-  --color-bg-sidebar:     #161616;
-  --color-bg-canvas:      #111111;
-  --color-bg-surface:     #1e1e1e;
-  --color-bg-elevated:    #262626;
-  --color-bg-hover:       #2a2a2a;
+  --color-bg-body:        #fdfdfc;
+  --color-bg-sidebar:     #f8f7f5;
+  --color-bg-canvas:      #f4f3f1;
+  --color-bg-surface:     #ffffff;
+  --color-bg-elevated:    #f0efec;
+  --color-bg-hover:       #e8e7e3;
 
-  --color-border:         #2a2a2a;
-  --color-border-subtle:  #222222;
-  --color-border-focus:   #444444;
+  --color-border:         #e4e3df;
+  --color-border-subtle:  #ececea;
+  --color-border-focus:   #c9c7c1;
 
-  --color-text-primary:   #e8e8e8;
-  --color-text-secondary: #999999;
-  --color-text-tertiary:  #666666;
-  --color-text-muted:     #555555;
+  --color-text-primary:   #111111;
+  --color-text-secondary: #4a4a4a;
+  --color-text-tertiary:  #8a8a87;
+  --color-text-muted:     #b0aeaa;
 
-  --color-accent:         #e63946;
-  --color-accent-hover:   #d62f3d;
-  --color-accent-subtle:  rgba(230, 57, 70, 0.12);
+  --color-accent:         #111111;
+  --color-accent-hover:   #000000;
+  --color-accent-subtle:  rgba(17, 17, 17, 0.06);
 
-  /* Typography */
-  --font-sans:   -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-mono:   'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  /* Typography — Inter body, SF Mono code, matches liveline */
+  --font-sans:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono:   'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 
   --text-xs:     10px;
   --text-sm:     11px;
@@ -71,7 +78,34 @@
   --ease-default:  0.15s ease;
   --ease-smooth:   0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Shadows */
+  /* Shadows — softer for light ground */
+  --shadow-canvas:  0 2px 18px rgba(17, 17, 17, 0.08);
+  --shadow-modal:   0 16px 48px rgba(17, 17, 17, 0.12);
+  --shadow-toast:   0 4px 16px rgba(17, 17, 17, 0.12);
+}
+
+/* ── Optional dark mode — opt-in via <html data-theme="dark"> ── */
+[data-theme="dark"] {
+  --color-bg-body:        #0e0e0e;
+  --color-bg-sidebar:     #161616;
+  --color-bg-canvas:      #111111;
+  --color-bg-surface:     #1e1e1e;
+  --color-bg-elevated:    #262626;
+  --color-bg-hover:       #2a2a2a;
+
+  --color-border:         #2a2a2a;
+  --color-border-subtle:  #222222;
+  --color-border-focus:   #444444;
+
+  --color-text-primary:   #e8e8e8;
+  --color-text-secondary: #999999;
+  --color-text-tertiary:  #666666;
+  --color-text-muted:     #555555;
+
+  --color-accent:         #e63946;
+  --color-accent-hover:   #d62f3d;
+  --color-accent-subtle:  rgba(230, 57, 70, 0.12);
+
   --shadow-canvas:  0 4px 32px rgba(0,0,0,0.5);
   --shadow-modal:   0 16px 48px rgba(0,0,0,0.6);
   --shadow-toast:   0 4px 16px rgba(0,0,0,0.4);
@@ -241,7 +275,7 @@ input[type="range"] {
   appearance: none;
   width: 100%;
   height: 4px;
-  background: #333;
+  background: var(--color-border);
   border-radius: 2px;
   outline: none;
   cursor: pointer;
@@ -888,10 +922,10 @@ input[type="number"]:focus {
   align-items: center;
   gap: 6px;
   padding: 7px 12px;
-  background: rgba(18, 18, 18, 0.92);
+  background: var(--color-bg-surface);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   color: var(--color-text-tertiary);
   font-family: var(--font-mono);
@@ -900,10 +934,11 @@ input[type="number"]:focus {
   z-index: 98;
   transition: color var(--ease-default), border-color var(--ease-default), transform var(--ease-default);
   user-select: none;
+  box-shadow: var(--shadow-toast);
 }
 .permalink-pill:hover {
   color: var(--color-text-primary);
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: var(--color-border-focus);
 }
 .permalink-pill:active { transform: scale(0.97); }
 .permalink-pill__icon {
@@ -915,8 +950,8 @@ input[type="number"]:focus {
   font-variant-numeric: tabular-nums;
 }
 .permalink-pill--copied {
-  color: #7ccc8f;
-  border-color: rgba(124, 204, 143, 0.3);
+  color: #2f8f4a;
+  border-color: rgba(47, 143, 74, 0.3);
 }
 .permalink-pill--copied .permalink-pill__icon { opacity: 0.9; }
 
@@ -930,10 +965,10 @@ input[type="number"]:focus {
   align-items: center;
   gap: 8px;
   padding: 8px 10px 8px 14px;
-  background: rgba(18, 18, 18, 0.94);
+  background: var(--color-bg-surface);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-border);
   border-radius: 999px;
   color: var(--color-text-secondary);
   font-size: var(--text-sm);
@@ -1145,10 +1180,10 @@ input[type="number"]:focus {
 
 /* ── Button copied flash state ── */
 .btn--copied {
-  color: #7ccc8f !important;
+  color: #2f8f4a !important;
 }
 .btn--copied svg {
-  color: #7ccc8f;
+  color: #2f8f4a;
 }
 
 /* ── Small-screen tweaks for permalink pill ── */
@@ -1160,5 +1195,49 @@ input[type="number"]:focus {
   }
   .remix-chip {
     font-size: var(--text-xs);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EMBEDDED MODE
+   Set by /shared/tools-embed.js when window !== window.parent.
+   Suppresses all permalink chrome and the switcher dropdown so
+   the tool reads as a clean, self-contained widget.
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-embedded="true"] .permalink-pill,
+[data-embedded="true"] .remix-chip,
+[data-embedded="true"] .permalink-help,
+[data-embedded="true"] .permalink-copy-modal,
+[data-embedded="true"] .tool-sidebar {
+  display: none !important;
+}
+
+/* Canvas fills the iframe — this is the preview surface. */
+[data-embedded="true"] body {
+  height: auto;
+  min-height: 100vh;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+[data-embedded="true"] .tool-canvas {
+  min-height: 100vh;
+  flex: 1;
+  background: var(--color-bg-canvas);
+}
+
+[data-embedded="true"] .tool-canvas canvas,
+[data-embedded="true"] .tool-canvas svg {
+  display: block;
+  margin: auto;
+}
+
+/* Responsive override: the <768px rule in this stylesheet also sets
+   flex-direction + sidebar height; the sidebar is hidden so the tool
+   canvas takes the full iframe regardless. */
+@media (max-width: 768px) {
+  [data-embedded="true"] .tool-canvas {
+    min-height: 100vh;
   }
 }
