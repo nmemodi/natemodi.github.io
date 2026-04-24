@@ -22,11 +22,6 @@
 
 <div class="tool-sidebar">
   <div class="tool-header">
-    <a href="/tools/" class="tool-header__back" aria-label="Back to tools">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M10 12L6 8l4-4"/>
-      </svg>
-    </a>
     <h1 class="tool-header__title">Parallel Letters</h1>
   </div>
 
@@ -102,6 +97,7 @@
   <div class="control-group">
     <button class="btn btn-primary btn-full btn-export" id="openExport">Export</button>
   </div>
+  <div class="tool-nav"></div>
 </div>
 
 <div class="tool-canvas tool-canvas--centered">
@@ -109,6 +105,7 @@
 </div>
 
 <script src="/shared/tools-export.js"></script>
+<script src="/shared/tools-nav.js"></script>
 <script>
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');

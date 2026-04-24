@@ -23,11 +23,6 @@
 <body>
     <div class="tool-sidebar">
         <div class="tool-header">
-            <a href="/tools/" class="tool-header__back" aria-label="Back to tools">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M10 12L6 8l4-4"/>
-                </svg>
-            </a>
             <h1 class="tool-header__title">Sliced Shapes</h1>
         </div>
         <p class="tool-hint">Shapes bisected by curved lines at varying angles. Adjust controls to explore.</p>
@@ -165,6 +160,7 @@
             <button class="btn btn-secondary" id="randomBtn">Randomize</button>
             <button class="btn btn-primary btn-export" id="openExport">Export</button>
         </div>
+        <div class="tool-nav"></div>
     </div>
 
     <div class="tool-canvas tool-canvas--fill">
@@ -172,6 +168,7 @@
     </div>
 
     <script src="/shared/tools-export.js"></script>
+<script src="/shared/tools-nav.js"></script>
     <script>
 const canvasEl = document.getElementById('canvas');
 const ctx = canvasEl.getContext('2d');
