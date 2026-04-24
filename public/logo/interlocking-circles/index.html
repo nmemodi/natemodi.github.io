@@ -29,11 +29,6 @@
 <body>
     <div class="tool-sidebar">
         <div class="tool-header">
-            <a href="/logo/" class="tool-header__back" aria-label="Back to tools">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M10 12L6 8l4-4"/>
-                </svg>
-            </a>
             <h1 class="tool-header__title">Interlocking Circles</h1>
         </div>
         <p class="tool-hint">Drag circles to reposition. Adjust controls to explore variations.</p>
@@ -109,6 +104,7 @@
             <button class="btn btn-secondary" id="resetBtn">Reset</button>
             <button class="btn btn-primary btn-export" id="openExport">Export</button>
         </div>
+        <div class="tool-nav"></div>
     </div>
 
     <div class="tool-canvas tool-canvas--fill">
@@ -465,6 +461,6 @@
             draw();
         });
     </script>
-<script src="/logo/nav.js"></script>
+<script src="/shared/tools-nav.js"></script>
 </body>
 </html>
