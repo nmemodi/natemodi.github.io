@@ -875,3 +875,291 @@ input[type="number"]:focus {
     min-width: 0;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PERMALINK SYSTEM
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Permalink pill (bottom-right, shows last-6 of hash) ── */
+.permalink-pill {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: rgba(18, 18, 18, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  z-index: 98;
+  transition: color var(--ease-default), border-color var(--ease-default), transform var(--ease-default);
+  user-select: none;
+}
+.permalink-pill:hover {
+  color: var(--color-text-primary);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+.permalink-pill:active { transform: scale(0.97); }
+.permalink-pill__icon {
+  opacity: 0.55;
+  transition: opacity var(--ease-default);
+}
+.permalink-pill:hover .permalink-pill__icon { opacity: 0.9; }
+.permalink-pill__label {
+  font-variant-numeric: tabular-nums;
+}
+.permalink-pill--copied {
+  color: #7ccc8f;
+  border-color: rgba(124, 204, 143, 0.3);
+}
+.permalink-pill--copied .permalink-pill__icon { opacity: 0.9; }
+
+/* ── Remix chip (top-center, appears when loaded from hash) ── */
+.remix-chip {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-80px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px 8px 14px;
+  background: rgba(18, 18, 18, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  z-index: 99;
+  opacity: 0;
+  transition: transform var(--ease-smooth), opacity var(--ease-smooth);
+  box-shadow: var(--shadow-toast);
+}
+.remix-chip--visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+.remix-chip svg { opacity: 0.7; }
+.remix-chip__close {
+  background: transparent;
+  border: none;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0 4px;
+  line-height: 1;
+  transition: color var(--ease-default);
+}
+.remix-chip__close:hover { color: var(--color-text-primary); }
+
+/* ── Help overlay (#? sentinel) ── */
+.permalink-help {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  padding: 24px;
+}
+.permalink-help__panel {
+  background: var(--color-bg-sidebar);
+  border: 1px solid var(--color-border-focus);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  max-width: 520px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-modal);
+}
+.permalink-help__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.permalink-help__header h2 {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semi);
+  letter-spacing: var(--tracking-tight);
+}
+.permalink-help__close {
+  background: transparent;
+  border: none;
+  color: var(--color-text-tertiary);
+  font-size: 18px;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+}
+.permalink-help__close:hover {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+}
+.permalink-help__intro {
+  font-size: var(--text-md);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+  margin-bottom: 16px;
+}
+.permalink-help__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.permalink-help__list li {
+  font-size: var(--text-md);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+}
+.permalink-help__list code {
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
+  background: var(--color-bg-elevated);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: var(--text-sm);
+}
+.permalink-help__def {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin-left: 4px;
+}
+.permalink-help__foot {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border-subtle);
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+}
+.permalink-help__foot code {
+  font-family: var(--font-mono);
+  color: var(--color-text-secondary);
+}
+
+/* ── Copy fallback modal ── */
+.permalink-copy-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1002;
+  padding: 24px;
+}
+.permalink-copy-modal__panel {
+  background: var(--color-bg-sidebar);
+  border: 1px solid var(--color-border-focus);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: var(--shadow-modal);
+}
+.permalink-copy-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.permalink-copy-modal__header h3 {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semi);
+}
+.permalink-copy-modal__close {
+  background: transparent;
+  border: none;
+  color: var(--color-text-tertiary);
+  font-size: 18px;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+}
+.permalink-copy-modal__panel p {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+.permalink-copy-modal__panel kbd {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  background: var(--color-bg-elevated);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--color-border-focus);
+}
+.permalink-copy-modal__panel textarea {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background: var(--color-bg-body);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-focus);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  resize: none;
+  outline: none;
+}
+
+/* ── Export share links (desktop fallback for Web Share) ── */
+.export-share-links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border-subtle);
+}
+.export-share-link {
+  display: block;
+  padding: 8px 12px;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: all var(--ease-default);
+  text-align: center;
+}
+.export-share-link:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-focus);
+}
+
+/* ── Button copied flash state ── */
+.btn--copied {
+  color: #7ccc8f !important;
+}
+.btn--copied svg {
+  color: #7ccc8f;
+}
+
+/* ── Small-screen tweaks for permalink pill ── */
+@media (max-width: 768px) {
+  .permalink-pill {
+    bottom: 12px;
+    right: 12px;
+    padding: 6px 10px;
+  }
+  .remix-chip {
+    font-size: var(--text-xs);
+  }
+}

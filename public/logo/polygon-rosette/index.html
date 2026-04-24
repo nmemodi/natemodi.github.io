@@ -121,6 +121,9 @@
         <canvas id="canvas"></canvas>
     </div>
 
+    <script src="/shared/schema-helpers.js"></script>
+    <script src="/shared/rng.js"></script>
+    <script src="/shared/permalink.js"></script>
     <script src="/shared/tools-export.js"></script>
     <script>
         paper.install(window);
@@ -473,6 +476,52 @@
             draw();
         });
 
+        // ---- Permalink ----
+        const { INT_RANGE, FLOAT_RANGE, COLOR, BOOL } = window.LogoSchema;
+        const pschema = {
+            n:  INT_RANGE(3, 24, 10),
+            r:  INT_RANGE(80, 400, 250),
+            ir: FLOAT_RANGE(0.10, 0.95, 0.58, 2),
+            sk: INT_RANGE(1, 5, 2),
+            sw: INT_RANGE(1, 30, 5),
+            rt: FLOAT_RANGE(0, 360, 0, 1),
+            so: BOOL(true),
+            si: BOOL(true),
+            wv: BOOL(false),
+            g:  FLOAT_RANGE(0.5, 4.0, 1.8, 2),
+            bg: COLOR('#cc0000'),
+            fg: COLOR('#f0f0f0'),
+        };
+        function getPermalinkState() {
+            return {
+                n: config.sides, r: config.outerRadius, ir: config.innerRatio,
+                sk: config.skip, sw: config.strokeWidth, rt: config.rotation,
+                so: config.showOuter, si: config.showInner, wv: config.weave,
+                g: config.gap, bg: config.bgColor, fg: config.fgColor,
+            };
+        }
+        function applyPermalinkState(s) {
+            config.sides = s.n; config.outerRadius = s.r; config.innerRatio = s.ir;
+            config.skip = s.sk; config.strokeWidth = s.sw; config.rotation = s.rt;
+            config.showOuter = s.so; config.showInner = s.si; config.weave = s.wv;
+            config.gap = s.g; config.bgColor = s.bg; config.fgColor = s.fg;
+            syncUI();
+            draw();
+        }
+        const pm = new window.PermalinkManager({
+            toolName: 'polygon-rosette',
+            schema: pschema, getState: getPermalinkState, applyState: applyPermalinkState,
+        });
+        ['sides','outerRadius','innerRatio','skip','strokeWidth','rotation','gap',
+         'bgColor','fgColor','showOuter','showInner','weave'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const evt = (el.type === 'checkbox') ? 'change' : 'input';
+            el.addEventListener(evt, () => pm.update());
+        });
+        document.querySelectorAll('.preset-btn, #resetBtn').forEach(btn =>
+            btn.addEventListener('click', () => pm.update()));
+
         // ---- Export ----
         new ToolExporter({
             toolName: 'polygon-rosette',
@@ -489,7 +538,9 @@
             getBackgroundColor: () => config.bgColor,
             paperProject: paper.project,
             baseWidth: 800,
-            baseHeight: 800
+            baseHeight: 800,
+            getPermalink: () => pm.getPermalink(),
+            flushPermalink: () => pm.flush(),
         });
 
         // Resize
@@ -508,6 +559,7 @@
             resizeCanvas();
             view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
             draw();
+            pm.decode();
         });
     </script>
 <script src="/shared/tools-nav.js"></script>
