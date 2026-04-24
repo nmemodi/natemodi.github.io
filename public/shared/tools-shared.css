@@ -667,11 +667,13 @@ input[type="number"]:focus {
 }
 
 .tool-switcher__button {
+  /* Padding + negative margin are identical in all states so the title
+     never shifts on hover — only the background color changes. */
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 2px 4px 2px 0;
-  margin-left: -4px;
+  padding: 2px 6px;
+  margin-left: -6px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -684,9 +686,6 @@ input[type="number"]:focus {
 .tool-switcher__button:hover,
 .tool-switcher.is-open .tool-switcher__button {
   background: var(--color-bg-elevated);
-  padding-left: 6px;
-  padding-right: 6px;
-  margin-left: -6px;
 }
 
 .tool-switcher__title {
