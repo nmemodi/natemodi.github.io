@@ -112,8 +112,9 @@ describe('formatTimezone', () => {
   });
 
   it('handles UTC timezone', () => {
+    // Node 18+ Intl.DateTimeFormat returns "UTC+0"; older runtimes may return "UTC"
     const result = formatTimezone('UTC');
-    expect(result).toBe('UTC');
+    expect(result).toMatch(/^UTC(\+0)?$/);
   });
 
   it('returns the input for invalid timezone names', () => {

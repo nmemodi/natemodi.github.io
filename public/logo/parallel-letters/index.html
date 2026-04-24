@@ -103,6 +103,9 @@
   <canvas id="canvas" width="800" height="800"></canvas>
 </div>
 
+<script src="/shared/schema-helpers.js"></script>
+<script src="/shared/rng.js"></script>
+<script src="/shared/permalink.js"></script>
 <script src="/shared/tools-export.js"></script>
 <script>
 const canvas = document.getElementById('canvas');
@@ -300,6 +303,39 @@ function generateSVG() {
   return svg;
 }
 
+// ─── Permalink ───
+const { INT_RANGE, FLOAT_RANGE, COLOR, ENUM, TEXT } = window.LogoSchema;
+const pschema = {
+  ch: TEXT({ charset: /^.{1,2}$/u, maxLen: 2, def: 'G' }),
+  f:  ENUM(['Orbitron','Audiowide','Russo One','Exo 2','Black Ops One','Rajdhani','Share Tech','Baumans','Electrolize','Michroma','Aldrich','Arial Black','Impact','Georgia','Courier New'], 'Orbitron'),
+  fw: ENUM(['100','300','400','700','900'], '900'),
+  jo: ENUM(['round','miter','bevel'], 'round'),
+  n:  INT_RANGE(1, 40, 5),
+  t:  FLOAT_RANGE(0.5, 10, 2, 1),
+  g:  FLOAT_RANGE(1, 40, 6, 1),
+  sz: INT_RANGE(400, 2400, 800),
+  bg: COLOR('#e63946'),
+  fg: COLOR('#ffffff'),
+};
+function getPermalinkState() {
+  return {
+    ch: charInput.value || 'G', f: fontSelect.value, fw: weightSelect.value,
+    jo: joinSelect.value, n: +numLinesEl.value, t: +thicknessEl.value,
+    g: +gapEl.value, sz: +sizeEl.value, bg: bgColorEl.value, fg: lineColorEl.value,
+  };
+}
+function applyPermalinkState(s) {
+  charInput.value = s.ch; fontSelect.value = s.f; weightSelect.value = s.fw;
+  joinSelect.value = s.jo; numLinesEl.value = s.n; thicknessEl.value = s.t;
+  gapEl.value = s.g; sizeEl.value = s.sz; bgColorEl.value = s.bg; lineColorEl.value = s.fg;
+  updateLabels();
+  render();
+}
+const pm = new window.PermalinkManager({
+  toolName: 'parallel-letters',
+  schema: pschema, getState: getPermalinkState, applyState: applyPermalinkState,
+});
+
 // ─── ToolExporter integration ───
 new ToolExporter({
   toolName: 'parallel-letters',
@@ -311,11 +347,16 @@ new ToolExporter({
   getBackgroundColor: () => bgColorEl.value,
   baseWidth: parseInt(sizeEl.value),
   baseHeight: parseInt(sizeEl.value),
+  getPermalink: () => pm.getPermalink(),
+  flushPermalink: () => pm.flush(),
 });
 
 // ─── Event listeners ───
 allInputs.forEach(el => {
-  el.addEventListener('input', () => { updateLabels(); render(); });
+  el.addEventListener('input', () => { updateLabels(); render(); pm.update(); });
+});
+[fontSelect, weightSelect, joinSelect].forEach(el => {
+  el.addEventListener('change', () => pm.update());
 });
 
 charInput.addEventListener('focus', () => charInput.select());
@@ -328,7 +369,7 @@ charInput.addEventListener('input', () => {
 
 // ─── Init ───
 updateLabels();
-document.fonts.ready.then(() => render());
+document.fonts.ready.then(() => { render(); pm.decode(); });
 </script>
 <script src="/shared/tools-nav.js"></script>
 </body>

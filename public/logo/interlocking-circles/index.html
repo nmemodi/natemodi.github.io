@@ -110,6 +110,9 @@
         <canvas id="canvas"></canvas>
     </div>
 
+    <script src="/shared/schema-helpers.js"></script>
+    <script src="/shared/rng.js"></script>
+    <script src="/shared/permalink.js"></script>
     <script src="/shared/tools-export.js"></script>
     <script>
         paper.install(window);
@@ -421,6 +424,50 @@
             draw();
         });
 
+        // ─── Permalink ───
+        const { INT_RANGE, FLOAT_RANGE, COLOR, BOOL } = window.LogoSchema;
+        const schema = {
+            n:  INT_RANGE(2, 15, 2),
+            r:  INT_RANGE(30, 300, 150),
+            sw: INT_RANGE(2, 80, 28),
+            sp: INT_RANGE(10, 400, 110),
+            wv: BOOL(true),
+            gp: FLOAT_RANGE(0.5, 4, 1.5, 2),
+            br: FLOAT_RANGE(0, 1.5, 0.7, 2),
+            bg: COLOR('#cc0000'),
+            fg: COLOR('#f0f0f0'),
+        };
+
+        function getPermalinkState() {
+            return {
+                n: config.numCircles, r: config.radius, sw: config.strokeWidth,
+                sp: config.spacing, wv: config.weave, gp: config.gap,
+                br: config.breakWidth, bg: config.bgColor, fg: config.fgColor,
+            };
+        }
+        function applyPermalinkState(s) {
+            config.numCircles = s.n; config.radius = s.r; config.strokeWidth = s.sw;
+            config.spacing = s.sp; config.weave = s.wv; config.gap = s.gp;
+            config.breakWidth = s.br; config.bgColor = s.bg; config.fgColor = s.fg;
+            syncUI();
+            initPositions();
+            draw();
+        }
+        const pm = new window.PermalinkManager({
+            toolName: 'interlocking-circles',
+            schema, getState: getPermalinkState, applyState: applyPermalinkState,
+        });
+        ['numCircles', 'radius', 'strokeWidth', 'spacing', 'gap', 'break',
+         'bgColor', 'fgColor', 'weave'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const evt = (el.type === 'checkbox') ? 'change' : 'input';
+            el.addEventListener(evt, () => pm.update());
+        });
+        document.querySelectorAll('.preset-btn, #resetBtn').forEach(btn => {
+            btn.addEventListener('click', () => pm.update());
+        });
+
         // Export
         new ToolExporter({
             toolName: 'interlocking-circles',
@@ -437,7 +484,9 @@
             getBackgroundColor: () => currentBgColor,
             paperProject: paper.project,
             baseWidth: 800,
-            baseHeight: 800
+            baseHeight: 800,
+            getPermalink: () => pm.getPermalink(),
+            flushPermalink: () => pm.flush(),
         });
 
         // Resize
@@ -458,6 +507,7 @@
             view.viewSize = new Size(wrap.clientWidth, wrap.clientHeight);
             initPositions();
             draw();
+            pm.decode();
         });
     </script>
 <script src="/shared/tools-nav.js"></script>

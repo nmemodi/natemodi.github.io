@@ -166,6 +166,9 @@
         <canvas id="canvas"></canvas>
     </div>
 
+    <script src="/shared/schema-helpers.js"></script>
+    <script src="/shared/rng.js"></script>
+    <script src="/shared/permalink.js"></script>
     <script src="/shared/tools-export.js"></script>
     <script>
 const canvasEl = document.getElementById('canvas');
@@ -679,35 +682,40 @@ document.querySelectorAll('.preset-btn').forEach(btn => {
     });
 });
 
-// Randomize
-document.getElementById('randomBtn').addEventListener('click', function() {
+// Randomize — uses seeded RNG (mulberry32) so Randomize + share = reproducible
+function applyRandom(seed) {
+    const rand = window.LogoRNG.mulberry32(seed);
     const shapes = ['circle','square','rounded-square','diamond','triangle','hexagon','octagon','oval','pentagon','star-5','shield'];
     const curves = ['arc','sine','straight','s-curve','zigzag'];
-    S.count = 2 + Math.floor(Math.random() * 6);
-    S.shape = shapes[Math.floor(Math.random() * shapes.length)];
-    S.size = 60 + Math.floor(Math.random() * 140);
-    S.spacing = S.size * (1.1 + Math.random() * 0.8);
-    S.curveType = curves[Math.floor(Math.random() * curves.length)];
-    S.baseAngle = Math.floor(Math.random() * 60 - 30);
-    S.angleSpread = Math.floor(Math.random() * 50);
-    S.curvature = +(Math.random() * 0.7).toFixed(2);
-    S.gapWidth = +(3 + Math.random() * 15).toFixed(1);
-    S.lineWidth = Math.random() > 0.6 ? +(1 + Math.random() * 4).toFixed(1) : 0;
-    S.taper = +(Math.random() * 0.8).toFixed(2);
-    S.sliceOffset = +((Math.random() - 0.5) * 0.3).toFixed(2);
+    S.count = 2 + Math.floor(rand() * 6);
+    S.shape = shapes[Math.floor(rand() * shapes.length)];
+    S.size = 60 + Math.floor(rand() * 140);
+    S.spacing = Math.round(S.size * (1.1 + rand() * 0.8));
+    S.curveType = curves[Math.floor(rand() * curves.length)];
+    S.baseAngle = Math.floor(rand() * 60 - 30);
+    S.angleSpread = Math.floor(rand() * 50);
+    S.curvature = +(rand() * 0.7).toFixed(2);
+    S.gapWidth = +(3 + rand() * 15).toFixed(1);
+    S.lineWidth = rand() > 0.6 ? +(1 + rand() * 4).toFixed(1) : 0;
+    S.taper = +(rand() * 0.8).toFixed(2);
+    S.sliceOffset = +((rand() - 0.5) * 0.3).toFixed(2);
 
-    if (Math.random() > 0.5) {
-        const hue = Math.floor(Math.random() * 360);
-        const light = 70 + Math.floor(Math.random() * 25);
+    if (rand() > 0.5) {
+        const hue = Math.floor(rand() * 360);
+        const light = 70 + Math.floor(rand() * 25);
         S.bgColor = hslToHex(hue, 10, light);
-        S.fillColor = hslToHex(hue, 15, 10 + Math.floor(Math.random() * 20));
+        S.fillColor = hslToHex(hue, 15, 10 + Math.floor(rand() * 20));
     } else {
-        const hue = Math.floor(Math.random() * 360);
-        S.bgColor = hslToHex(hue, 10, 5 + Math.floor(Math.random() * 15));
-        S.fillColor = hslToHex(hue, 10, 80 + Math.floor(Math.random() * 18));
+        const hue = Math.floor(rand() * 360);
+        S.bgColor = hslToHex(hue, 10, 5 + Math.floor(rand() * 15));
+        S.fillColor = hslToHex(hue, 10, 80 + Math.floor(rand() * 18));
     }
     S.lineColor = S.fillColor;
+    S.seed = seed;
+}
 
+document.getElementById('randomBtn').addEventListener('click', function() {
+    applyRandom(window.LogoRNG.randomSeed());
     syncUI();
     draw();
 });
@@ -727,6 +735,60 @@ function hslToHex(h, s, l) {
 const exportW = 800;
 const exportH = 800;
 
+// ---- Permalink ----
+const LS = window.LogoSchema;
+const pschema = {
+    c:  LS.INT_RANGE(1, 12, 3),
+    sh: LS.ENUM(['circle','square','rounded-square','diamond','triangle','inverted-triangle','pentagon','hexagon','heptagon','octagon','star-4','star-5','star-6','cross','semicircle','oval','teardrop','shield'], 'circle'),
+    sz: LS.INT_RANGE(30, 250, 100),
+    sp: LS.INT_RANGE(40, 400, 220),
+    cv: LS.ENUM(['arc','sine','straight','s-curve','zigzag'], 'arc'),
+    ba: LS.INT_RANGE(-180, 180, 0),
+    as: LS.INT_RANGE(0, 90, 25),
+    cu: LS.FLOAT_RANGE(0, 1, 0.35, 2),
+    gw: LS.FLOAT_RANGE(1, 40, 8, 1),
+    lw: LS.FLOAT_RANGE(0, 8, 0, 1),
+    tp: LS.FLOAT_RANGE(0, 1, 0, 2),
+    so: LS.FLOAT_RANGE(-0.5, 0.5, 0, 2),
+    bg: LS.COLOR('#c8c8c8'),
+    fc: LS.COLOR('#2a2a2a'),
+    lc: LS.COLOR('#000000'),
+    sd: LS.SEED(0),
+};
+S.seed = 0;
+function getPermalinkState() {
+    return {
+        c: S.count, sh: S.shape, sz: S.size, sp: S.spacing, cv: S.curveType,
+        ba: S.baseAngle, as: S.angleSpread, cu: S.curvature, gw: S.gapWidth,
+        lw: S.lineWidth, tp: S.taper, so: S.sliceOffset,
+        bg: S.bgColor, fc: S.fillColor, lc: S.lineColor, sd: S.seed || 0,
+    };
+}
+function applyPermalinkState(s) {
+    S.count = s.c; S.shape = s.sh; S.size = s.sz; S.spacing = s.sp;
+    S.curveType = s.cv; S.baseAngle = s.ba; S.angleSpread = s.as;
+    S.curvature = s.cu; S.gapWidth = s.gw; S.lineWidth = s.lw;
+    S.taper = s.tp; S.sliceOffset = s.so;
+    S.bgColor = s.bg; S.fillColor = s.fc; S.lineColor = s.lc;
+    S.seed = s.sd;
+    syncUI();
+    draw();
+}
+const pm = new window.PermalinkManager({
+    toolName: 'sliced-shapes',
+    schema: pschema, getState: getPermalinkState, applyState: applyPermalinkState,
+});
+['count','shape','size','spacing','curveType','baseAngle','angleSpread',
+ 'curvature','gapWidth','lineWidth','taper','sliceOffset',
+ 'bgColor','fillColor','lineColor'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const evt = (el.tagName === 'SELECT') ? 'change' : 'input';
+    el.addEventListener(evt, () => pm.update());
+});
+document.querySelectorAll('.preset-btn, #randomBtn').forEach(btn =>
+    btn.addEventListener('click', () => pm.update()));
+
 new ToolExporter({
     toolName: 'sliced-shapes',
     getCanvas: () => canvasEl,
@@ -741,11 +803,14 @@ new ToolExporter({
         expCtx.scale(scaleX, scaleY);
         renderToExportCanvas(expCtx, exportW, exportH, opts);
         expCtx.restore();
-    }
+    },
+    getPermalink: () => pm.getPermalink(),
+    flushPermalink: () => pm.flush(),
 });
 
 // ---- Init ----
 resize();
+pm.decode();
     </script>
     <script src="/shared/tools-nav.js"></script>
 </body>

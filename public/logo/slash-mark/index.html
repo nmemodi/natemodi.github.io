@@ -141,6 +141,9 @@
         <canvas id="canvas"></canvas>
     </div>
 
+    <script src="/shared/schema-helpers.js"></script>
+    <script src="/shared/rng.js"></script>
+    <script src="/shared/permalink.js"></script>
     <script src="/shared/tools-export.js"></script>
     <script>
         // ---- State ----
@@ -512,6 +515,54 @@
         const pad = 30;
         const exportSize = () => (config.shapeSize + pad) * 2;
 
+        // ---- Permalink ----
+        const { INT_RANGE, FLOAT_RANGE, COLOR, ENUM, BOOL } = window.LogoSchema;
+        const pschema = {
+            n:  INT_RANGE(1, 30, 11),
+            a:  INT_RANGE(0, 180, 30),
+            lw: INT_RANGE(1, 40, 5),
+            tp: INT_RANGE(0, 100, 95),
+            sp: INT_RANGE(10, 100, 65),
+            ex: INT_RANGE(-30, 60, 3),
+            sh: ENUM(['circle','square','hexagon','triangle'], 'circle'),
+            sz: INT_RANGE(50, 350, 200),
+            bg: COLOR('#c8c8c8'),
+            sc: COLOR('#1a1a1a'),
+            lc: COLOR('#c8c8c8'),
+            mb: BOOL(true),
+        };
+        function getPermalinkState() {
+            return {
+                n: config.numLines, a: config.angle, lw: config.lineWidth,
+                tp: Math.round(config.taper * 100), sp: Math.round(config.spread * 100),
+                ex: config.extension, sh: config.shape, sz: config.shapeSize,
+                bg: config.bgColor, sc: config.shapeColor, lc: config.lineColor,
+                mb: config.matchBg,
+            };
+        }
+        function applyPermalinkState(s) {
+            config.numLines = s.n; config.angle = s.a; config.lineWidth = s.lw;
+            config.taper = s.tp / 100; config.spread = s.sp / 100; config.extension = s.ex;
+            config.shape = s.sh; config.shapeSize = s.sz;
+            config.bgColor = s.bg; config.shapeColor = s.sc; config.lineColor = s.lc;
+            config.matchBg = s.mb;
+            syncUI();
+            draw();
+        }
+        const pm = new window.PermalinkManager({
+            toolName: 'slash-mark',
+            schema: pschema, getState: getPermalinkState, applyState: applyPermalinkState,
+        });
+        ['numLines','angle','lineWidth','taper','spread','extension','shapeSize',
+         'bgColor','shapeColor','lineColor','matchBg'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const evt = (el.type === 'checkbox') ? 'change' : 'input';
+            el.addEventListener(evt, () => pm.update());
+        });
+        document.querySelectorAll('.shape-btn, .preset-btn, #resetBtn').forEach(btn =>
+            btn.addEventListener('click', () => pm.update()));
+
         new ToolExporter({
             toolName: 'slash-mark',
             getCanvas: () => canvasEl,
@@ -528,11 +579,14 @@
                 ctx.scale(scaleX, scaleY);
                 renderToExportCanvas(ctx, sz, sz, opts);
                 ctx.restore();
-            }
+            },
+            getPermalink: () => pm.getPermalink(),
+            flushPermalink: () => pm.flush(),
         });
 
         // Go
         draw();
+        pm.decode();
     </script>
 <script src="/shared/tools-nav.js"></script>
 </body>

@@ -76,6 +76,9 @@
   <canvas id="c" width="800" height="800"></canvas>
 </div>
 
+<script src="/shared/schema-helpers.js"></script>
+<script src="/shared/rng.js"></script>
+<script src="/shared/permalink.js"></script>
 <script src="/shared/tools-export.js"></script>
 <script>
 // ─── Letter cut definitions ───
@@ -309,6 +312,69 @@ wireSlider('depthMult', 'depthMult', v => v/100, '%');
 document.getElementById('bgColor').addEventListener('input', e => { state.bgColor = e.target.value; draw(); });
 document.getElementById('fgColor').addEventListener('input', e => { state.fgColor = e.target.value; draw(); });
 
+// ─── Permalink ───
+const { INT_RANGE, COLOR, TEXT } = window.LogoSchema;
+const schema = {
+  ch: TEXT({ charset: /^[A-Z0-9]$/, maxLen: 1, def: 'G' }),
+  bg: COLOR('#000000'),
+  fg: COLOR('#ffffff'),
+  cr: INT_RANGE(0, 50, 22),
+  pa: INT_RANGE(0, 25, 8),
+  lw: INT_RANGE(5, 45, 22),
+  dp: INT_RANGE(30, 200, 100),
+};
+
+function getState() {
+  return {
+    ch: state.letter,
+    bg: state.bgColor,
+    fg: state.fgColor,
+    cr: Math.round(state.cornerRadius * 100),
+    pa: Math.round(state.padding * 100),
+    lw: Math.round(state.lineWidth * 100),
+    dp: Math.round(state.depthMult * 100),
+  };
+}
+
+function applyState(s) {
+  state.letter = s.ch;
+  state.bgColor = s.bg;
+  state.fgColor = s.fg;
+  state.cornerRadius = s.cr / 100;
+  state.padding = s.pa / 100;
+  state.lineWidth = s.lw / 100;
+  state.depthMult = s.dp / 100;
+
+  charInput.value = state.letter;
+  document.querySelectorAll('.picker-btn').forEach(b => b.classList.toggle('active', b.textContent === state.letter));
+  document.getElementById('bgColor').value = state.bgColor;
+  document.getElementById('fgColor').value = state.fgColor;
+  const setSlider = (id, rawVal, suffix) => {
+    const el = document.getElementById(id);
+    const val = document.getElementById(id + 'Val');
+    if (el) el.value = rawVal;
+    if (val) val.textContent = rawVal + (suffix || '');
+  };
+  setSlider('cornerRadius', s.cr, '%');
+  setSlider('padding', s.pa, '%');
+  setSlider('lineWidth', s.lw, '%');
+  setSlider('depthMult', s.dp, '%');
+
+  draw();
+}
+
+const pm = new window.PermalinkManager({
+  toolName: 'brutalist-letters',
+  schema, getState, applyState,
+});
+
+// Hook all input events to live-update the URL
+['charInput', 'bgColor', 'fgColor', 'cornerRadius', 'padding', 'lineWidth', 'depthMult'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => pm.update());
+});
+document.querySelectorAll('.picker-btn').forEach(btn => btn.addEventListener('click', () => pm.update()));
+
 // ─── Export ───
 new ToolExporter({
   toolName: 'brutalist-letters',
@@ -318,10 +384,13 @@ new ToolExporter({
   getBackgroundColor: () => state.bgColor,
   baseWidth: 800,
   baseHeight: 800,
+  getPermalink: () => pm.getPermalink(),
+  flushPermalink: () => pm.flush(),
 });
 
 window.addEventListener('resize', draw);
 draw();
+pm.decode();
 </script>
 <script src="/shared/tools-nav.js"></script>
 </body>

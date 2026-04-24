@@ -127,6 +127,9 @@
   <canvas id="c" width="800" height="800"></canvas>
 </div>
 
+<script src="/shared/schema-helpers.js"></script>
+<script src="/shared/rng.js"></script>
+<script src="/shared/permalink.js"></script>
 <script src="/shared/tools-export.js"></script>
 <script>
 const state = {
@@ -487,6 +490,120 @@ document.getElementById('invert').addEventListener('change', e => {
   state.invert = e.target.checked; draw();
 });
 
+// ─── Permalink ───
+const { INT_RANGE, COLOR, ENUM, BOOL, TEXT } = window.LogoSchema;
+const schema = {
+  ch: TEXT({ charset: /^[A-Za-z0-9]$/, maxLen: 1, def: 'L' }),
+  ff: ENUM(['Archivo Black', 'Inter', 'Playfair Display', 'Space Mono', 'Arial', 'Georgia', 'Impact', 'Courier New'], 'Archivo Black'),
+  fw: ENUM(['400', '700', '900'], '900'),
+  gc: INT_RANGE(5, 32, 12),
+  ds: INT_RANGE(40, 100, 92),
+  th: INT_RANGE(5, 95, 30),
+  sh: ENUM(['circle', 'square', 'rounded-square', 'diamond', 'hexagon', 'triangle'], 'circle'),
+  bs: ENUM(['square', 'circle', 'none'], 'square'),
+  br: INT_RANGE(0, 50, 0),
+  bg: COLOR('#cc0000'),
+  bd: COLOR('#ffffff'),
+  dc: COLOR('#cc0000'),
+  mg: INT_RANGE(0, 15, 3),
+  pa: INT_RANGE(0, 25, 10),
+  ls: INT_RANGE(50, 150, 90),
+  ox: INT_RANGE(-30, 30, 0),
+  oy: INT_RANGE(-30, 30, 0),
+  in: BOOL(false),
+};
+
+function getState() {
+  return {
+    ch: state.letter,
+    ff: state.fontFamily,
+    fw: state.fontWeight,
+    gc: state.gridCols,
+    ds: Math.round(state.dotSize * 100),
+    th: Math.round(state.threshold * 100),
+    sh: state.dotShape,
+    bs: state.backdropShape,
+    br: Math.round(state.backdropRadius * 100),
+    bg: state.bgColor,
+    bd: state.backdropColor,
+    dc: state.dotColor,
+    mg: Math.round(state.margin * 100),
+    pa: Math.round(state.padding * 100),
+    ls: Math.round(state.letterScale * 100),
+    ox: Math.round(state.offsetX * 100),
+    oy: Math.round(state.offsetY * 100),
+    in: state.invert,
+  };
+}
+
+function applyState(s) {
+  state.letter = s.ch;
+  state.fontFamily = s.ff;
+  state.fontWeight = s.fw;
+  state.gridCols = s.gc;
+  state.dotSize = s.ds / 100;
+  state.threshold = s.th / 100;
+  state.dotShape = s.sh;
+  state.backdropShape = s.bs;
+  state.backdropRadius = s.br / 100;
+  state.bgColor = s.bg;
+  state.backdropColor = s.bd;
+  state.dotColor = s.dc;
+  state.margin = s.mg / 100;
+  state.padding = s.pa / 100;
+  state.letterScale = s.ls / 100;
+  state.offsetX = s.ox / 100;
+  state.offsetY = s.oy / 100;
+  state.invert = s.in;
+
+  charInput.value = state.letter;
+  document.querySelectorAll('.picker-btn').forEach(b => b.classList.toggle('active', b.textContent === state.letter.toUpperCase()));
+  document.getElementById('fontFamily').value = state.fontFamily;
+  document.getElementById('fontWeight').value = state.fontWeight;
+  document.getElementById('dotShape').value = state.dotShape;
+  document.getElementById('backdropShape').value = state.backdropShape;
+  document.getElementById('bgColor').value = state.bgColor;
+  document.getElementById('backdropColor').value = state.backdropColor;
+  document.getElementById('dotColor').value = state.dotColor;
+  document.getElementById('invert').checked = state.invert;
+
+  const sliderMap = [
+    ['gridCols', state.gridCols, ''],
+    ['dotSize', Math.round(state.dotSize * 100), '%'],
+    ['threshold', Math.round(state.threshold * 100), '%'],
+    ['backdropRadius', Math.round(state.backdropRadius * 100), '%'],
+    ['margin', Math.round(state.margin * 100), '%'],
+    ['padding', Math.round(state.padding * 100), '%'],
+    ['letterScale', Math.round(state.letterScale * 100), '%'],
+    ['offsetX', Math.round(state.offsetX * 100), '%'],
+    ['offsetY', Math.round(state.offsetY * 100), '%'],
+  ];
+  sliderMap.forEach(([id, val, suffix]) => {
+    const el = document.getElementById(id);
+    const valEl = document.getElementById(id + 'Val');
+    if (el) el.value = val;
+    if (valEl) valEl.textContent = val + suffix;
+  });
+
+  draw();
+}
+
+const pm = new window.PermalinkManager({
+  toolName: 'dot-grid',
+  schema, getState, applyState,
+});
+
+// Hook every input/change to live-update the URL
+['charInput', 'fontFamily', 'fontWeight', 'gridCols', 'dotSize', 'threshold',
+ 'dotShape', 'backdropShape', 'backdropRadius', 'bgColor', 'backdropColor',
+ 'dotColor', 'margin', 'padding', 'letterScale', 'offsetX', 'offsetY', 'invert'].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const evt = (el.type === 'checkbox' || el.tagName === 'SELECT') ? 'change' : 'input';
+  el.addEventListener(evt, () => pm.update());
+});
+document.querySelectorAll('.picker-btn').forEach(btn => btn.addEventListener('click', () => pm.update()));
+
 // ─── Export via shared ToolExporter ───
 new ToolExporter({
   toolName: 'dotgrid',
@@ -496,10 +613,12 @@ new ToolExporter({
   getBackgroundColor: () => state.bgColor,
   baseWidth: 800,
   baseHeight: 800,
+  getPermalink: () => pm.getPermalink(),
+  flushPermalink: () => pm.flush(),
 });
 
 window.addEventListener('resize', draw);
-document.fonts.ready.then(draw);
+document.fonts.ready.then(() => { draw(); pm.decode(); });
 </script>
 <script src="/shared/tools-nav.js"></script>
 </body>

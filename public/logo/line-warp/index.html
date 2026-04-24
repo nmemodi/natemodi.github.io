@@ -134,6 +134,9 @@
   <canvas id="canvas"></canvas>
 </div>
 
+<script src="/shared/schema-helpers.js"></script>
+<script src="/shared/rng.js"></script>
+<script src="/shared/permalink.js"></script>
 <script src="/shared/tools-export.js"></script>
 <script>
 const SIZE = 800;
@@ -593,6 +596,78 @@ Object.values(controls).forEach(el => {
   el.addEventListener('change', () => { updateLabels(); render(); });
 });
 
+// --- Permalink ---
+const { INT_RANGE, FLOAT_RANGE, ENUM, BOOL, TEXT } = window.LogoSchema;
+const schema = {
+  lt: TEXT({ charset: /^[A-Za-z0-9]{1,2}$/, maxLen: 2, def: 'S' }),
+  f:  ENUM(['Helvetica Neue', 'Arial Black', 'Georgia', 'Impact', 'Futura', 'Times New Roman'], 'Helvetica Neue'),
+  fw: ENUM(['900', '800', '700', '600'], '900'),
+  r:  INT_RANGE(0, 359, 0),
+  ox: INT_RANGE(-200, 200, 0),
+  oy: INT_RANGE(-200, 200, 0),
+  n:  INT_RANGE(5, 25, 13),
+  d:  INT_RANGE(0, 150, 65),
+  b:  INT_RANGE(5, 60, 28),
+  rd: INT_RANGE(0, 100, 0),
+  g:  FLOAT_RANGE(0.1, 0.7, 0.35, 2),
+  ls: FLOAT_RANGE(0.3, 1.0, 0.72, 2),
+  m:  INT_RANGE(0, 80, 25),
+  cr: INT_RANGE(0, 40, 10),
+  sm: BOOL(false),
+  iv: BOOL(false),
+};
+
+function getPermalinkState() {
+  return {
+    lt: controls.letter.value || 'S',
+    f: controls.font.value,
+    fw: controls.fontWeight.value,
+    r: +controls.rotation.value,
+    ox: +controls.offsetX.value,
+    oy: +controls.offsetY.value,
+    n: +controls.lines.value,
+    d: +controls.displacement.value,
+    b: +controls.blur.value,
+    rd: +controls.ridge.value,
+    g: +controls.gap.value,
+    ls: +controls.letterSize.value,
+    m: +controls.margin.value,
+    cr: +controls.radius.value,
+    sm: controls.showMap.checked,
+    iv: controls.invert.checked,
+  };
+}
+function applyPermalinkState(s) {
+  controls.letter.value = s.lt;
+  controls.font.value = s.f;
+  controls.fontWeight.value = s.fw;
+  controls.rotation.value = s.r;
+  controls.offsetX.value = s.ox;
+  controls.offsetY.value = s.oy;
+  controls.lines.value = s.n;
+  controls.displacement.value = s.d;
+  controls.blur.value = s.b;
+  controls.ridge.value = s.rd;
+  controls.gap.value = s.g;
+  controls.letterSize.value = s.ls;
+  controls.margin.value = s.m;
+  controls.radius.value = s.cr;
+  controls.showMap.checked = s.sm;
+  controls.invert.checked = s.iv;
+  updateLabels();
+  render();
+}
+
+const pm = new window.PermalinkManager({
+  toolName: 'line-warp',
+  schema, getState: getPermalinkState, applyState: applyPermalinkState,
+});
+
+Object.values(controls).forEach(el => {
+  const evt = (el.type === 'checkbox') ? 'change' : 'input';
+  el.addEventListener(evt, () => pm.update());
+});
+
 // --- Export via shared ToolExporter ---
 new ToolExporter({
   toolName: 'line-warp',
@@ -602,11 +677,14 @@ new ToolExporter({
   getBackgroundColor: () => getParams().invert ? '#000000' : '#ffffff',
   baseWidth: SIZE,
   baseHeight: SIZE,
+  getPermalink: () => pm.getPermalink(),
+  flushPermalink: () => pm.flush(),
 });
 
 // Initial render
 updateLabels();
 render();
+pm.decode();
 </script>
 <script src="/shared/tools-nav.js"></script>
 </body>

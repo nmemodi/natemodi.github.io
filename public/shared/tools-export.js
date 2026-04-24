@@ -17,6 +17,10 @@ class ToolExporter {
    * @param {number}   [opts.baseWidth]    — base canvas width (default: reads from canvas)
    * @param {number}   [opts.baseHeight]   — base canvas height (default: reads from canvas)
    * @param {Object}   [opts.paperProject] — Paper.js project (enables Paper.js PNG export)
+   * @param {Function} [opts.getPermalink] — () => string; if provided, enables Copy Link
+   *   button + auto-copies permalink to clipboard alongside PNG download.
+   * @param {Function} [opts.flushPermalink] — () => void; called before getPermalink()
+   *   to flush pending debounced hash updates. Optional.
    */
   constructor(opts) {
     this.toolName = opts.toolName;
@@ -27,6 +31,8 @@ class ToolExporter {
     this.baseWidth = opts.baseWidth || null;
     this.baseHeight = opts.baseHeight || null;
     this.paperProject = opts.paperProject || null;
+    this.getPermalink = opts.getPermalink || null;
+    this.flushPermalink = opts.flushPermalink || null;
 
     this.currentFormat = 'png';
     this.currentScale = 2;
@@ -86,8 +92,29 @@ class ToolExporter {
               <rect x="5" y="5" width="9" height="9" rx="1.5"/>
               <path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5"/>
             </svg>
-            Copy to Clipboard
+            <span class="btn__label">Copy to Clipboard</span>
           </button>
+          <button class="btn btn-secondary btn-full export-copylink" id="exportCopyLink" style="display:none">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6.5 10.5L9.5 5.5"/>
+              <path d="M10 9L12 7A2.5 2.5 0 008 3L6 5"/>
+              <path d="M6 7L4 9A2.5 2.5 0 008 13L10 11"/>
+            </svg>
+            <span class="btn__label">Copy Link</span>
+          </button>
+          <button class="btn btn-secondary btn-full export-share" id="exportShare" style="display:none">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 10V2"/>
+              <path d="M5 5L8 2L11 5"/>
+              <path d="M3 9v4a1 1 0 001 1h8a1 1 0 001-1V9"/>
+            </svg>
+            <span class="btn__label">Share…</span>
+          </button>
+          <div class="export-share-links" id="exportShareLinks" style="display:none">
+            <a class="export-share-link" data-target="twitter" target="_blank" rel="noopener">Post to X</a>
+            <a class="export-share-link" data-target="bluesky" target="_blank" rel="noopener">Post to Bluesky</a>
+            <a class="export-share-link" data-target="sms">Send via Messages</a>
+          </div>
         </div>
       </div>
     `;
@@ -97,6 +124,9 @@ class ToolExporter {
     this.dimsEl = this.panel.querySelector('.export-dims');
     this.pngOptions = this.panel.querySelector('#exportPngOptions');
     this.transparentCheckbox = this.panel.querySelector('#exportTransparent');
+    this.copyLinkBtn = this.panel.querySelector('#exportCopyLink');
+    this.shareBtn = this.panel.querySelector('#exportShare');
+    this.shareLinks = this.panel.querySelector('#exportShareLinks');
   }
 
   /* ─── Event binding ─── */
@@ -140,6 +170,46 @@ class ToolExporter {
 
     // Clipboard
     this.panel.querySelector('#exportClipboard').addEventListener('click', () => this._copyToClipboard());
+
+    // Copy Link (only active when getPermalink provided)
+    if (this.getPermalink) {
+      this.copyLinkBtn.style.display = '';
+      this.copyLinkBtn.addEventListener('click', () => this._copyLink());
+    }
+
+    // Web Share (mobile) + "Open in…" deep links
+    if (this.getPermalink) {
+      if (navigator.share) {
+        this.shareBtn.style.display = '';
+        this.shareBtn.addEventListener('click', () => this._webShare());
+      } else {
+        // Desktop: show static deep links instead
+        this.shareLinks.style.display = '';
+      }
+      this._bindShareLinks();
+    }
+  }
+
+  _bindShareLinks() {
+    const linkEls = this.shareLinks.querySelectorAll('.export-share-link');
+    const updateHrefs = () => {
+      if (!this.getPermalink) return;
+      if (this.flushPermalink) this.flushPermalink();
+      const url = this.getPermalink();
+      const text = `Made with ${this.toolName} — natemodi.com`;
+      linkEls.forEach(a => {
+        const target = a.dataset.target;
+        if (target === 'twitter') {
+          a.href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+        } else if (target === 'bluesky') {
+          a.href = `https://bsky.app/intent/compose?text=${encodeURIComponent(text + ' ' + url)}`;
+        } else if (target === 'sms') {
+          a.href = `sms:?&body=${encodeURIComponent(text + ' ' + url)}`;
+        }
+      });
+    };
+    // Refresh hrefs each time modal opens
+    this._updateShareHrefs = updateHrefs;
   }
 
   _bindKeyboard() {
@@ -164,6 +234,7 @@ class ToolExporter {
 
   open() {
     this._updateDims();
+    if (this._updateShareHrefs) this._updateShareHrefs();
     this.overlay.classList.add('visible');
     this.panel.classList.add('visible');
   }
@@ -317,7 +388,22 @@ class ToolExporter {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    this._toast(`Saved ${this.toolName}.${ext}`);
+    // Auto-copy permalink alongside download (best-effort, non-blocking)
+    let linkNote = '';
+    if (this.getPermalink) {
+      try {
+        if (this.flushPermalink) this.flushPermalink();
+        const permalink = this.getPermalink();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(permalink);
+          linkNote = ' · link copied';
+        }
+      } catch (e) {
+        // Silent — download already succeeded
+      }
+    }
+
+    this._toast(`Saved ${this.toolName}.${ext}${linkNote}`);
     this.close();
   }
 
@@ -342,10 +428,85 @@ class ToolExporter {
         ]);
       }
 
+      this._flashBtnCopied(this.panel.querySelector('#exportClipboard'));
       this._toast('Copied to clipboard');
-      this.close();
     } catch (e) {
       this._toast('Copy failed — try downloading instead', true);
+    }
+  }
+
+  /* ─── Copy Link ─── */
+
+  async _copyLink() {
+    if (!this.getPermalink) return;
+    if (this.flushPermalink) this.flushPermalink();
+    const url = this.getPermalink();
+
+    try {
+      await navigator.clipboard.writeText(url);
+      this._flashBtnCopied(this.copyLinkBtn);
+      this._toast('Link copied');
+      return;
+    } catch (e) { /* fall through */ }
+
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      ta.style.cssText = 'position:fixed;top:-9999px;opacity:0';
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (ok) {
+        this._flashBtnCopied(this.copyLinkBtn);
+        this._toast('Link copied');
+        return;
+      }
+    } catch (e) { /* fall through */ }
+
+    this._toast('Copy failed — URL is in the address bar', true);
+  }
+
+  _flashBtnCopied(btn) {
+    if (!btn) return;
+    const labelEl = btn.querySelector('.btn__label');
+    if (!labelEl) return;
+    const original = labelEl.textContent;
+    labelEl.textContent = 'Copied ✓';
+    btn.classList.add('btn--copied');
+    setTimeout(() => {
+      labelEl.textContent = original;
+      btn.classList.remove('btn--copied');
+    }, 1500);
+  }
+
+  /* ─── Web Share (mobile) ─── */
+
+  async _webShare() {
+    if (!navigator.share || !this.getPermalink) return;
+    if (this.flushPermalink) this.flushPermalink();
+    const url = this.getPermalink();
+    try {
+      const shareData = {
+        title: `${this.toolName} — natemodi.com`,
+        text: 'Made this with Logo Lab',
+        url,
+      };
+      // Try to include PNG file on capable devices
+      try {
+        const blob = await this._exportPNG();
+        if (blob && navigator.canShare) {
+          const file = new File([blob], `${this.toolName}.png`, { type: 'image/png' });
+          if (navigator.canShare({ files: [file] })) {
+            shareData.files = [file];
+          }
+        }
+      } catch (e) { /* share without image */ }
+      await navigator.share(shareData);
+    } catch (e) {
+      if (e && e.name !== 'AbortError') {
+        this._toast('Share failed — try Copy Link instead', true);
+      }
     }
   }
 
