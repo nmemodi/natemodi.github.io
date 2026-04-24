@@ -122,6 +122,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return heightData[iy * W + ix] / 255;
   };
 
+  const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  let bgColor = '#fff', strokeColor = '#1a1a1a';
+  const applyTheme = () => {
+    if (darkQuery.matches) { bgColor = '#111'; strokeColor = '#e5e5e5'; }
+    else { bgColor = '#fff'; strokeColor = '#1a1a1a'; }
+  };
+  applyTheme();
+  darkQuery.addEventListener('change', applyTheme);
+
   let mx = -9999, my = -9999;
   canvas.addEventListener('mousemove', (e) => {
     const r = canvas.getBoundingClientRect();
@@ -134,9 +143,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const baseDisp = 65;
 
   function draw() {
-    ctx.fillStyle = '#111';
+    ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, W, H);
-    ctx.strokeStyle = '#fff';
+    ctx.strokeStyle = strokeColor;
     ctx.lineWidth = 2;
     ctx.lineCap = 'round';
 
