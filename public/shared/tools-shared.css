@@ -656,150 +656,186 @@ input[type="number"]:focus {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   INTER-TOOL NAV  —  "Contact Sheet"
-   A 3×3 swatch of sibling tools pinned to the sidebar footer.
-   Rendered by /shared/tools-nav.js. Keyboard: ← → · 1–9 · T.
+   SWITCHER DROPDOWN
+   The tool title at the top of the sidebar becomes a dropdown
+   trigger. Minimized by default. Rendered by /shared/tools-nav.js.
+   Keyboard: ← → cycle · 1–9 jump · T index · Esc close.
    ═══════════════════════════════════════════════════════════════ */
 
-.tool-nav {
-  margin-top: auto;                         /* anchor to bottom of sidebar */
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--color-border-subtle);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+.tool-switcher {
+  position: relative;
 }
 
-.tool-nav__label {
+.tool-switcher__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px 2px 0;
+  margin-left: -4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  font-family: inherit;
+  border-radius: var(--radius-sm);
+  transition: background var(--ease-default);
+}
+
+.tool-switcher__button:hover,
+.tool-switcher.is-open .tool-switcher__button {
+  background: var(--color-bg-elevated);
+  padding-left: 6px;
+  padding-right: 6px;
+  margin-left: -6px;
+}
+
+.tool-switcher__title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semi);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.tool-switcher__chev {
+  width: 11px;
+  height: 11px;
+  color: var(--color-text-tertiary);
+  opacity: 0.55;
+  transition: transform var(--ease-smooth), opacity var(--ease-default);
+  flex-shrink: 0;
+}
+
+.tool-switcher__button:hover .tool-switcher__chev {
+  opacity: 1;
+}
+
+.tool-switcher.is-open .tool-switcher__chev {
+  transform: rotate(180deg);
+  opacity: 1;
+  color: var(--color-text-primary);
+}
+
+/* ── Dropdown panel ── */
+.tool-switcher__panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: -4px;
+  min-width: 232px;
+  padding: 4px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-modal);
+  z-index: 50;
+
+  /* Collapsed state */
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
+  transform-origin: top left;
+  pointer-events: none;
+  transition:
+    opacity 0.14s ease,
+    transform 0.14s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tool-switcher.is-open .tool-switcher__panel {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.tool-switcher__item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  font-size: var(--text-xs);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--color-text-tertiary);
-}
-
-.tool-nav__label-link {
-  color: var(--color-text-tertiary);
+  gap: 10px;
+  padding: 7px 9px;
+  border-radius: var(--radius-sm);
   text-decoration: none;
-  transition: color var(--ease-default);
+  color: var(--color-text-secondary);
+  font-size: var(--text-md);
+  line-height: 1;
+  transition: background var(--ease-default), color var(--ease-default);
+  position: relative;
 }
-.tool-nav__label-link:hover {
+
+.tool-switcher__item:hover {
+  background: var(--color-bg-hover);
   color: var(--color-text-primary);
 }
 
-.tool-nav__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--color-border-subtle);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-md);
-  overflow: hidden;
+.tool-switcher__item.is-current {
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface);
 }
 
-.tool-nav__tile {
-  aspect-ratio: 1;
-  background: var(--color-bg-canvas);
-  color: var(--color-text-primary);
-  display: flex;
+.tool-switcher__item.is-current::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--color-accent);
+}
+
+.tool-switcher__glyph {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  text-decoration: none;
-  transition: background var(--ease-smooth);
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
 }
 
-.tool-nav__tile svg {
-  width: 62%;
-  height: 62%;
-  opacity: 0.45;
-  transition: opacity var(--ease-smooth), transform var(--ease-smooth);
+.tool-switcher__glyph svg {
+  width: 100%;
+  height: 100%;
 }
 
-.tool-nav__tile:hover {
-  background: var(--color-bg-elevated);
-}
-.tool-nav__tile:hover svg {
-  opacity: 1;
-  transform: scale(1.08);
+.tool-switcher__item:hover .tool-switcher__glyph,
+.tool-switcher__item.is-current .tool-switcher__glyph {
+  color: var(--color-text-primary);
 }
 
-.tool-nav__tile.is-current {
-  background: var(--color-bg-elevated);
-  box-shadow: inset 0 0 0 1px var(--color-accent);
-}
-.tool-nav__tile.is-current svg {
-  opacity: 1;
+.tool-switcher__item.is-current .tool-switcher__glyph {
   color: var(--color-accent);
 }
 
-/* Tooltip — reveals tile name on hover */
-.tool-nav__tile::after {
-  content: attr(data-name);
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%) translateY(4px);
-  background: var(--color-bg-elevated);
-  color: var(--color-text-primary);
-  font-size: var(--text-xs);
-  font-weight: var(--weight-medium);
-  letter-spacing: 0;
-  text-transform: none;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border-focus);
+.tool-switcher__name {
+  flex: 1;
   white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity var(--ease-default), transform var(--ease-default);
-  z-index: 10;
-  box-shadow: var(--shadow-toast);
-}
-.tool-nav__tile:hover::after {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: var(--weight-medium);
+  letter-spacing: -0.005em;
 }
 
-/* Keyboard hint row under the grid */
-.tool-nav__hint {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  font-size: var(--text-xs);
-  color: var(--color-text-tertiary);
-  opacity: 0.85;
-}
-
-.tool-nav__hint kbd {
+.tool-switcher__key {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
-  background: var(--color-bg-elevated);
+  background: var(--color-bg-canvas);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: var(--weight-medium);
-  color: var(--color-text-secondary);
-  line-height: 1;
-}
-
-.tool-nav__hint .tool-nav__sep {
-  opacity: 0.4;
-  margin: 0 2px;
-}
-
-.tool-nav__hint .tool-nav__dash {
   color: var(--color-text-tertiary);
-  margin: 0 1px;
+  line-height: 1;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.tool-switcher__item:hover .tool-switcher__key,
+.tool-switcher__item.is-current .tool-switcher__key {
+  opacity: 1;
+  color: var(--color-text-secondary);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -832,18 +868,10 @@ input[type="number"]:focus {
     padding: 20px 20px 28px;
   }
 
-  /* Contact Sheet collapses to a single row of 9 on mobile,
-     keyboard hint hides (no keyboard). */
-  .tool-nav {
-    padding-top: var(--space-4);
-  }
-  .tool-nav__grid {
-    grid-template-columns: repeat(9, 1fr);
-  }
-  .tool-nav__hint {
-    display: none;
-  }
-  .tool-nav__tile::after {
-    display: none;
+  /* Dropdown stretches to full sidebar width on mobile */
+  .tool-switcher__panel {
+    left: -4px;
+    right: -4px;
+    min-width: 0;
   }
 }
