@@ -1,0 +1,73 @@
+import { describe, it, expect, beforeEach } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
+import { JSDOM } from 'jsdom';
+
+function loadRegistry(window) {
+  const src = fs.readFileSync(
+    path.resolve(__dirname, '../../public/shared/tools-registry.js'),
+    'utf8'
+  );
+  // eslint-disable-next-line no-new-func
+  const fn = new Function('window', 'document', 'location', src);
+  fn(window, window.document, window.location);
+}
+
+describe('tools-registry', () => {
+  let dom;
+  let window;
+
+  beforeEach(() => {
+    dom = new JSDOM('<html><body></body></html>', { url: 'https://natemodi.com/logo/line-warp/' });
+    window = dom.window;
+    loadRegistry(window);
+  });
+
+  it('exposes window.LogoTools', () => {
+    expect(window.LogoTools).toBeDefined();
+    expect(Array.isArray(window.LogoTools.TOOLS)).toBe(true);
+  });
+
+  it('has exactly 9 tools', () => {
+    expect(window.LogoTools.TOOLS.length).toBe(9);
+  });
+
+  it('every tool has required fields', () => {
+    window.LogoTools.TOOLS.forEach(t => {
+      expect(typeof t.slug).toBe('string');
+      expect(t.slug.length).toBeGreaterThan(0);
+      expect(/^[a-z-]+$/.test(t.slug)).toBe(true);
+      expect(typeof t.name).toBe('string');
+      expect(typeof t.tagline).toBe('string');
+      expect(typeof t.blurb).toBe('string');
+      expect(typeof t.defaultSeed).toBe('string');
+      expect(/^[a-zA-Z0-9_-]{1,32}$/.test(t.defaultSeed)).toBe(true);
+      expect(typeof t.svg).toBe('string');
+      expect(t.svg.startsWith('<svg')).toBe(true);
+    });
+  });
+
+  it('all slugs are unique', () => {
+    const slugs = window.LogoTools.TOOLS.map(t => t.slug);
+    expect(new Set(slugs).size).toBe(slugs.length);
+  });
+
+  it('toolPath builds /logo/<slug>/ correctly', () => {
+    expect(window.LogoTools.toolPath('line-warp')).toBe('/logo/line-warp/');
+  });
+
+  it('findBySlug returns the matching tool or null', () => {
+    expect(window.LogoTools.findBySlug('line-warp').slug).toBe('line-warp');
+    expect(window.LogoTools.findBySlug('does-not-exist')).toBe(null);
+  });
+
+  it('currentIndex returns 0 for line-warp at /logo/line-warp/', () => {
+    expect(window.LogoTools.currentIndex()).toBe(0);
+  });
+
+  it('currentIndex returns -1 for a non-tool path', () => {
+    const otherDom = new JSDOM('<html><body></body></html>', { url: 'https://natemodi.com/' });
+    loadRegistry(otherDom.window);
+    expect(otherDom.window.LogoTools.currentIndex()).toBe(-1);
+  });
+});

@@ -4,245 +4,803 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Logo Lab</title>
+<meta name="description" content="Nine generative logo tools. Tweak parameters live, share the result with a URL.">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Logo Lab">
+<meta property="og:description" content="Nine generative logo tools. Tweak parameters live, share the result with a URL.">
+<meta property="og:url" content="https://natemodi.com/logo/">
+<meta property="og:type" content="website">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
 <style>
+  :root {
+    --bg: #fdfdfc;
+    --fg: #111;
+    --fg-muted: rgba(17, 17, 17, 0.58);
+    --fg-faded: rgba(17, 17, 17, 0.4);
+    --fg-quiet: rgba(17, 17, 17, 0.32);
+    --border: rgba(17, 17, 17, 0.1);
+    --border-subtle: rgba(17, 17, 17, 0.06);
+    --code-bg: #f4f3f1;
+    --code-border: rgba(17, 17, 17, 0.08);
+    --accent: #111;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    color-scheme: light;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  html { scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
   body {
-    background: #0a0a0a;
-    color: #ccc;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 3rem 2rem;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.005em;
   }
 
-  h1 {
-    font-size: 0.75rem;
-    font-weight: 400;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: #555;
-    margin-bottom: 3rem;
+  /* ── Layout: sidebar + main ── */
+  .page {
+    display: flex;
+    justify-content: center;
+    gap: 64px;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 64px 32px 128px;
+    align-items: flex-start;
   }
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1px;
-    background: #222;
-    max-width: 820px;
-    width: 100%;
+  aside {
+    width: 140px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 64px;
+    font-size: 13px;
   }
 
-  .tile {
-    aspect-ratio: 1;
-    background: #111;
+  .aside-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--fg-faded);
+    text-decoration: none;
+    font-size: 13px;
+    margin-bottom: 24px;
+    transition: color 0.15s ease;
+  }
+  .aside-back:hover { color: var(--fg); }
+  .aside-back svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+  .aside-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  aside ul {
+    list-style: none;
     display: flex;
     flex-direction: column;
+    gap: 4px;
+  }
+
+  aside a.toc-link {
+    display: block;
+    color: var(--fg-faded);
+    text-decoration: none;
+    font-size: 13px;
+    line-height: 1.4;
+    padding: 2px 0;
+    transition: color 0.15s ease;
+  }
+  aside a.toc-link:hover { color: var(--fg); }
+  aside a.toc-link.is-active { color: var(--fg); font-weight: 500; }
+
+  /* ── Main article ── */
+  main { flex: 1; min-width: 0; max-width: 560px; }
+
+  article h1 {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.45;
+    letter-spacing: -0.005em;
+    color: var(--fg);
+    margin-bottom: 2px;
+  }
+
+  article time {
+    display: block;
+    color: var(--fg-faded);
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  article p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fg);
+    margin-top: 16px;
+  }
+
+  article p.lede { color: var(--fg); }
+  article p.caption {
+    font-size: 13px;
+    color: var(--fg-muted);
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .sep {
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0 28px;
+  }
+
+  /* Section header (h2 visually, h1 semantically to match liveline) */
+  article .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 4px;
+    letter-spacing: -0.005em;
+    scroll-margin-top: 32px;
+  }
+
+  /* ── Embed surface ── */
+  .embed-wrap {
+    margin-top: 24px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--code-bg);
+    position: relative;
+    min-height: 240px;
+  }
+
+  .embed-wrap iframe {
+    display: block;
+    width: 100%;
+    border: 0;
+    background: var(--code-bg);
+    height: 320px; /* overridden by postMessage once mounted */
+    transition: height 0.25s ease;
+  }
+
+  .embed-skeleton {
+    position: absolute;
+    inset: 0;
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--fg-quiet);
+    font-size: 12px;
+    font-family: var(--font-mono);
+    pointer-events: none;
+    background: linear-gradient(90deg, var(--code-bg) 0%, #ebeae7 50%, var(--code-bg) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
   }
 
-  a.tile {
-    text-decoration: none;
-    color: inherit;
+  .embed-wrap.is-ready .embed-skeleton { display: none; }
+
+  @keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .embed-skeleton { animation: none; background: var(--code-bg); }
+  }
+
+  /* Fallback (iframe failed or timed out) */
+  .embed-fallback {
+    display: none;
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--fg-muted);
+    font-size: 13px;
+  }
+  .embed-wrap.is-failed .embed-skeleton { display: none; }
+  .embed-wrap.is-failed iframe { display: none; }
+  .embed-wrap.is-failed .embed-fallback { display: block; }
+  .embed-fallback svg {
+    width: 56px; height: 56px;
+    color: var(--fg-quiet);
+    margin-bottom: 14px;
+  }
+  .embed-fallback a {
+    display: inline-block;
+    margin-top: 6px;
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  /* ── Action row below each embed ── */
+  .actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+    font-size: 13px;
+  }
+  .actions button,
+  .actions a {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: var(--fg-muted);
     cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.15s ease;
   }
+  .actions button:hover,
+  .actions a:hover { color: var(--fg); }
+  .actions svg { width: 12px; height: 12px; }
 
-  a.tile:hover {
-    background: #181818;
+  .actions button.is-copied { color: #2f8f4a; }
+
+  /* ── Copyable embed snippet ── */
+  details.embed-snippet {
+    margin-top: 14px;
   }
-
-  a.tile:hover .tile-icon {
-    opacity: 1;
-    transform: scale(1.05);
+  details.embed-snippet > summary {
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--fg-muted);
+    list-style: none;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.15s ease;
   }
+  details.embed-snippet > summary::-webkit-details-marker { display: none; }
+  details.embed-snippet > summary:hover { color: var(--fg); }
+  details.embed-snippet > summary svg {
+    width: 10px; height: 10px;
+    transition: transform 0.15s ease;
+  }
+  details.embed-snippet[open] > summary svg { transform: rotate(90deg); }
 
-  a.tile:hover .tile-label {
+  details.embed-snippet pre {
+    margin-top: 10px;
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.45;
+    color: #333;
+    position: relative;
+  }
+  details.embed-snippet pre code { display: block; white-space: pre; }
+  details.embed-snippet .snippet-copy {
+    position: absolute;
+    top: 6px; right: 6px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 7px;
+    font-size: 11px;
+    font-family: var(--font);
+    color: var(--fg-muted);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  details.embed-snippet .snippet-copy:hover {
+    color: var(--fg);
+    border-color: var(--fg-faded);
+  }
+  details.embed-snippet .snippet-copy.is-copied { color: #2f8f4a; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: #111;
     color: #fff;
+    font-size: 12px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    opacity: 0;
+    transition: all 0.2s ease;
+    z-index: 100;
+    pointer-events: none;
+    font-family: var(--font);
+  }
+  .toast.is-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 
-  .tile-icon {
-    width: 80px;
-    height: 80px;
-    opacity: 0.6;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    transform: scale(1);
+  /* ── Footer ── */
+  .article-foot {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--fg-faded);
+    font-size: 13px;
   }
+  .article-foot a { color: var(--fg-muted); text-decoration: none; }
+  .article-foot a:hover { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
 
-  .tile-label {
-    font-size: 0.65rem;
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #666;
-    transition: color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  /* ── Debug panel (?debug=1) ── */
+  .debug-panel {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    background: #111;
+    color: #eee;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    line-height: 1.5;
+    opacity: 0.92;
+    z-index: 99;
+    max-width: 260px;
   }
+  .debug-panel strong { color: #fff; }
 
-  @media (max-width: 540px) {
-    .grid { max-width: 100%; }
-    .tile-icon { width: 56px; height: 56px; }
-    .tile-label { font-size: 0.55rem; }
-    body { padding: 2rem 1rem; }
+  /* ── Mobile ── */
+  @media (max-width: 768px) {
+    .page {
+      flex-direction: column;
+      gap: 0;
+      padding: 32px 20px 96px;
+    }
+    aside {
+      position: static;
+      width: 100%;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+    .aside-title { margin-bottom: 8px; }
+    aside ul {
+      flex-direction: row;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 12px;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+    aside a.toc-link {
+      white-space: nowrap;
+      padding: 2px 0;
+    }
+    main { max-width: 100%; }
   }
 </style>
 </head>
 <body>
 
-<h1>Logo Lab</h1>
+<div class="page">
 
-<div class="grid">
+  <aside>
+    <a class="aside-back" href="/">
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M7.5 3L4.5 6L7.5 9"/>
+      </svg>
+      Index
+    </a>
+    <div class="aside-title">Logo Lab</div>
+    <ul id="toc"></ul>
+  </aside>
 
-  <!-- 1. Line Warp -->
-  <a class="tile" href="/logo/line-warp/">
-    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.8">
-      <line x1="0" y1="8" x2="80" y2="8"/>
-      <line x1="0" y1="16" x2="30" y2="16"/>
-      <path d="M30 16 Q40 6 50 16" fill="none"/>
-      <line x1="50" y1="16" x2="80" y2="16"/>
-      <line x1="0" y1="24" x2="25" y2="24"/>
-      <path d="M25 24 Q40 8 55 24" fill="none"/>
-      <line x1="55" y1="24" x2="80" y2="24"/>
-      <line x1="0" y1="32" x2="22" y2="32"/>
-      <path d="M22 32 Q40 10 58 32" fill="none"/>
-      <line x1="58" y1="32" x2="80" y2="32"/>
-      <line x1="0" y1="40" x2="20" y2="40"/>
-      <path d="M20 40 Q40 12 60 40" fill="none"/>
-      <line x1="60" y1="40" x2="80" y2="40"/>
-      <line x1="0" y1="48" x2="22" y2="48"/>
-      <path d="M22 48 Q40 14 58 48" fill="none"/>
-      <line x1="58" y1="48" x2="80" y2="48"/>
-      <line x1="0" y1="56" x2="25" y2="56"/>
-      <path d="M25 56 Q40 20 55 56" fill="none"/>
-      <line x1="55" y1="56" x2="80" y2="56"/>
-      <line x1="0" y1="64" x2="30" y2="64"/>
-      <path d="M30 64 Q40 40 50 64" fill="none"/>
-      <line x1="50" y1="64" x2="80" y2="64"/>
-      <line x1="0" y1="72" x2="80" y2="72"/>
-    </svg>
-    <span class="tile-label">Line Warp</span>
-  </a>
+  <main>
+    <article>
+      <h1>Logo Lab</h1>
+      <time datetime="2026-04-24">Nine generative tools</time>
 
-  <!-- 2. Brutalist Letters -->
-  <a class="tile" href="/logo/brutalist-letters/">
-    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.8">
-      <line x1="20" y1="64" x2="40" y2="16"/>
-      <line x1="40" y1="16" x2="60" y2="64"/>
-      <line x1="28" y1="46" x2="52" y2="46"/>
-      <rect x="12" y="12" width="56" height="56" rx="2" stroke-dasharray="2 3" opacity="0.3"/>
-    </svg>
-    <span class="tile-label">Brutalist Letters</span>
-  </a>
+      <p class="lede">Nine browser-based tools for generating minimalist marks. Each one trades on a narrow visual idea — displaced lines, interlocking rings, rounded-rect bitmaps — and gives you just enough knobs to find the good version. Every state has a shareable URL, every mark has a PNG/SVG export, and every tool embeds via iframe into anyone's site.</p>
 
-  <!-- 3. Interlocking Circles -->
-  <a class="tile" href="/logo/interlocking-circles/">
-    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.8">
-      <circle cx="32" cy="32" r="18"/>
-      <circle cx="48" cy="32" r="18"/>
-      <circle cx="40" cy="46" r="18"/>
-    </svg>
-    <span class="tile-label">Interlocking Circles</span>
-  </a>
+      <p>Keyboard: press <strong>J</strong>/<strong>K</strong> to move between sections, <strong>1–9</strong> to jump, <strong>T</strong> to return to the top. Every embed is live — tweak it here, or click <em>Open in tool</em> for the full controls.</p>
 
-  <!-- 4. Parallel Letters -->
-  <a class="tile" href="/logo/parallel-letters/">
-    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.8">
-      <line x1="16" y1="20" x2="16" y2="60"/>
-      <line x1="24" y1="20" x2="24" y2="60"/>
-      <line x1="32" y1="20" x2="32" y2="60"/>
-      <line x1="40" y1="20" x2="40" y2="60"/>
-      <line x1="48" y1="20" x2="48" y2="60"/>
-      <line x1="56" y1="20" x2="56" y2="60"/>
-      <line x1="64" y1="20" x2="64" y2="60"/>
-      <path d="M20 24 L40 24 L40 40 L24 40 L24 56 L44 56" stroke-width="3" opacity="0.4"/>
-    </svg>
-    <span class="tile-label">Parallel Letters</span>
-  </a>
+      <div id="sections"></div>
 
-  <!-- 5. Shape Tiles -->
-  <a class="tile" href="/logo/shape-tiles/">
-    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.8">
-      <circle cx="40" cy="40" r="13"/>
-      <path d="M53 8 A13 13 0 0 1 27 8"/>
-      <path d="M27 72 A13 13 0 0 1 53 72"/>
-      <path d="M8 27 A13 13 0 0 1 8 53"/>
-      <path d="M72 53 A13 13 0 0 1 72 27"/>
-      <path d="M8 21 A13 13 0 0 1 21 8"/>
-      <path d="M59 8 A13 13 0 0 1 72 21"/>
-      <path d="M72 59 A13 13 0 0 1 59 72"/>
-      <path d="M21 72 A13 13 0 0 1 8 59"/>
-    </svg>
-    <span class="tile-label">Shape Tiles</span>
-  </a>
-
-  <!-- 6. Sliced Shapes -->
-  <a class="tile" href="/logo/sliced-shapes/">
-    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.8">
-      <path d="M10,32 A12,12,0,1,1,34,32" fill="none"/>
-      <path d="M10,32 A12,12,0,1,0,34,32" fill="none"/>
-      <path d="M30,34 A12,12,0,1,1,54,28" fill="none"/>
-      <path d="M30,28 A12,12,0,1,0,54,34" fill="none"/>
-      <path d="M48,36 A12,12,0,1,1,72,26" fill="none"/>
-      <path d="M48,26 A12,12,0,1,0,72,36" fill="none"/>
-    </svg>
-    <span class="tile-label">Sliced Shapes</span>
-  </a>
-
-  <!-- 7. Slash Mark -->
-  <a class="tile" href="/logo/slash-mark/">
-    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.8">
-      <circle cx="40" cy="40" r="26"/>
-      <line x1="30" y1="58" x2="38" y2="22"/>
-      <line x1="34" y1="58" x2="42" y2="22"/>
-      <line x1="38" y1="58" x2="46" y2="22"/>
-      <line x1="42" y1="58" x2="50" y2="22"/>
-      <line x1="46" y1="56" x2="52" y2="26"/>
-    </svg>
-    <span class="tile-label">Slash Mark</span>
-  </a>
-
-  <!-- 8. Polygon Rosette -->
-  <a class="tile" href="/logo/polygon-rosette/">
-    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="#fff" stroke-width="0.7">
-      <polygon points="40,12 55.6,17 64.7,30 64.7,50 55.6,63 40,68 24.4,63 15.3,50 15.3,30 24.4,17"/>
-      <polygon points="40,24 49.4,27.6 53.8,36 53.8,44 49.4,52.4 40,56 30.6,52.4 26.2,44 26.2,36 30.6,27.6"/>
-      <line x1="40" y1="12" x2="53.8" y2="36"/>
-      <line x1="55.6" y1="17" x2="53.8" y2="44"/>
-      <line x1="64.7" y1="30" x2="49.4" y2="52.4"/>
-      <line x1="64.7" y1="50" x2="40" y2="56"/>
-      <line x1="55.6" y1="63" x2="30.6" y2="52.4"/>
-      <line x1="40" y1="68" x2="26.2" y2="44"/>
-      <line x1="24.4" y1="63" x2="26.2" y2="36"/>
-      <line x1="15.3" y1="50" x2="30.6" y2="27.6"/>
-      <line x1="15.3" y1="30" x2="40" y2="24"/>
-      <line x1="24.4" y1="17" x2="49.4" y2="27.6"/>
-    </svg>
-    <span class="tile-label">Polygon Rosette</span>
-  </a>
-
-  <!-- 9. Dot Grid -->
-  <a class="tile" href="/logo/dot-grid/">
-    <svg class="tile-icon" viewBox="0 0 80 80" fill="none" stroke="none">
-      <circle cx="20" cy="20" r="5" fill="#fff"/>
-      <circle cx="20" cy="34" r="5" fill="#fff"/>
-      <circle cx="20" cy="48" r="5" fill="#fff"/>
-      <circle cx="20" cy="62" r="5" fill="#fff"/>
-      <circle cx="34" cy="62" r="5" fill="#fff"/>
-      <circle cx="48" cy="62" r="5" fill="#fff"/>
-      <circle cx="62" cy="62" r="5" fill="#fff"/>
-    </svg>
-    <span class="tile-label">Dot Grid</span>
-  </a>
+      <div class="article-foot">
+        <p>Every iframe URL on this page is a public contract: <code>/logo/&lt;slug&gt;/#v=1&amp;seed=&lt;value&gt;</code>. Links are stable across redesigns. Source on <a href="https://github.com/nmemodi/natemodi.github.io" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+      </div>
+    </article>
+  </main>
 
 </div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script src="/shared/tools-registry.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  if (!window.LogoTools) {
+    console.warn('[logo-lab] landing: registry missing');
+    return;
+  }
+
+  const TOOLS = window.LogoTools.TOOLS;
+  const toolPath = window.LogoTools.toolPath;
+
+  const ORIGIN = location.origin;
+  const SEED_RE = /^[a-zA-Z0-9_-]{1,32}$/;
+
+  /* ── Utility: absolute URL for an embed (seed validated) ── */
+  function embedUrl(slug, seed) {
+    const safeSeed = (seed && SEED_RE.test(seed)) ? seed : '1';
+    return ORIGIN + toolPath(slug) + '#v=1&seed=' + safeSeed;
+  }
+
+  /* ── Build the TOC (sidebar) and sections (main) ── */
+  const toc = document.getElementById('toc');
+  const sections = document.getElementById('sections');
+
+  TOOLS.forEach((t, i) => {
+    /* Sidebar link */
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.className = 'toc-link';
+    a.href = '#' + t.slug;
+    a.textContent = t.name;
+    a.dataset.slug = t.slug;
+    li.appendChild(a);
+    toc.appendChild(li);
+
+    /* Section */
+    const sep = document.createElement('div');
+    sep.className = 'sep';
+
+    const sec = document.createElement('section');
+    sec.id = t.slug;
+    sec.dataset.slug = t.slug;
+    sec.dataset.seed = t.defaultSeed;
+
+    const h2 = document.createElement('h2');
+    h2.className = 'section-title';
+    h2.textContent = t.name;
+
+    const tag = document.createElement('p');
+    tag.style.color = 'var(--fg-muted)';
+    tag.style.fontSize = '13px';
+    tag.style.marginTop = '4px';
+    tag.textContent = t.tagline;
+
+    const body = document.createElement('p');
+    body.textContent = t.blurb;
+
+    /* Embed wrapper */
+    const wrap = document.createElement('div');
+    wrap.className = 'embed-wrap';
+    wrap.dataset.slug = t.slug;
+
+    const skel = document.createElement('div');
+    skel.className = 'embed-skeleton';
+    skel.textContent = 'Loading ' + t.name + '…';
+    wrap.appendChild(skel);
+
+    /* Fallback (shown if iframe fails / times out) */
+    const fb = document.createElement('div');
+    fb.className = 'embed-fallback';
+    fb.innerHTML =
+      '<div>' +
+        '<div>Preview unavailable. </div>' +
+        '<a href="' + toolPath(t.slug) + '" target="_blank" rel="noopener">Open ' + t.name + ' in full &rarr;</a>' +
+      '</div>';
+    wrap.appendChild(fb);
+
+    /* Action row */
+    const actions = document.createElement('div');
+    actions.className = 'actions';
+    actions.innerHTML =
+      '<a href="' + toolPath(t.slug) + '#v=1&seed=' + t.defaultSeed + '" target="_blank" rel="noopener">' +
+        '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h6v6"/><path d="M9 3L3 9"/></svg>' +
+        'Open in tool' +
+      '</a>' +
+      '<button type="button" data-action="copy-link" data-slug="' + t.slug + '" data-seed="' + t.defaultSeed + '">' +
+        '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7.5L7.5 4.5"/><path d="M6 3l1.5-1.5a2.1 2.1 0 013 3L9 6"/><path d="M6 9l-1.5 1.5a2.1 2.1 0 01-3-3L3 6"/></svg>' +
+        'Share link' +
+      '</button>';
+
+    /* Embed snippet */
+    const snip = document.createElement('details');
+    snip.className = 'embed-snippet';
+    const sum = document.createElement('summary');
+    sum.innerHTML =
+      '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3l4 3-4 3"/></svg>' +
+      'Embed snippet';
+    snip.appendChild(sum);
+
+    const pre = document.createElement('pre');
+    const code = document.createElement('code');
+    const url = embedUrl(t.slug, t.defaultSeed);
+    code.textContent = '<iframe src="' + url + '"\n  style="width:100%;height:320px;border:0"></iframe>';
+    pre.appendChild(code);
+    const copy = document.createElement('button');
+    copy.className = 'snippet-copy';
+    copy.type = 'button';
+    copy.dataset.action = 'copy-snippet';
+    copy.dataset.snippet = code.textContent;
+    copy.textContent = 'Copy';
+    pre.appendChild(copy);
+    snip.appendChild(pre);
+
+    sec.appendChild(h2);
+    sec.appendChild(tag);
+    sec.appendChild(body);
+    sec.appendChild(wrap);
+    sec.appendChild(actions);
+    sec.appendChild(snip);
+
+    sections.appendChild(sep);
+    sections.appendChild(sec);
+  });
+
+  /* ── Toast ── */
+  const toast = document.getElementById('toast');
+  let toastTimer = null;
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('is-visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('is-visible'), 1600);
+  }
+
+  /* ── Clipboard with fallback ── */
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    /* Fallback: hidden textarea + execCommand */
+    return new Promise((resolve, reject) => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '0';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        const ok = document.execCommand('copy');
+        ok ? resolve() : reject(new Error('execCommand failed'));
+      } catch (e) { reject(e); }
+      finally { document.body.removeChild(ta); }
+    });
+  }
+
+  /* ── Click delegation for share / embed buttons ── */
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+
+    if (btn.dataset.action === 'copy-link') {
+      const slug = btn.dataset.slug;
+      const seed = btn.dataset.seed;
+      const url = embedUrl(slug, seed);
+      copyText(url)
+        .then(() => {
+          btn.classList.add('is-copied');
+          showToast('Link copied');
+          setTimeout(() => btn.classList.remove('is-copied'), 1400);
+        })
+        .catch(() => showToast('Copy failed'));
+    }
+
+    if (btn.dataset.action === 'copy-snippet') {
+      copyText(btn.dataset.snippet)
+        .then(() => {
+          btn.textContent = 'Copied';
+          btn.classList.add('is-copied');
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('is-copied');
+          }, 1400);
+        })
+        .catch(() => showToast('Copy failed'));
+    }
+  });
+
+  /* ── Lazy-mount iframes via IntersectionObserver ── */
+  const MOUNT_MARGIN = '500px';
+  const mountedSlugs = new Set();
+
+  function mountSection(sec) {
+    const slug = sec.dataset.slug;
+    if (mountedSlugs.has(slug)) return;
+    mountedSlugs.add(slug);
+
+    const wrap = sec.querySelector('.embed-wrap');
+    const seed = sec.dataset.seed;
+
+    const iframe = document.createElement('iframe');
+    iframe.src = embedUrl(slug, seed);
+    iframe.setAttribute('title', slug + ' preview');
+    iframe.setAttribute('loading', 'lazy');
+    iframe.setAttribute('scrolling', 'no');
+
+    let settled = false;
+    const settle = (ok) => {
+      if (settled) return;
+      settled = true;
+      if (ok) wrap.classList.add('is-ready');
+      else     wrap.classList.add('is-failed');
+    };
+
+    iframe.addEventListener('load', () => settle(true));
+    iframe.addEventListener('error', () => settle(false));
+
+    /* Hard 5s timeout — if the iframe hasn't settled, show fallback. */
+    setTimeout(() => {
+      if (!settled) {
+        console.warn('[logo-lab] landing: iframe timeout for', slug);
+        settle(false);
+      }
+    }, 5000);
+
+    wrap.insertBefore(iframe, wrap.querySelector('.embed-skeleton'));
+  }
+
+  const mountObserver = ('IntersectionObserver' in window)
+    ? new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) {
+            mountSection(en.target);
+            mountObserver.unobserve(en.target);
+          }
+        });
+      }, { rootMargin: MOUNT_MARGIN })
+    : null;
+
+  const allSections = Array.from(document.querySelectorAll('section[data-slug]'));
+  if (mountObserver) {
+    allSections.forEach((s) => mountObserver.observe(s));
+  } else {
+    allSections.forEach(mountSection);
+  }
+
+  /* ── Anchor-click forces immediate mount of the target section ── */
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a.toc-link');
+    if (!a) return;
+    const slug = a.dataset.slug;
+    const sec = document.getElementById(slug);
+    if (sec) mountSection(sec);
+  });
+
+  /* ── Active-section highlighting in the sidebar ── */
+  const tocLinks = Array.from(document.querySelectorAll('a.toc-link'));
+  const linkBySlug = new Map(tocLinks.map((l) => [l.dataset.slug, l]));
+
+  if ('IntersectionObserver' in window) {
+    const visible = new Set();
+    const activeObserver = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) visible.add(en.target.dataset.slug);
+        else visible.delete(en.target.dataset.slug);
+      });
+      /* First visible in document order wins */
+      const orderedSlugs = TOOLS.map((t) => t.slug).filter((s) => visible.has(s));
+      const winner = orderedSlugs[0];
+      tocLinks.forEach((l) => l.classList.toggle('is-active', l.dataset.slug === winner));
+    }, { rootMargin: '-40% 0px -50% 0px' });
+    allSections.forEach((s) => activeObserver.observe(s));
+  }
+
+  /* ── postMessage listener — iframes post their scrollHeight ── */
+  window.addEventListener('message', (e) => {
+    if (e.origin !== location.origin) return;
+    if (!e.data || e.data.source !== 'logo-lab-embed') return;
+    const h = e.data.height;
+    if (typeof h !== 'number' || !isFinite(h) || h <= 0 || h > 2000) return;
+
+    /* Find the iframe whose contentWindow is the sender */
+    const iframes = document.querySelectorAll('.embed-wrap iframe');
+    for (let i = 0; i < iframes.length; i++) {
+      if (iframes[i].contentWindow === e.source) {
+        iframes[i].style.height = h + 'px';
+        return;
+      }
+    }
+  });
+
+  /* ── Keyboard: J/K cycle, 1-9 jump, T back to top ── */
+  function scrollToSlug(slug) {
+    const sec = document.getElementById(slug);
+    if (!sec) return;
+    mountSection(sec);
+    sec.scrollIntoView({ behavior: (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'), block: 'start' });
+    history.replaceState(null, '', '#' + slug);
+  }
+
+  function currentSlugInView() {
+    /* Pick the section whose top is closest to (but at or above) the centre of the viewport */
+    const mid = innerHeight * 0.3;
+    let best = null; let bestDist = Infinity;
+    allSections.forEach((s) => {
+      const r = s.getBoundingClientRect();
+      const d = Math.abs(r.top - mid);
+      if (r.top < innerHeight && r.bottom > 0 && d < bestDist) { best = s; bestDist = d; }
+    });
+    return best ? best.dataset.slug : TOOLS[0].slug;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const tgt = e.target;
+    if (tgt && tgt.matches && tgt.matches('input, textarea, select, [contenteditable="true"]')) return;
+
+    if (e.key === 'j' || e.key === 'J') {
+      const cur = currentSlugInView();
+      const idx = TOOLS.findIndex((t) => t.slug === cur);
+      const next = TOOLS[Math.min(idx + 1, TOOLS.length - 1)];
+      scrollToSlug(next.slug);
+      e.preventDefault();
+    } else if (e.key === 'k' || e.key === 'K') {
+      const cur = currentSlugInView();
+      const idx = TOOLS.findIndex((t) => t.slug === cur);
+      const prev = TOOLS[Math.max(idx - 1, 0)];
+      scrollToSlug(prev.slug);
+      e.preventDefault();
+    } else if (e.key === 't' || e.key === 'T') {
+      window.scrollTo({ top: 0, behavior: (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth') });
+      history.replaceState(null, '', location.pathname);
+      e.preventDefault();
+    } else if (/^[1-9]$/.test(e.key)) {
+      const idx = parseInt(e.key, 10) - 1;
+      if (idx < TOOLS.length) {
+        scrollToSlug(TOOLS[idx].slug);
+        e.preventDefault();
+      }
+    }
+  });
+
+  /* ── Debug panel (?debug=1) ── */
+  if (location.search.includes('debug=1')) {
+    const panel = document.createElement('div');
+    panel.className = 'debug-panel';
+    document.body.appendChild(panel);
+
+    function renderPanel() {
+      const cur = currentSlugInView();
+      const mounted = mountedSlugs.size;
+      const ready = document.querySelectorAll('.embed-wrap.is-ready').length;
+      const failed = document.querySelectorAll('.embed-wrap.is-failed').length;
+      panel.innerHTML =
+        '<strong>logo-lab</strong><br>' +
+        'active: ' + cur + '<br>' +
+        'mounted: ' + mounted + ' / ' + TOOLS.length + '<br>' +
+        'ready: ' + ready + ' · failed: ' + failed;
+    }
+    renderPanel();
+    window.addEventListener('scroll', renderPanel, { passive: true });
+    window.addEventListener('message', renderPanel);
+    setInterval(renderPanel, 500);
+  }
+})();
+</script>
 
 </body>
 </html>

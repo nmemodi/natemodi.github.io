@@ -127,6 +127,7 @@
   <canvas id="c" width="800" height="800"></canvas>
 </div>
 
+<script src="/shared/tools-embed.js"></script>
 <script src="/shared/schema-helpers.js"></script>
 <script src="/shared/rng.js"></script>
 <script src="/shared/permalink.js"></script>
@@ -620,6 +621,7 @@ new ToolExporter({
 window.addEventListener('resize', draw);
 document.fonts.ready.then(() => { draw(); pm.decode(); });
 </script>
+<script src="/shared/tools-registry.js"></script>
 <script src="/shared/tools-nav.js"></script>
 </body>
 </html>

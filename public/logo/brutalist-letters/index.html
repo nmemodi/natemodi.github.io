@@ -30,11 +30,11 @@
     <div class="section-label">Colors</div>
     <div class="color-row">
       <label>Background</label>
-      <input type="color" id="bgColor" value="#000000">
+      <input type="color" id="bgColor" value="#ffffff">
     </div>
     <div class="color-row">
       <label>Shape</label>
-      <input type="color" id="fgColor" value="#ffffff">
+      <input type="color" id="fgColor" value="#111111">
     </div>
   </div>
 
@@ -76,6 +76,7 @@
   <canvas id="c" width="800" height="800"></canvas>
 </div>
 
+<script src="/shared/tools-embed.js"></script>
 <script src="/shared/schema-helpers.js"></script>
 <script src="/shared/rng.js"></script>
 <script src="/shared/permalink.js"></script>
@@ -136,7 +137,7 @@ const CUTS = {
 };
 
 const state = {
-  letter: 'G', bgColor: '#000000', fgColor: '#ffffff',
+  letter: 'G', bgColor: '#ffffff', fgColor: '#111111',
   size: 800, padding: 0.08, cornerRadius: 0.22,
   lineWidth: 0.22, depthMult: 1.0,
 };
@@ -316,8 +317,8 @@ document.getElementById('fgColor').addEventListener('input', e => { state.fgColo
 const { INT_RANGE, COLOR, TEXT } = window.LogoSchema;
 const schema = {
   ch: TEXT({ charset: /^[A-Z0-9]$/, maxLen: 1, def: 'G' }),
-  bg: COLOR('#000000'),
-  fg: COLOR('#ffffff'),
+  bg: COLOR('#ffffff'),
+  fg: COLOR('#111111'),
   cr: INT_RANGE(0, 50, 22),
   pa: INT_RANGE(0, 25, 8),
   lw: INT_RANGE(5, 45, 22),
@@ -392,6 +393,7 @@ window.addEventListener('resize', draw);
 draw();
 pm.decode();
 </script>
+<script src="/shared/tools-registry.js"></script>
 <script src="/shared/tools-nav.js"></script>
 </body>
 </html>
