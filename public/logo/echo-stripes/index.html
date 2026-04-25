@@ -72,16 +72,16 @@
     <input type="range" id="levels" min="1" max="5" value="3">
     <label>Outer growth <span class="control-val" id="growthVal">1.45</span>×</label>
     <input type="range" id="growth" min="1.05" max="2.0" step="0.01" value="1.45">
-    <label>Thinning ratio <span class="control-val" id="ratioVal">0.50</span></label>
-    <input type="range" id="ratio" min="0.3" max="0.85" step="0.01" value="0.50">
+    <label>Thinning ratio <span class="control-val" id="ratioVal">0.18</span></label>
+    <input type="range" id="ratio" min="0.05" max="0.85" step="0.01" value="0.18">
   </div>
 
   <div class="control-group">
     <div class="section-label">Stripes</div>
-    <label>Count <span class="control-val" id="stripesVal">14</span></label>
-    <input type="range" id="stripes" min="6" max="40" value="14">
-    <label>Inner thickness <span class="control-val" id="thicknessVal">22</span></label>
-    <input type="range" id="thickness" min="4" max="60" step="0.5" value="22">
+    <label>Count <span class="control-val" id="stripesVal">10</span> in inner letter</label>
+    <input type="range" id="stripes" min="4" max="30" value="10">
+    <label>Inner thickness <span class="control-val" id="thicknessVal">60</span>%</label>
+    <input type="range" id="thickness" min="20" max="90" value="60">
   </div>
 
   <div class="control-group">
@@ -222,20 +222,29 @@ function renderToCtx(targetCtx, size, opts = {}) {
 
   const { px, py } = anchorPoint(anchor, size);
 
-  // Top-edge alignment: every level's stripe shares its TOP at y_top[i]. Thicker
-  // (inner) levels extend further DOWN from that edge, so a thin outer trail and
-  // the thick inner bar visibly connect along the same horizontal line — the
-  // "shutter trail" that gives the source mark its motion.
-  const stripeStep = size / stripes;
+  // Anchor the stripe grid to the INNER letter's top edge. The same step continues
+  // upward (and downward, depending on anchor) so thin outer trails sit on the
+  // same vertical column as the thick inner bars — the systematic relationship in
+  // the source mark.
+  const innerScale  = Math.pow(growth, -(levels - 1));
+  const innerSize   = outerFontSize * innerScale;
+  const innerM      = measureChar(char, font, weight, innerSize, targetCtx);
+  const innerPlace  = placeLetter(anchor, innerM, px, py);
+  const innerTopY   = innerPlace.drawY - innerM.a;
+  const stripeStep  = innerM.h / stripes;
+  const innerStripeT = stripeStep * (thickness / 100);  // bar height in inner letter
+
+  // y_tops aligned to inner letter's top edge, extending across the whole canvas
   const yTops = [];
-  for (let i = 0; i < stripes; i++) yTops.push(stripeStep * i);
+  for (let yt = innerTopY; yt < size + stripeStep; yt += stripeStep) yTops.push(yt);
+  for (let yt = innerTopY - stripeStep; yt > -stripeStep * 2; yt -= stripeStep) yTops.push(yt);
 
   // Outer-most level paints first; inner levels overpaint within their letter shape.
   // Innermost (lvl=0) gets the thickest stripes; each outer ring thins by `ratio`.
   for (let lvl = levels - 1; lvl >= 0; lvl--) {
     const scale = Math.pow(growth, -(levels - 1 - lvl));
     const fontSize = outerFontSize * scale;
-    const stripeT = thickness * Math.pow(ratio, lvl);
+    const stripeT = innerStripeT * Math.pow(ratio, lvl);
 
     // Position letter so its anchor corner sits at the shared canvas anchor
     const m = measureChar(char, font, weight, fontSize, targetCtx);
@@ -297,7 +306,19 @@ function generateSVG() {
   if (!outerFontSize) return '';
 
   const { px, py } = anchorPoint(anchor, size);
-  const stripeStep = size / stripes;
+
+  const innerScale  = Math.pow(growth, -(levels - 1));
+  const innerSize   = outerFontSize * innerScale;
+  const innerM      = measureChar(char, font, weight, innerSize);
+  const innerPlace  = placeLetter(anchor, innerM, px, py);
+  const innerTopY   = innerPlace.drawY - innerM.a;
+  const stripeStep  = innerM.h / stripes;
+  const innerStripeT = stripeStep * (thickness / 100);
+
+  const yTops = [];
+  for (let yt = innerTopY; yt < size + stripeStep; yt += stripeStep) yTops.push(yt);
+  for (let yt = innerTopY - stripeStep; yt > -stripeStep * 2; yt -= stripeStep) yTops.push(yt);
+
   const escaped = escapeXml(char);
   const fontUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@${weight}&amp;display=swap`;
 
@@ -315,10 +336,9 @@ function generateSVG() {
   svg += `<rect width="${size}" height="${size}" fill="${bgColor}"/>\n`;
 
   for (let lvl = levels - 1; lvl >= 0; lvl--) {
-    const stripeT = thickness * Math.pow(ratio, lvl);
+    const stripeT = innerStripeT * Math.pow(ratio, lvl);
     svg += `<g clip-path="url(#es-lvl${lvl})">\n`;
-    for (let i = 0; i < stripes; i++) {
-      const yt = stripeStep * i;
+    for (const yt of yTops) {
       svg += `<rect x="0" y="${yt.toFixed(2)}" width="${size}" height="${stripeT.toFixed(2)}" fill="${lineColor}"/>\n`;
     }
     svg += `</g>\n`;
@@ -336,9 +356,9 @@ const pschema = {
   an: ENUM(['bl','br','tl','tr','c'], 'bl'),
   lv: INT_RANGE(1, 5, 3),
   gr: FLOAT_RANGE(1.05, 2.0, 1.45, 2),
-  rt: FLOAT_RANGE(0.3, 0.85, 0.50, 2),
-  st: INT_RANGE(6, 40, 14),
-  tk: FLOAT_RANGE(4, 60, 22, 1),
+  rt: FLOAT_RANGE(0.05, 0.85, 0.18, 2),
+  st: INT_RANGE(4, 30, 10),
+  tk: INT_RANGE(20, 90, 60),
   sz: INT_RANGE(400, 2400, 800),
   bg: COLOR('#fdfdfc'),
   fg: COLOR('#111111'),
