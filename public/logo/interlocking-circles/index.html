@@ -8,14 +8,16 @@
     <link rel="stylesheet" href="/shared/tools-shared.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.17/paper-full.min.js"></script>
     <style>
-        #weaveControls {
+        #weaveControls,
+        #neighborsGroup {
             display: flex;
             flex-direction: column;
             gap: 16px;
             transition: opacity 0.2s;
         }
 
-        #weaveControls.disabled {
+        #weaveControls.disabled,
+        #neighborsGroup.disabled {
             opacity: 0.3;
             pointer-events: none;
         }
@@ -40,6 +42,21 @@
         </div>
 
         <div class="control-group">
+            <label>Layout</label>
+            <select id="layout">
+                <option value="auto">Auto</option>
+                <option value="ring">Ring</option>
+                <option value="grid">Grid</option>
+                <option value="line">Line</option>
+            </select>
+        </div>
+
+        <div class="control-group" id="neighborsGroup">
+            <label>Neighbors <span class="val" id="neighborsVal">1</span></label>
+            <input type="range" id="neighbors" min="1" max="7" value="1" step="1">
+        </div>
+
+        <div class="control-group">
             <label>Radius <span class="val" id="radiusVal">150</span></label>
             <input type="range" id="radius" min="30" max="300" value="150">
         </div>
@@ -52,6 +69,11 @@
         <div class="control-group">
             <label>Spacing <span class="val" id="spacingVal">110</span></label>
             <input type="range" id="spacing" min="10" max="400" value="110">
+        </div>
+
+        <div class="control-group">
+            <label>Rotation <span class="val" id="rotationVal">0</span>°</label>
+            <input type="range" id="rotation" min="-180" max="180" value="0" step="1">
         </div>
 
         <label class="toggle-row">
@@ -96,6 +118,7 @@
                 <button class="preset-btn" data-preset="chain">Chain</button>
                 <button class="preset-btn" data-preset="tight">Tight</button>
                 <button class="preset-btn" data-preset="loose">Loose</button>
+                <button class="preset-btn" data-preset="venn">Venn</button>
             </div>
         </div>
 
@@ -131,9 +154,12 @@
         // ---- State ----
         let config = {
             numCircles: 2,
+            layout: 'auto',
+            neighbors: 1,
             radius: 150,
             strokeWidth: 28,
             spacing: 110,
+            rotation: 0,
             weave: true,
             gap: 1.5,
             breakWidth: 0.7,
@@ -148,12 +174,13 @@
 
         // ---- Presets ----
         const presets = {
-            classic:  { numCircles: 2, radius: 150, strokeWidth: 28, spacing: 110, weave: true, gap: 1.5, breakWidth: 0.7, bgColor: '#cc0000', fgColor: '#f0f0f0' },
-            olympic:  { numCircles: 5, radius: 70,  strokeWidth: 14, spacing: 80,  weave: true, gap: 1.4, breakWidth: 0.6, bgColor: '#1a1a2e', fgColor: '#e0e0e0' },
-            trinity:  { numCircles: 3, radius: 120, strokeWidth: 24, spacing: 100, weave: true, gap: 1.5, breakWidth: 0.7, bgColor: '#1b4332', fgColor: '#d4a373' },
-            chain:    { numCircles: 4, radius: 80,  strokeWidth: 16, spacing: 90,  weave: true, gap: 1.3, breakWidth: 0.6, bgColor: '#222222', fgColor: '#ffd700' },
-            tight:    { numCircles: 2, radius: 150, strokeWidth: 36, spacing: 70,  weave: true, gap: 1.8, breakWidth: 0.5, bgColor: '#0d1b2a', fgColor: '#e0fbfc' },
-            loose:    { numCircles: 2, radius: 150, strokeWidth: 20, spacing: 180, weave: true, gap: 1.2, breakWidth: 0.8, bgColor: '#2b2d42', fgColor: '#ef233c' },
+            classic:  { numCircles: 2, layout: 'auto', neighbors: 1, radius: 150, strokeWidth: 28, spacing: 110, rotation: 0, weave: true, gap: 1.5, breakWidth: 0.7, bgColor: '#cc0000', fgColor: '#f0f0f0' },
+            olympic:  { numCircles: 5, layout: 'auto', neighbors: 1, radius: 70,  strokeWidth: 14, spacing: 80,  rotation: 0, weave: true, gap: 1.4, breakWidth: 0.6, bgColor: '#1a1a2e', fgColor: '#e0e0e0' },
+            trinity:  { numCircles: 3, layout: 'ring', neighbors: 1, radius: 120, strokeWidth: 24, spacing: 100, rotation: 0, weave: true, gap: 1.5, breakWidth: 0.7, bgColor: '#1b4332', fgColor: '#d4a373' },
+            chain:    { numCircles: 4, layout: 'ring', neighbors: 1, radius: 80,  strokeWidth: 16, spacing: 90,  rotation: 0, weave: true, gap: 1.3, breakWidth: 0.6, bgColor: '#222222', fgColor: '#ffd700' },
+            tight:    { numCircles: 2, layout: 'auto', neighbors: 1, radius: 150, strokeWidth: 36, spacing: 70,  rotation: 0, weave: true, gap: 1.8, breakWidth: 0.5, bgColor: '#0d1b2a', fgColor: '#e0fbfc' },
+            loose:    { numCircles: 2, layout: 'auto', neighbors: 1, radius: 150, strokeWidth: 20, spacing: 180, rotation: 0, weave: true, gap: 1.2, breakWidth: 0.8, bgColor: '#2b2d42', fgColor: '#ef233c' },
+            venn:     { numCircles: 6, layout: 'ring', neighbors: 3, radius: 130, strokeWidth: 18, spacing: 110, rotation: 0, weave: true, gap: 1.4, breakWidth: 0.6, bgColor: '#101820', fgColor: '#fee715' },
         };
 
         // ---- Geometry helpers ----
@@ -188,61 +215,131 @@
         }
 
         // ---- Layout ----
+        function maxNeighbors(n) {
+            return Math.max(1, Math.floor(n / 2));
+        }
+
+        // Ring radius such that each circle intersects exactly k neighbors
+        // on each side. Two circles k angular steps apart on a ring of
+        // radius R have center distance 2R·sin(kπ/n); they intersect when
+        // that distance < 2r. Picking R between the k and k+1 thresholds
+        // makes the k-th neighbor overlap and the (k+1)-th miss.
+        function ringRadiusForNeighbors(n, k, r) {
+            if (n < 2) return 0;
+            k = Math.max(1, Math.min(k, maxNeighbors(n)));
+            const thresholdAt = step => r / Math.sin(step * Math.PI / n);
+            const lo = thresholdAt(k);
+            if (k + 1 > Math.floor(n / 2)) {
+                // No "next" neighbor pair exists — pick something that
+                // makes everything overlap nicely (Venn-style).
+                return Math.max(r * 0.6, lo * 0.6);
+            }
+            const hi = thresholdAt(k + 1);
+            return (lo + hi) / 2;
+        }
+
+        function ringPositions(cx, cy, n, R) {
+            const out = [];
+            for (let i = 0; i < n; i++) {
+                const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+                out.push(new Point(cx + Math.cos(angle) * R, cy + Math.sin(angle) * R));
+            }
+            return out;
+        }
+
+        function gridPositions(cx, cy, n, sp) {
+            const cols = Math.ceil(Math.sqrt(n * 1.5));
+            const rows = Math.ceil(n / cols);
+            const totalH = (rows - 1) * sp * 0.85;
+            const startY = cy - totalH / 2;
+            const out = [];
+            let count = 0;
+            for (let row = 0; row < rows && count < n; row++) {
+                const colsInRow = Math.min(cols, n - count);
+                const rowOffset = (row % 2 === 1) ? sp * 0.5 : 0;
+                const rowW = (colsInRow - 1) * sp;
+                const rowStartX = cx - rowW / 2 + rowOffset;
+                for (let col = 0; col < colsInRow && count < n; col++) {
+                    out.push(new Point(rowStartX + col * sp, startY + row * sp * 0.85));
+                    count++;
+                }
+            }
+            return out;
+        }
+
+        function linePositions(cx, cy, n, sp) {
+            const totalW = (n - 1) * sp;
+            const startX = cx - totalW / 2;
+            const out = [];
+            for (let i = 0; i < n; i++) {
+                out.push(new Point(startX + i * sp, cy));
+            }
+            return out;
+        }
+
+        function autoPositions(cx, cy, n, sp) {
+            if (n === 2) {
+                return [new Point(cx - sp / 2, cy), new Point(cx + sp / 2, cy)];
+            }
+            if (n <= 4) {
+                return ringPositions(cx, cy, n, sp);
+            }
+            if (n <= 6) {
+                const out = [];
+                const topY = cy - sp * 0.3;
+                const botY = cy + sp * 0.3;
+                const gap = sp * 1.15;
+                out.push(new Point(cx - gap, topY));
+                out.push(new Point(cx, topY));
+                out.push(new Point(cx + gap, topY));
+                out.push(new Point(cx - gap / 2, botY));
+                out.push(new Point(cx + gap / 2, botY));
+                if (n > 5) out.push(new Point(cx, botY + sp * 0.6));
+                return out;
+            }
+            return gridPositions(cx, cy, n, sp);
+        }
+
+        function rotatePositions(pts, cx, cy, deg) {
+            if (!deg) return pts;
+            const rad = deg * Math.PI / 180;
+            const cos = Math.cos(rad);
+            const sin = Math.sin(rad);
+            return pts.map(p => {
+                const dx = p.x - cx, dy = p.y - cy;
+                return new Point(cx + dx * cos - dy * sin, cy + dx * sin + dy * cos);
+            });
+        }
+
         function initPositions() {
             const cx = view.center.x;
             const cy = view.center.y;
             const n = config.numCircles;
             const sp = config.spacing;
-            positions = [];
+            let pts;
 
-            if (n === 2) {
-                positions.push(new Point(cx - sp / 2, cy));
-                positions.push(new Point(cx + sp / 2, cy));
-            } else if (n <= 4) {
-                for (let i = 0; i < n; i++) {
-                    const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
-                    positions.push(new Point(
-                        cx + Math.cos(angle) * sp,
-                        cy + Math.sin(angle) * sp
-                    ));
-                }
-            } else if (n <= 6) {
-                // Olympic-style: 3 top, 2-3 bottom
-                const topY = cy - sp * 0.3;
-                const botY = cy + sp * 0.3;
-                const gap = sp * 1.15;
-
-                positions.push(new Point(cx - gap, topY));
-                positions.push(new Point(cx, topY));
-                positions.push(new Point(cx + gap, topY));
-                positions.push(new Point(cx - gap / 2, botY));
-                positions.push(new Point(cx + gap / 2, botY));
-                if (n > 5) {
-                    positions.push(new Point(cx, botY + sp * 0.6));
-                }
-            } else {
-                // Grid layout for 7+: arrange in rows
-                const cols = Math.ceil(Math.sqrt(n * 1.5));
-                const rows = Math.ceil(n / cols);
-                const totalW = (cols - 1) * sp;
-                const totalH = (rows - 1) * sp * 0.85;
-                const startX = cx - totalW / 2;
-                const startY = cy - totalH / 2;
-                let count = 0;
-                for (let row = 0; row < rows && count < n; row++) {
-                    const colsInRow = Math.min(cols, n - count);
-                    const rowOffset = (row % 2 === 1) ? sp * 0.5 : 0;
-                    const rowW = (colsInRow - 1) * sp;
-                    const rowStartX = cx - rowW / 2 + rowOffset;
-                    for (let col = 0; col < colsInRow && count < n; col++) {
-                        positions.push(new Point(
-                            rowStartX + col * sp,
-                            startY + row * sp * 0.85
-                        ));
-                        count++;
+            switch (config.layout) {
+                case 'ring': {
+                    if (n === 2) {
+                        pts = [new Point(cx - sp / 2, cy), new Point(cx + sp / 2, cy)];
+                    } else {
+                        const R = ringRadiusForNeighbors(n, config.neighbors, config.radius);
+                        pts = ringPositions(cx, cy, n, R);
                     }
+                    break;
                 }
+                case 'grid':
+                    pts = gridPositions(cx, cy, n, sp);
+                    break;
+                case 'line':
+                    pts = linePositions(cx, cy, n, sp);
+                    break;
+                case 'auto':
+                default:
+                    pts = autoPositions(cx, cy, n, sp);
             }
+
+            positions = rotatePositions(pts, cx, cy, config.rotation);
         }
 
         // ---- Render ----
@@ -339,13 +436,23 @@
         };
 
         // ---- Controls ----
+        function shouldReinit(prop) {
+            if (prop === 'numCircles' || prop === 'layout' || prop === 'rotation' || prop === 'spacing') return true;
+            if (prop === 'neighbors' || prop === 'radius') return config.layout === 'ring';
+            return false;
+        }
+
         function bindRange(id, prop, isFloat) {
             const el = document.getElementById(id);
             const valEl = document.getElementById(id + 'Val');
             el.addEventListener('input', function() {
                 config[prop] = isFloat ? parseFloat(this.value) : parseInt(this.value);
                 valEl.textContent = this.value;
-                if (prop === 'numCircles' || prop === 'spacing') initPositions();
+                if (prop === 'numCircles') {
+                    clampNeighbors();
+                    syncNeighborsSlider();
+                }
+                if (shouldReinit(prop)) initPositions();
                 draw();
             });
         }
@@ -369,10 +476,35 @@
             }
         }
 
+        function updateNeighborsUI() {
+            const ng = document.getElementById('neighborsGroup');
+            if (config.layout === 'ring' && config.numCircles >= 3) {
+                ng.classList.remove('disabled');
+            } else {
+                ng.classList.add('disabled');
+            }
+        }
+
+        function clampNeighbors() {
+            const max = maxNeighbors(config.numCircles);
+            if (config.neighbors > max) config.neighbors = max;
+            if (config.neighbors < 1) config.neighbors = 1;
+        }
+
+        function syncNeighborsSlider() {
+            const max = maxNeighbors(config.numCircles);
+            const el = document.getElementById('neighbors');
+            el.max = max;
+            if (parseInt(el.value) > max) el.value = max;
+            document.getElementById('neighborsVal').textContent = config.neighbors;
+            el.value = config.neighbors;
+        }
+
         function syncUI() {
             for (const [id, prop, isFloat] of [
                 ['numCircles', 'numCircles'], ['radius', 'radius'],
                 ['strokeWidth', 'strokeWidth'], ['spacing', 'spacing'],
+                ['rotation', 'rotation'],
                 ['gap', 'gap', true], ['break', 'breakWidth', true]
             ]) {
                 document.getElementById(id).value = config[prop];
@@ -383,13 +515,19 @@
                 document.getElementById(id + 'Val').textContent = config[prop];
             }
             document.getElementById('weave').checked = config.weave;
+            document.getElementById('layout').value = config.layout;
+            clampNeighbors();
+            syncNeighborsSlider();
             updateWeaveUI();
+            updateNeighborsUI();
         }
 
         bindRange('numCircles', 'numCircles');
+        bindRange('neighbors', 'neighbors');
         bindRange('radius', 'radius');
         bindRange('strokeWidth', 'strokeWidth');
         bindRange('spacing', 'spacing');
+        bindRange('rotation', 'rotation');
         bindRange('gap', 'gap', true);
         bindRange('break', 'breakWidth', true);
         bindColor('bgColor', 'bgColor');
@@ -398,6 +536,13 @@
         document.getElementById('weave').addEventListener('change', function() {
             config.weave = this.checked;
             updateWeaveUI();
+            draw();
+        });
+
+        document.getElementById('layout').addEventListener('change', function() {
+            config.layout = this.value;
+            updateNeighborsUI();
+            initPositions();
             draw();
         });
 
@@ -422,12 +567,15 @@
         });
 
         // ─── Permalink ───
-        const { INT_RANGE, FLOAT_RANGE, COLOR, BOOL } = window.LogoSchema;
+        const { INT_RANGE, FLOAT_RANGE, COLOR, BOOL, ENUM } = window.LogoSchema;
         const schema = {
             n:  INT_RANGE(2, 15, 2),
+            ly: ENUM(['auto', 'ring', 'grid', 'line'], 'auto'),
+            nb: INT_RANGE(1, 7, 1),
             r:  INT_RANGE(30, 300, 150),
             sw: INT_RANGE(2, 80, 28),
             sp: INT_RANGE(10, 400, 110),
+            ro: INT_RANGE(-180, 180, 0),
             wv: BOOL(true),
             gp: FLOAT_RANGE(0.5, 4, 1.5, 2),
             br: FLOAT_RANGE(0, 1.5, 0.7, 2),
@@ -437,14 +585,17 @@
 
         function getPermalinkState() {
             return {
-                n: config.numCircles, r: config.radius, sw: config.strokeWidth,
-                sp: config.spacing, wv: config.weave, gp: config.gap,
+                n: config.numCircles, ly: config.layout, nb: config.neighbors,
+                r: config.radius, sw: config.strokeWidth, sp: config.spacing,
+                ro: config.rotation, wv: config.weave, gp: config.gap,
                 br: config.breakWidth, bg: config.bgColor, fg: config.fgColor,
             };
         }
         function applyPermalinkState(s) {
-            config.numCircles = s.n; config.radius = s.r; config.strokeWidth = s.sw;
-            config.spacing = s.sp; config.weave = s.wv; config.gap = s.gp;
+            config.numCircles = s.n; config.layout = s.ly; config.neighbors = s.nb;
+            config.radius = s.r; config.strokeWidth = s.sw;
+            config.spacing = s.sp; config.rotation = s.ro;
+            config.weave = s.wv; config.gap = s.gp;
             config.breakWidth = s.br; config.bgColor = s.bg; config.fgColor = s.fg;
             syncUI();
             initPositions();
@@ -454,11 +605,11 @@
             toolName: 'interlocking-circles',
             schema, getState: getPermalinkState, applyState: applyPermalinkState,
         });
-        ['numCircles', 'radius', 'strokeWidth', 'spacing', 'gap', 'break',
-         'bgColor', 'fgColor', 'weave'].forEach(id => {
+        ['numCircles', 'neighbors', 'radius', 'strokeWidth', 'spacing', 'rotation',
+         'gap', 'break', 'bgColor', 'fgColor', 'weave', 'layout'].forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
-            const evt = (el.type === 'checkbox') ? 'change' : 'input';
+            const evt = (el.type === 'checkbox' || el.tagName === 'SELECT') ? 'change' : 'input';
             el.addEventListener(evt, () => pm.update());
         });
         document.querySelectorAll('.preset-btn, #resetBtn').forEach(btn => {
