@@ -41,7 +41,7 @@
         <div class="tool-header">
             <h1 class="tool-header__title">Shape Tiles</h1>
         </div>
-        <p class="tool-hint">Pick a shape. The pattern tiles automatically with halves at edges and quarters at corners.</p>
+        <p class="tool-hint">A central shape is split apart &mdash; halves slide out to the edges, quarters to the corners. Inspired by Vance Jonson's 1970s Dayton Hudson mark.</p>
 
         <div class="control-group">
             <label>Shape</label>
@@ -49,13 +49,13 @@
         </div>
 
         <div class="control-group">
-            <label>Size <span class="val" id="sizeVal">120</span></label>
-            <input type="range" id="size" min="30" max="300" value="120">
+            <label>Size <span class="val" id="sizeVal">220</span></label>
+            <input type="range" id="size" min="60" max="360" value="220">
         </div>
 
         <div class="control-group">
-            <label>Gap <span class="val" id="gapVal">16</span></label>
-            <input type="range" id="gap" min="0" max="120" value="16">
+            <label>Gap <span class="val" id="gapVal">24</span></label>
+            <input type="range" id="gap" min="0" max="120" value="24">
         </div>
 
         <div class="control-group">
@@ -372,29 +372,81 @@
         // ===== Config =====
         var DEFAULT_CONFIG = {
             shape: 'circle',
-            size: 120,
-            gap: 16,
+            size: 220,
+            gap: 24,
             rotation: 0,
-            bgColor: '#cc0000',
-            fgColor: '#f0f0f0'
+            bgColor: '#f0ece4',
+            fgColor: '#1a1a1a'
         };
 
         var config = Object.assign({}, DEFAULT_CONFIG);
 
         // ===== Presets =====
         var PRESETS = {
-            classic:  { shape: 'circle',    size: 120, gap: 16,  rotation: 0,   bgColor: '#cc0000', fgColor: '#f0f0f0' },
-            swiss:    { shape: 'cross',     size: 100, gap: 12,  rotation: 0,   bgColor: '#111111', fgColor: '#e63946' },
-            retro:    { shape: 'star5',     size: 110, gap: 20,  rotation: 0,   bgColor: '#1a1a2e', fgColor: '#ffd700' },
-            bloom:    { shape: 'flower',    size: 130, gap: 14,  rotation: 0,   bgColor: '#1b4332', fgColor: '#d4a373' },
-            minimal:  { shape: 'diamond',   size: 90,  gap: 40,  rotation: 0,   bgColor: '#f5f5f0', fgColor: '#222222' },
-            deco:     { shape: 'octagon',   size: 100, gap: 8,   rotation: 0,   bgColor: '#2b2d42', fgColor: '#c9a227' }
+            classic:  { shape: 'circle',    size: 240, gap: 18,  rotation: 0,   bgColor: '#f0ece4', fgColor: '#1a1a1a' },
+            swiss:    { shape: 'square',    size: 220, gap: 22,  rotation: 0,   bgColor: '#111111', fgColor: '#e63946' },
+            retro:    { shape: 'star5',     size: 240, gap: 30,  rotation: 0,   bgColor: '#1a1a2e', fgColor: '#ffd700' },
+            bloom:    { shape: 'flower',    size: 260, gap: 26,  rotation: 0,   bgColor: '#1b4332', fgColor: '#d4a373' },
+            minimal:  { shape: 'diamond',   size: 200, gap: 60,  rotation: 0,   bgColor: '#f5f5f0', fgColor: '#222222' },
+            deco:     { shape: 'octagon',   size: 230, gap: 14,  rotation: 0,   bgColor: '#2b2d42', fgColor: '#c9a227' }
         };
 
         // ===== Canvas Setup =====
         var canvas = document.getElementById('canvas');
         var wrap = document.querySelector('.tool-canvas');
         var ctx = canvas.getContext('2d');
+
+        // ===== Composition layout =====
+        // The shape is conceptually centered at the canvas middle and split into
+        // 9 segments: 1 whole at center, 4 halves at top/right/bottom/left, and
+        // 4 quarters at the corners. Each segment is then translated outward by
+        // the gap so the pieces visually pull apart from one another.
+        //
+        // Each entry: [dx, dy, clipL, clipT, clipR, clipB] all relative to canvas center.
+        // dx,dy is how far the shape is translated for that segment; clip is the
+        // canvas-space rectangle the shape is clipped to.
+        function getSegments(r, g) {
+            return [
+                // Center (whole shape)
+                [ 0,  0, -r,    -r,    r,    r   ],
+                // Edges (halves)
+                [ 0, -g, -r,    -r-g,  r,   -g   ],  // top
+                [ 0,  g, -r,     g,    r,    r+g ],  // bottom
+                [-g,  0, -r-g,  -r,   -g,    r   ],  // left
+                [ g,  0,  g,    -r,    r+g,  r   ],  // right
+                // Corners (quarters)
+                [-g, -g, -r-g,  -r-g, -g,   -g   ],  // top-left
+                [ g, -g,  g,    -r-g,  r+g, -g   ],  // top-right
+                [-g,  g, -r-g,   g,   -g,    r+g ],  // bottom-left
+                [ g,  g,  g,     g,    r+g,  r+g ],  // bottom-right
+            ];
+        }
+
+        function renderComposition(targetCtx, w, h) {
+            var shape = SHAPES.find(function(s) { return s.id === config.shape; });
+            if (!shape) return;
+
+            var r = config.size / 2;
+            var g = config.gap;
+            var rot = config.rotation * Math.PI / 180;
+            var cx = w / 2;
+            var cy = h / 2;
+
+            targetCtx.fillStyle = config.fgColor;
+
+            getSegments(r, g).forEach(function(seg) {
+                var dx = seg[0], dy = seg[1];
+                var clipL = seg[2], clipT = seg[3], clipR = seg[4], clipB = seg[5];
+                targetCtx.save();
+                targetCtx.beginPath();
+                targetCtx.rect(cx + clipL, cy + clipT, clipR - clipL, clipB - clipT);
+                targetCtx.clip();
+                targetCtx.translate(cx + dx, cy + dy);
+                if (rot) targetCtx.rotate(rot);
+                shape.draw(targetCtx, r);
+                targetCtx.restore();
+            });
+        }
 
         // ===== Render =====
         function render() {
@@ -407,66 +459,15 @@
             canvas.style.height = h + 'px';
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-            // Background
             ctx.fillStyle = config.bgColor;
             ctx.fillRect(0, 0, w, h);
 
-            // Find shape
-            var shape = SHAPES.find(function(s) { return s.id === config.shape; });
-            if (!shape) return;
-
-            var r = config.size / 2;
-            var spacing = config.size + config.gap;
-            var rot = config.rotation * Math.PI / 180;
-
-            ctx.fillStyle = config.fgColor;
-
-            // Center pattern on canvas
-            var cx = w / 2;
-            var cy = h / 2;
-            var nx = Math.ceil(w / spacing / 2) + 2;
-            var ny = Math.ceil(h / spacing / 2) + 2;
-
-            for (var iy = -ny; iy <= ny; iy++) {
-                for (var ix = -nx; ix <= nx; ix++) {
-                    var x = cx + ix * spacing;
-                    var y = cy + iy * spacing;
-                    ctx.save();
-                    ctx.translate(x, y);
-                    ctx.rotate(rot);
-                    shape.draw(ctx, r);
-                    ctx.restore();
-                }
-            }
+            renderComposition(ctx, w, h);
         }
 
         // ===== Render to export canvas =====
         function renderToExportCanvas(expCtx, w, h, opts) {
-            var shape = SHAPES.find(function(s) { return s.id === config.shape; });
-            if (!shape) return;
-
-            var r = config.size / 2;
-            var spacing = config.size + config.gap;
-            var rot = config.rotation * Math.PI / 180;
-
-            expCtx.fillStyle = config.fgColor;
-
-            var cx = w / 2;
-            var cy = h / 2;
-            var nx = Math.ceil(w / spacing / 2) + 2;
-            var ny = Math.ceil(h / spacing / 2) + 2;
-
-            for (var iy = -ny; iy <= ny; iy++) {
-                for (var ix = -nx; ix <= nx; ix++) {
-                    var x = cx + ix * spacing;
-                    var y = cy + iy * spacing;
-                    expCtx.save();
-                    expCtx.translate(x, y);
-                    expCtx.rotate(rot);
-                    shape.draw(expCtx, r);
-                    expCtx.restore();
-                }
-            }
+            renderComposition(expCtx, w, h);
         }
 
         // ===== Export SVG (returns string) =====
@@ -477,28 +478,31 @@
             if (!shape) return '';
 
             var r = config.size / 2;
-            var spacing = config.size + config.gap;
+            var g = config.gap;
             var rotDeg = config.rotation;
-
-            var elements = '';
             var cx = w / 2;
             var cy = h / 2;
-            var nx = Math.ceil(w / spacing / 2) + 2;
-            var ny = Math.ceil(h / spacing / 2) + 2;
 
-            for (var iy = -ny; iy <= ny; iy++) {
-                for (var ix = -nx; ix <= nx; ix++) {
-                    var x = (cx + ix * spacing).toFixed(1);
-                    var y = (cy + iy * spacing).toFixed(1);
-                    var transform = 'translate(' + x + ',' + y + ')';
-                    if (rotDeg !== 0) transform += ' rotate(' + rotDeg + ')';
-                    elements += '<g transform="' + transform + '">' + shape.svg(r, config.fgColor) + '</g>\n';
-                }
-            }
+            var defs = '';
+            var groups = '';
+            getSegments(r, g).forEach(function(seg, i) {
+                var dx = seg[0], dy = seg[1];
+                var clipL = seg[2], clipT = seg[3], clipR = seg[4], clipB = seg[5];
+                var clipId = 'st-clip-' + i;
+                defs += '<clipPath id="' + clipId + '">' +
+                    '<rect x="' + (cx + clipL).toFixed(2) + '" y="' + (cy + clipT).toFixed(2) +
+                    '" width="' + (clipR - clipL).toFixed(2) + '" height="' + (clipB - clipT).toFixed(2) + '"/>' +
+                    '</clipPath>';
+                var transform = 'translate(' + (cx + dx).toFixed(2) + ',' + (cy + dy).toFixed(2) + ')';
+                if (rotDeg !== 0) transform += ' rotate(' + rotDeg + ')';
+                groups += '<g clip-path="url(#' + clipId + ')"><g transform="' + transform + '">' +
+                    shape.svg(r, config.fgColor) + '</g></g>\n';
+            });
 
             return '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">\n' +
+                '<defs>' + defs + '</defs>\n' +
                 '<rect width="' + w + '" height="' + h + '" fill="' + config.bgColor + '"/>\n' +
-                '<g>\n' + elements + '</g>\n</svg>';
+                groups + '</svg>';
         }
 
         // ===== Shape Picker =====
@@ -602,8 +606,8 @@
         function applyRandom(seed) {
             var rand = window.LogoRNG.mulberry32(seed);
             config.shape = SHAPES[Math.floor(rand() * SHAPES.length)].id;
-            config.size = 30 + Math.floor(rand() * 270);
-            config.gap = Math.floor(rand() * 120);
+            config.size = 140 + Math.floor(rand() * 220);
+            config.gap = Math.floor(rand() * 80);
             config.rotation = Math.floor(rand() * 360);
             config.bgColor = '#' + Math.floor(rand() * 16777215).toString(16).padStart(6, '0');
             config.fgColor = '#' + Math.floor(rand() * 16777215).toString(16).padStart(6, '0');
@@ -621,11 +625,11 @@
         var shapeIds = SHAPES.map(function(s) { return s.id; });
         var pschema = {
             sh: LS.ENUM(shapeIds, 'circle'),
-            sz: LS.INT_RANGE(30, 300, 120),
-            g:  LS.INT_RANGE(0, 120, 16),
+            sz: LS.INT_RANGE(60, 360, 220),
+            g:  LS.INT_RANGE(0, 120, 24),
             rt: LS.INT_RANGE(0, 360, 0),
-            bg: LS.COLOR('#cc0000'),
-            fg: LS.COLOR('#f0f0f0'),
+            bg: LS.COLOR('#f0ece4'),
+            fg: LS.COLOR('#1a1a1a'),
             sd: LS.SEED(0),
         };
         config.seed = 0;
