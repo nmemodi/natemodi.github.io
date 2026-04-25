@@ -31,6 +31,12 @@
       tagline: 'Horizontal lines displaced by a letter heightmap.',
       blurb: 'Stack horizontal lines across the canvas, then lift each one by the brightness of the letter underneath. The result reads as a letterform that emerges from the weave rather than sits on top of it. Good for marks that should feel topographic — mountains, contour maps, and the cover of every vaguely-1970s paperback.',
       defaultSeed: '42',
+      variants: [
+        'v=1',
+        'v=1&f=Futura&g=0.7&iv=1&ls=1&lt=V&n=6&oy=114&rd=100',
+        'v=1&f=Futura&g=0.7&iv=1&ls=1&lt=K&m=34&n=23&oy=86&rd=100',
+        'v=1&cr=0&f=Futura&g=0.7&ls=1&lt=O&m=34&n=9&oy=86&rd=100'
+      ],
       credit: {
         work: 'Solfer',
         designers: [
@@ -47,6 +53,12 @@
       tagline: 'Cut letters out of solid blocks with right-angle paths.',
       blurb: 'Every character is a single path of right-angle turns carved out of a filled square. No curves, no optical corrections, no apology. The shapes that come out feel more like pictograms than typography, which is the point — they read as logos first and letters second.',
       defaultSeed: '7',
+      variants: [
+        'v=1&cr=16&dp=147&lw=18&pa=12',
+        'v=1&bg=e0e0e0&ch=K&cr=16&dp=147&fg=8c00ff&lw=18&pa=12',
+        'v=1&bg=cec1cd&ch=L&cr=16&dp=132&fg=7e7987&lw=14&pa=12',
+        'v=1&bg=12122b&ch=R&cr=16&dp=132&fg=ffc852&lw=14&pa=12'
+      ],
       credit: {
         work: 'Hans-Joachim Gericke',
         designers: [
