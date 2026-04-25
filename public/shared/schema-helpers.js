@@ -79,7 +79,13 @@
         if (!/^#[0-9a-fA-F]{6}$/.test(raw)) return { ok: false, value: defClean, reason: 'bad-hex' };
         return { ok: true, value: raw.toLowerCase() };
       },
-      randomize(rng) {
+      /* opts.palette === 'mono' picks from a curated grayscale ramp so
+         randomized marks read as black-and-white compositions. */
+      randomize(rng, opts) {
+        if (opts && opts.palette === 'mono') {
+          const ramp = ['#000000','#111111','#222222','#444444','#888888','#bbbbbb','#e5e5e5','#fafafa','#ffffff'];
+          return ramp[Math.floor(rng() * ramp.length)];
+        }
         const hex = Math.floor(rng() * 0x1000000).toString(16).padStart(6, '0');
         return '#' + hex;
       },
@@ -170,8 +176,12 @@
         if (charset && !charset.test(s)) return { ok: false, value: def, reason: 'bad-charset' };
         return { ok: true, value: s };
       },
-      randomize(rng) {
-        const ch = pool[Math.floor(rng() * pool.length)];
+      /* opts.monogram (string) overrides the default A–Z pool, so brand
+         initials propagate to every letter-based tool in a Mosaic. */
+      randomize(rng, opts) {
+        const source = (opts && opts.monogram) ? opts.monogram : pool;
+        if (source.length === 0) return def;
+        const ch = source[Math.floor(rng() * source.length)];
         if (charset && !charset.test(ch)) return def;
         return ch;
       },

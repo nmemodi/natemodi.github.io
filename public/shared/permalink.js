@@ -44,8 +44,10 @@
   /* Reserved hash keys that aren't part of any tool's schema:
      v    — schema version
      r    — randomize-all flag (drives Mosaic and any "lucky" links)
-     seed — RNG seed for `r=1` mode (so URLs are deterministic) */
-  const RESERVED_KEYS = new Set(['v', 'r', 'seed']);
+     seed — RNG seed for `r=1` mode (so URLs are deterministic)
+     p    — palette mode for randomization ('mono' clamps colors to grayscale)
+     m    — monogram pool for letter-based tools (string of allowed chars) */
+  const RESERVED_KEYS = new Set(['v', 'r', 'seed', 'p', 'm']);
 
   /* FNV-1a 32-bit string hash → seed for the deterministic RNG. */
   function _hashSeed(str) {
@@ -130,15 +132,21 @@
       }
 
       /* `r=1` → randomize every schema field that wasn't given an explicit
-         value. Seeded from `seed=` so reloads are deterministic. */
+         value. Seeded from `seed=` so reloads are deterministic.
+         Optional opts: p=mono (grayscale palette), m=ABC (monogram pool). */
       const isRandomMode = parsed.r === '1';
       if (isRandomMode) {
         const seedStr = parsed.seed || '0';
         const rng = _mulberry32(_hashSeed(seedStr));
+        const opts = {};
+        if (parsed.p === 'mono') opts.palette = 'mono';
+        if (parsed.m && typeof parsed.m === 'string' && parsed.m.length > 0) {
+          opts.monogram = parsed.m;
+        }
         for (const [key, field] of Object.entries(this.schema)) {
           if (parsed[key] !== undefined) continue;
           if (typeof field.randomize === 'function') {
-            state[key] = field.randomize(rng);
+            state[key] = field.randomize(rng, opts);
           }
         }
       }
