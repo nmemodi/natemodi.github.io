@@ -41,6 +41,33 @@
   const DEBOUNCE_MS = 200;
   const HELP_SENTINEL = '?';
 
+  /* Reserved hash keys that aren't part of any tool's schema:
+     v    — schema version
+     r    — randomize-all flag (drives Mosaic and any "lucky" links)
+     seed — RNG seed for `r=1` mode (so URLs are deterministic) */
+  const RESERVED_KEYS = new Set(['v', 'r', 'seed']);
+
+  /* FNV-1a 32-bit string hash → seed for the deterministic RNG. */
+  function _hashSeed(str) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  /* Mulberry32 — small, fast, decent-quality 32-bit PRNG. */
+  function _mulberry32(seed) {
+    let t = seed >>> 0;
+    return function () {
+      t = (t + 0x6D2B79F5) >>> 0;
+      let r = Math.imul(t ^ (t >>> 15), 1 | t);
+      r = (r + Math.imul(r ^ (r >>> 7), 61 | r)) ^ r;
+      return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
   class PermalinkManager {
     /**
      * @param {Object} opts
@@ -102,6 +129,20 @@
         this._toast('Some values in the link were invalid — showing defaults for those');
       }
 
+      /* `r=1` → randomize every schema field that wasn't given an explicit
+         value. Seeded from `seed=` so reloads are deterministic. */
+      const isRandomMode = parsed.r === '1';
+      if (isRandomMode) {
+        const seedStr = parsed.seed || '0';
+        const rng = _mulberry32(_hashSeed(seedStr));
+        for (const [key, field] of Object.entries(this.schema)) {
+          if (parsed[key] !== undefined) continue;
+          if (typeof field.randomize === 'function') {
+            state[key] = field.randomize(rng);
+          }
+        }
+      }
+
       try {
         this.applyState(state);
       } catch (e) {
@@ -111,7 +152,7 @@
       }
 
       this._loadedFromHash = true;
-      this._showRemixChip();
+      if (!isRandomMode) this._showRemixChip();
       this._canonicalize();
       this._updatePillLabel();
     }
@@ -206,7 +247,7 @@
     _validate(parsed) {
       const state = {};
       let hadFailures = false;
-      const seenKeys = new Set(['v']);
+      const seenKeys = new Set(RESERVED_KEYS);
 
       for (const [key, field] of Object.entries(this.schema)) {
         seenKeys.add(key);

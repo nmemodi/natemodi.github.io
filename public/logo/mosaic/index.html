@@ -351,7 +351,9 @@
   }
 
   function embedUrl(slug, seed) {
-    return ORIGIN + toolPath(slug) + '#v=1&seed=' + seed;
+    /* r=1 tells permalink.js to randomize every schema field via the seed.
+       Same URL → same render (deterministic), and the new tab matches the tile. */
+    return ORIGIN + toolPath(slug) + '#v=1&r=1&seed=' + seed;
   }
 
   /* ── Tile construction ── */

@@ -319,8 +319,13 @@ function draw() {
     }
   }
 
-  // Fit to viewport
-  const maxD = Math.min(window.innerWidth - 310, window.innerHeight - 40, 700);
+  // Fit to viewport. Sidebar is hidden in embed mode, so drop the 310px sidebar
+  // offset and the 700px cap — let the canvas fill the iframe square.
+  const isEmbed = document.documentElement.hasAttribute('data-embedded');
+  const wPad = isEmbed ? 0 : 310;
+  const hPad = isEmbed ? 0 : 40;
+  const cap = isEmbed ? Infinity : 700;
+  const maxD = Math.min(window.innerWidth - wPad, window.innerHeight - hPad, cap);
   canvas.style.width = maxD + 'px'; canvas.style.height = maxD + 'px';
 }
 
