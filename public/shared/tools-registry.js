@@ -13,9 +13,12 @@
      defaultSeed — seed used by the landing's embedded preview
      credit   — inspiration citation (historical logo). Fields:
                   work      — original logo title/company
-                  designers — list of credited designers
+                  designers — list of { name, url? } objects (url is the
+                              logobook.com /designer/<slug>/ page when one
+                              exists, otherwise null/omitted)
                   year      — year published
-                  url       — logobook.com link (optional; null if unlisted)
+                  url       — logobook.com /logo/<slug>/ link for the work
+                              itself (null when unlisted)
    ═══════════════════════════════════════════════════════════════ */
 
 (function () {
@@ -30,7 +33,9 @@
       defaultSeed: '42',
       credit: {
         work: 'Solfer',
-        designers: ['Francesco Burcini'],
+        designers: [
+          { name: 'Francesco Burcini', url: 'https://logobook.com/designer/francesco-burcini/' }
+        ],
         year: 1978,
         url: 'https://logobook.com/logo/solfer/'
       },
@@ -43,8 +48,11 @@
       blurb: 'Every character is a single path of right-angle turns carved out of a filled square. No curves, no optical corrections, no apology. The shapes that come out feel more like pictograms than typography, which is the point — they read as logos first and letters second.',
       defaultSeed: '7',
       credit: {
-        work: 'Hans-Joachim Gericke (mark)',
-        designers: ['Hans-Joachim Gericke', 'Klaus Grötzinger', 'Peter Riefenstahl'],
+        work: 'Hans-Joachim Gericke',
+        designers: [
+          { name: 'Klaus Grötzinger', url: 'https://logobook.com/designer/klaus-grozinger/' },
+          { name: 'Peter Riefenstahl', url: 'https://logobook.com/designer/peter-riefenstahl/' }
+        ],
         year: 1966,
         url: 'https://logobook.com/logo/hans-joachim-gericke/'
       },
@@ -58,7 +66,9 @@
       defaultSeed: '3',
       credit: {
         work: 'Ota Dental Clinic',
-        designers: ['Koichi Watanabe'],
+        designers: [
+          { name: 'Koichi Watanabe', url: 'https://logobook.com/designer/koichi-watanabe/' }
+        ],
         year: 1974,
         url: 'https://logobook.com/logo/ota-dental-clinic/'
       },
@@ -72,7 +82,10 @@
       defaultSeed: '12',
       credit: {
         work: 'Five G Marketing',
-        designers: ['John B. Castle', 'Castle, Chappell and Partners'],
+        designers: [
+          { name: 'John B. Castle', url: 'https://logobook.com/designer/john-b-castle/' },
+          { name: 'Castle, Chappell and Partners', url: null }
+        ],
         year: 1966,
         url: 'https://logobook.com/logo/five-g/'
       },
@@ -86,7 +99,9 @@
       defaultSeed: '5',
       credit: {
         work: 'Dayton Hudson Corporation',
-        designers: ['Vance Jonson'],
+        designers: [
+          { name: 'Vance Jonson', url: 'https://logobook.com/designer/vance-jonson/' }
+        ],
         year: '1970s',
         url: 'https://logobook.com/logo/dayton-hudson-corporation/'
       },
@@ -100,7 +115,10 @@
       defaultSeed: '9',
       credit: {
         work: 'Fujisankei Kokukusha',
-        designers: ['Ippo Miyamoto', 'Tadashi Ishikawa'],
+        designers: [
+          { name: 'Ippo Miyamoto', url: 'https://logobook.com/designer/ippo-miyamoto/' },
+          { name: 'Tadashi Ishikawa', url: 'https://logobook.com/designer/tadashi-ishikawa/' }
+        ],
         year: 1978,
         url: 'https://logobook.com/logo/fujisankei-kokukusha/'
       },
@@ -114,7 +132,9 @@
       defaultSeed: '11',
       credit: {
         work: 'Minami-nihon',
-        designers: ['Kazumasa Nagai'],
+        designers: [
+          { name: 'Kazumasa Nagai', url: 'https://logobook.com/designer/kazumasa-nagai/' }
+        ],
         year: 1983,
         url: 'https://logobook.com/logo/minami-nihon/'
       },
@@ -128,7 +148,12 @@
       defaultSeed: '6',
       credit: {
         work: 'Grace',
-        designers: ['Koichi Nakai', 'Ichiro Nakai', 'Tetsuo Hiro', 'Tetsuo Togasawa'],
+        designers: [
+          { name: 'Koichi Nakai', url: 'https://logobook.com/designer/koichi-nakai/' },
+          { name: 'Ichiro Nakai', url: 'https://logobook.com/designer/ichiro-nakai/' },
+          { name: 'Tetsuo Hiro', url: 'https://logobook.com/designer/tetsuo-hiro/' },
+          { name: 'Tetsuo Togasawa', url: 'https://logobook.com/designer/tetsuo-togasawa/' }
+        ],
         year: 1982,
         url: 'https://logobook.com/logo/grace/'
       },
@@ -142,7 +167,9 @@
       defaultSeed: '42',
       credit: {
         work: 'LaSalle Steel',
-        designers: ['Morton Goldsholl'],
+        designers: [
+          { name: 'Morton Goldsholl', url: 'https://logobook.com/designer/morton-goldsholl/' }
+        ],
         year: 1962,
         url: null
       },
