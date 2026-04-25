@@ -476,11 +476,11 @@
   <main>
     <article>
       <h1>Logo Lab</h1>
-      <time datetime="2026-04-24">Nine generative tools</time>
+      <time datetime="2026-04-24">Generative tools for iconic logos</time>
 
       <p class="lede">Nine browser-based tools for generating minimalist marks. Each one trades on a narrow visual idea — displaced lines, interlocking rings, rounded-rect bitmaps — and gives you just enough knobs to find the good version. Every state has a shareable URL, every mark has a PNG/SVG export, and every tool embeds via iframe into anyone's site.</p>
 
-      <p>Keyboard: press <strong>J</strong>/<strong>K</strong> to move between sections, <strong>1–9</strong> to jump, <strong>T</strong> to return to the top. Every embed is live — tweak it here, or click <em>Open in tool</em> for the full controls.</p>
+      <p>Keyboard: press <strong>J</strong>/<strong>K</strong> to move between sections, <strong>1–9</strong> to jump, <strong>T</strong> to return to the top. Every embed is live — tweak it here, or click <em>Open tool</em> for the full controls.</p>
 
       <div id="sections"></div>
 
@@ -554,7 +554,7 @@
     openTop.target = '_blank';
     openTop.rel = 'noopener';
     openTop.innerHTML =
-      'Open in tool' +
+      'Open tool' +
       '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h6v6"/><path d="M9 3L3 9"/></svg>';
 
     head.appendChild(h2);
@@ -628,28 +628,38 @@
     sec.appendChild(actions);
     sec.appendChild(snip);
 
-    /* Citation — historical logo reference (optional logobook.com link) */
+    /* Citation — historical logo reference. Links the work title and each
+       designer name to logobook.com when a page exists. Uses textContent
+       throughout so any user-generated string would be safely escaped. */
     if (t.credit) {
       const credit = document.createElement('p');
       credit.className = 'credit';
-      const designers = Array.isArray(t.credit.designers)
-        ? t.credit.designers.join(', ')
-        : (t.credit.designers || '');
-      const workNode = document.createElement(t.credit.url ? 'a' : 'span');
-      if (t.credit.url) {
-        workNode.href = t.credit.url;
-        workNode.target = '_blank';
-        workNode.rel = 'noopener noreferrer';
-      }
-      workNode.textContent = t.credit.work;
+
       const labelSpan = document.createElement('span');
       labelSpan.className = 'credit-label';
       labelSpan.textContent = 'After';
       credit.appendChild(labelSpan);
-      credit.appendChild(workNode);
-      credit.appendChild(document.createTextNode(
-        (designers ? ' · ' + designers : '') + ' · ' + t.credit.year
-      ));
+
+      const linkOrSpan = (text, href) => {
+        const node = document.createElement(href ? 'a' : 'span');
+        if (href) {
+          node.href = href;
+          node.target = '_blank';
+          node.rel = 'noopener noreferrer';
+        }
+        node.textContent = text;
+        return node;
+      };
+
+      credit.appendChild(linkOrSpan(t.credit.work, t.credit.url));
+
+      const designers = Array.isArray(t.credit.designers) ? t.credit.designers : [];
+      designers.forEach((d, i) => {
+        credit.appendChild(document.createTextNode(i === 0 ? ' · ' : ', '));
+        credit.appendChild(linkOrSpan(d.name, d.url || null));
+      });
+
+      credit.appendChild(document.createTextNode(' · ' + t.credit.year));
       sec.appendChild(credit);
     }
 

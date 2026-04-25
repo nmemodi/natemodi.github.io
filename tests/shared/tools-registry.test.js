@@ -56,11 +56,21 @@ describe('tools-registry', () => {
       expect(t.credit.designers.length).toBeGreaterThan(0);
       // year is number or decade-string like "1970s"
       expect(['number', 'string']).toContain(typeof t.credit.year);
-      // url is either a logobook.com https URL or null
+      // work url is either a logobook.com /logo/ URL or null
       if (t.credit.url !== null) {
         expect(typeof t.credit.url).toBe('string');
-        expect(t.credit.url.startsWith('https://logobook.com/')).toBe(true);
+        expect(t.credit.url.startsWith('https://logobook.com/logo/')).toBe(true);
       }
+      // each designer is an object with name and an optional url
+      t.credit.designers.forEach(d => {
+        expect(typeof d).toBe('object');
+        expect(typeof d.name).toBe('string');
+        expect(d.name.length).toBeGreaterThan(0);
+        if (d.url) {
+          expect(typeof d.url).toBe('string');
+          expect(d.url.startsWith('https://logobook.com/designer/')).toBe(true);
+        }
+      });
     });
   });
 
