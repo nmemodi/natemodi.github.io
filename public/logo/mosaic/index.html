@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mosaic — Logo Lab</title>
+<meta name="description" content="A randomized grid of every Logo Lab tool. Shuffle for a new wall. Click any tile to open it.">
+
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+<meta property="og:title" content="Mosaic — Logo Lab">
+<meta property="og:description" content="A randomized grid of every Logo Lab tool. Shuffle for a new wall. Click any tile to open it.">
+<meta property="og:url" content="https://natemodi.com/logo/mosaic/">
+<meta property="og:type" content="website">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --bg: #fdfdfc;
+    --fg: #111;
+    --fg-muted: rgba(17, 17, 17, 0.58);
+    --fg-faded: rgba(17, 17, 17, 0.4);
+    --fg-quiet: rgba(17, 17, 17, 0.32);
+    --border: rgba(17, 17, 17, 0.1);
+    --border-subtle: rgba(17, 17, 17, 0.06);
+    --tile-bg: #f4f3f1;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    color-scheme: light;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.005em;
+  }
+
+  .page {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 48px 32px 96px;
+  }
+
+  /* ── Header ── */
+  .head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .head__left { min-width: 0; }
+  .crumb {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--fg-faded);
+    text-decoration: none;
+    font-size: 13px;
+    margin-bottom: 12px;
+    transition: color 0.15s ease;
+  }
+  .crumb:hover { color: var(--fg); }
+  .crumb svg { width: 12px; height: 12px; }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .lede {
+    color: var(--fg-muted);
+    font-size: 14px;
+    max-width: 56ch;
+  }
+
+  .head__actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .btn {
+    appearance: none;
+    background: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    user-select: none;
+  }
+  .btn:hover { border-color: var(--fg); }
+  .btn--primary {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+  .btn--primary:hover { background: #000; border-color: #000; }
+  .btn svg { width: 12px; height: 12px; }
+  .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+  .btn--shuffle .ico-shuffle { transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .btn--shuffle.is-spinning .ico-shuffle { transform: rotate(180deg); }
+
+  /* ── Grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  @media (max-width: 880px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  }
+  @media (max-width: 540px) {
+    .grid { grid-template-columns: 1fr; gap: 14px; }
+    .page { padding: 32px 20px 80px; }
+    h1 { font-size: 19px; }
+  }
+
+  /* ── Tile ── */
+  .tile {
+    position: relative;
+    display: block;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--tile-bg);
+    text-decoration: none;
+    color: inherit;
+    aspect-ratio: 1 / 1;
+    transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .tile:hover {
+    border-color: var(--fg);
+    box-shadow: 0 2px 12px rgba(17, 17, 17, 0.06);
+  }
+  .tile:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 2px;
+  }
+
+  .tile iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: var(--tile-bg);
+    /* Crucial: clicks pass through to the wrapping anchor. */
+    pointer-events: none;
+  }
+
+  .tile__skel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fg-quiet);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    background: linear-gradient(90deg, var(--tile-bg) 0%, #ebeae7 50%, var(--tile-bg) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+  .tile.is-ready .tile__skel { display: none; }
+
+  @keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tile__skel { animation: none; background: var(--tile-bg); }
+  }
+
+  .tile__fail {
+    display: none;
+    position: absolute;
+    inset: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 16px;
+    text-align: center;
+    color: var(--fg-muted);
+    font-size: 12px;
+  }
+  .tile.is-failed .tile__skel { display: none; }
+  .tile.is-failed iframe { display: none; }
+  .tile.is-failed .tile__fail { display: flex; }
+
+  /* Hover label — name of the tool, peeks up from the bottom */
+  .tile__label {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 8px 10px;
+    background: linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 70%, rgba(255,255,255,0) 100%);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--fg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    pointer-events: none;
+  }
+  .tile:hover .tile__label,
+  .tile:focus-visible .tile__label {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .tile__label .ico-out {
+    width: 11px;
+    height: 11px;
+    color: var(--fg-muted);
+    flex-shrink: 0;
+  }
+
+  /* ── Footer ── */
+  .foot {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--fg-faded);
+    font-size: 12.5px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .foot a {
+    color: var(--fg-muted);
+    text-decoration: none;
+  }
+  .foot a:hover { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
+
+  kbd {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 1px 5px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--tile-bg);
+    color: var(--fg-muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="head">
+    <div class="head__left">
+      <a class="crumb" href="/logo/">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M7.5 3L4.5 6L7.5 9"/>
+        </svg>
+        Logo Lab
+      </a>
+      <h1>Mosaic</h1>
+      <p class="lede">A live wall of every tool, randomized. Click a tile to open it. Press <kbd>S</kbd> to shuffle.</p>
+    </div>
+
+    <div class="head__actions">
+      <button type="button" class="btn btn--primary btn--shuffle" id="shuffle" aria-label="Shuffle tiles">
+        <svg class="ico-shuffle" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 3h2l5 6h2"/>
+          <path d="M2 9h2l5-6h2"/>
+          <path d="M9 1l2 2-2 2"/>
+          <path d="M9 7l2 2-2 2"/>
+        </svg>
+        Shuffle
+      </button>
+    </div>
+  </header>
+
+  <div class="grid" id="grid" role="list"></div>
+
+  <footer class="foot">
+    <span>Each tile is the same tool you'd open standalone — same URL, same params.</span>
+    <a href="/logo/">All tools →</a>
+  </footer>
+</div>
+
+<script src="/shared/tools-registry.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  if (!window.LogoTools) {
+    console.warn('[mosaic] registry missing');
+    return;
+  }
+
+  const TOOLS = window.LogoTools.TOOLS;
+  const toolPath = window.LogoTools.toolPath;
+
+  const ORIGIN = location.origin;
+  const TILE_COUNT = Math.min(9, TOOLS.length);
+  const SEED_ALPHABET = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  const SEED_LEN = 8;
+  const SHUFFLE_STAGGER_MS = 60;
+  const MOUNT_ROOT_MARGIN = '300px';
+
+  /* ── Helpers ── */
+
+  function randomSeed() {
+    let s = '';
+    const buf = new Uint32Array(SEED_LEN);
+    if (window.crypto && crypto.getRandomValues) {
+      crypto.getRandomValues(buf);
+      for (let i = 0; i < SEED_LEN; i++) s += SEED_ALPHABET[buf[i] % SEED_ALPHABET.length];
+    } else {
+      for (let i = 0; i < SEED_LEN; i++) s += SEED_ALPHABET[Math.floor(Math.random() * SEED_ALPHABET.length)];
+    }
+    return s;
+  }
+
+  /* Fisher–Yates shuffle, returns a new array */
+  function shuffled(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function embedUrl(slug, seed) {
+    return ORIGIN + toolPath(slug) + '#v=1&seed=' + seed;
+  }
+
+  /* ── Tile construction ── */
+
+  const grid = document.getElementById('grid');
+  /* Tracks pending mount tasks per tile so shuffle can cancel mid-flight loads */
+  const tiles = [];
+
+  function makeTile(slug, name) {
+    const a = document.createElement('a');
+    a.className = 'tile';
+    a.setAttribute('role', 'listitem');
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.dataset.slug = slug;
+
+    const skel = document.createElement('div');
+    skel.className = 'tile__skel';
+    skel.textContent = name;
+
+    const fail = document.createElement('div');
+    fail.className = 'tile__fail';
+    fail.innerHTML = '<div>Preview unavailable</div><div style="font-size:11px">Click to open '
+      + name.replace(/[<&>]/g, '') + '</div>';
+
+    const label = document.createElement('div');
+    label.className = 'tile__label';
+    const labelText = document.createElement('span');
+    labelText.textContent = name;
+    const labelIco = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    labelIco.setAttribute('class', 'ico-out');
+    labelIco.setAttribute('viewBox', '0 0 12 12');
+    labelIco.setAttribute('fill', 'none');
+    labelIco.setAttribute('stroke', 'currentColor');
+    labelIco.setAttribute('stroke-width', '1.4');
+    labelIco.setAttribute('stroke-linecap', 'round');
+    labelIco.setAttribute('stroke-linejoin', 'round');
+    labelIco.innerHTML = '<path d="M3 3h6v6"/><path d="M9 3L3 9"/>';
+    label.appendChild(labelText);
+    label.appendChild(labelIco);
+
+    a.appendChild(skel);
+    a.appendChild(fail);
+    a.appendChild(label);
+
+    return a;
+  }
+
+  function buildTiles() {
+    const picks = shuffled(TOOLS).slice(0, TILE_COUNT);
+    grid.innerHTML = '';
+    tiles.length = 0;
+
+    picks.forEach((tool) => {
+      const seed = randomSeed();
+      const url = embedUrl(tool.slug, seed);
+      const el = makeTile(tool.slug, tool.name);
+      el.href = url;
+
+      const t = {
+        el: el,
+        slug: tool.slug,
+        seed: seed,
+        url: url,
+        iframe: null,
+        token: 0,           // bumps on every (re)assign — stale loads ignored
+        mounted: false,
+        settled: false,
+      };
+      tiles.push(t);
+      grid.appendChild(el);
+    });
+  }
+
+  /* ── Mount / lazy-load ── */
+
+  function mountTile(t) {
+    if (t.mounted) return;
+    t.mounted = true;
+    const myToken = t.token;
+
+    const iframe = document.createElement('iframe');
+    iframe.src = t.url;
+    iframe.setAttribute('title', t.slug + ' preview');
+    iframe.setAttribute('loading', 'lazy');
+    iframe.setAttribute('scrolling', 'no');
+    iframe.setAttribute('aria-hidden', 'true'); // anchor carries the link semantics
+    iframe.setAttribute('tabindex', '-1');
+
+    const settle = (ok) => {
+      if (myToken !== t.token) return; // stale (shuffled away)
+      if (t.settled) return;
+      t.settled = true;
+      t.el.classList.add(ok ? 'is-ready' : 'is-failed');
+    };
+
+    iframe.addEventListener('load', () => settle(true));
+    iframe.addEventListener('error', () => settle(false));
+
+    setTimeout(() => {
+      if (myToken !== t.token) return;
+      if (!t.settled) {
+        console.warn('[mosaic] iframe timeout', t.slug);
+        settle(false);
+      }
+    }, 6000);
+
+    t.iframe = iframe;
+    /* Insert before skeleton so it paints behind it until ready. */
+    t.el.insertBefore(iframe, t.el.firstChild);
+  }
+
+  let mountObserver = null;
+  function setupMountObserver() {
+    if (!('IntersectionObserver' in window)) {
+      tiles.forEach(mountTile);
+      return;
+    }
+    if (mountObserver) mountObserver.disconnect();
+    mountObserver = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        const t = tiles.find((x) => x.el === en.target);
+        if (t) mountTile(t);
+        mountObserver.unobserve(en.target);
+      });
+    }, { rootMargin: MOUNT_ROOT_MARGIN });
+
+    tiles.forEach((t) => mountObserver.observe(t.el));
+  }
+
+  /* ── Shuffle ── */
+
+  let shuffling = false;
+  const shuffleBtn = document.getElementById('shuffle');
+
+  function shuffle() {
+    if (shuffling) return;
+    shuffling = true;
+    shuffleBtn.classList.add('is-spinning');
+    shuffleBtn.disabled = true;
+
+    const picks = shuffled(TOOLS).slice(0, TILE_COUNT);
+
+    /* Reuse tile elements. Rebuild iframe entirely so fresh load listeners fire. */
+    tiles.forEach((t, i) => {
+      const tool = picks[i];
+      const seed = randomSeed();
+      const url = embedUrl(tool.slug, seed);
+
+      t.token++;             // invalidates any in-flight load callbacks from the prior iframe
+      t.slug = tool.slug;
+      t.seed = seed;
+      t.url = url;
+      t.settled = false;
+      t.mounted = false;
+      t.el.dataset.slug = tool.slug;
+      t.el.href = url;
+      t.el.classList.remove('is-ready', 'is-failed');
+
+      /* Update label + skeleton text to the new tool name */
+      const label = t.el.querySelector('.tile__label span');
+      if (label) label.textContent = tool.name;
+      const skel = t.el.querySelector('.tile__skel');
+      if (skel) skel.textContent = tool.name;
+      const fail = t.el.querySelector('.tile__fail');
+      if (fail) fail.firstChild.textContent = 'Preview unavailable';
+
+      /* Drop the old iframe so mountTile creates a fresh one with fresh listeners. */
+      if (t.iframe) {
+        t.iframe.remove();
+        t.iframe = null;
+      }
+
+      /* Stagger so we don't fire 9 simultaneous loads. */
+      setTimeout(() => mountTile(t), i * SHUFFLE_STAGGER_MS);
+    });
+
+    /* Release the button once the last stagger fires. */
+    setTimeout(() => {
+      shuffling = false;
+      shuffleBtn.classList.remove('is-spinning');
+      shuffleBtn.disabled = false;
+    }, tiles.length * SHUFFLE_STAGGER_MS + 200);
+  }
+
+  shuffleBtn.addEventListener('click', shuffle);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const tag = e.target && e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    if (e.key === 's' || e.key === 'S') {
+      shuffle();
+      e.preventDefault();
+    }
+  });
+
+  /* ── postMessage: ignore. We don't auto-resize tiles — they're square by design. ── */
+  /* (The embed contract from tools-embed.js posts heights; we deliberately drop them
+     so each tile keeps its 1:1 aspect ratio regardless of the tool's natural height.) */
+
+  /* ── Boot ── */
+  buildTiles();
+  setupMountObserver();
+})();
+</script>
+
+</body>
+</html>
