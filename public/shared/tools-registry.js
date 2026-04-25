@@ -121,6 +121,12 @@
       tagline: 'A single shape tiled across a grid at deterministic rotations.',
       blurb: 'Pick a primitive — circle, cross, hexagon, square cut in half — and tile it. Rotation and gap are the only knobs that matter. Good for wordmark backgrounds, product grids, or the inevitable moment a brand needs a "pattern version" of its logo.',
       defaultSeed: '5',
+      variants: [
+        'v=1&g=120',
+        'v=1&bg=000000&fg=ffffff&g=97&rt=45&sh=ring&sz=241',
+        'v=1&bg=0b562f&fg=ffffff&g=97&rt=45&sh=petal&sz=241',
+        'v=1&fg=4c4a43&g=85&rt=68&sh=diamond&sz=240'
+      ],
       credit: {
         work: 'Dayton Hudson Corporation',
         designers: [
@@ -137,6 +143,12 @@
       tagline: 'Primitives cut by negative arcs to reveal the shape behind.',
       blurb: 'Every shape is two shapes — a foreground solid and a negative-space cut that carves an arc through it. The cut width becomes its own visual element. The whole thing feels like cafeteria-tray modernist graphics. You can get a surprising number of brand-adjacent marks out of it.',
       defaultSeed: '9',
+      variants: [
+        'v=1',
+        'v=1&as=0&ba=-7&bg=000000&c=2&cu=0&fc=ffffff&gw=28&sh=diamond&sp=122&sz=128',
+        'v=1&as=0&ba=-180&bg=d6ddff&c=2&cu=0&fc=000000&gw=28&lc=ffffff&sh=cross&sp=111&sz=103',
+        'v=1&as=38&ba=-180&bg=f5f5f5&cu=0&fc=1a1a1a&gw=19.5&lc=ffffff&sh=shield&so=0.11&sp=238&sz=105&tp=0.57'
+      ],
       credit: {
         work: 'Fujisankei Kokukusha',
         designers: [
