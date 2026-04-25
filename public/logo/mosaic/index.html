@@ -51,14 +51,8 @@
 
   /* ── Header ── */
   .head {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 24px;
-    margin-bottom: 28px;
-    flex-wrap: wrap;
+    margin-bottom: 24px;
   }
-  .head__left { min-width: 0; }
   .crumb {
     display: inline-flex;
     align-items: center;
@@ -82,13 +76,78 @@
   .lede {
     color: var(--fg-muted);
     font-size: 14px;
-    max-width: 56ch;
+    margin-bottom: 18px;
   }
 
-  .head__actions {
+  /* ── Toolbar ── */
+  .toolbar {
     display: flex;
-    gap: 8px;
+    flex-wrap: wrap;
     align-items: center;
+    gap: 14px 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .toolbar__spacer { flex: 1; }
+
+  .ctl {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ctl__label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--fg-muted);
+    letter-spacing: 0.005em;
+  }
+
+  /* Segmented control (radio-style pills) */
+  .seg {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 2px;
+    background: var(--bg);
+  }
+  .seg__opt {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 4px 10px;
+    font: inherit;
+    font-size: 12.5px;
+    color: var(--fg-muted);
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.15s ease, color 0.15s ease;
+    user-select: none;
+  }
+  .seg__opt:hover { color: var(--fg); }
+  .seg__opt.is-active {
+    background: var(--fg);
+    color: var(--bg);
+  }
+
+  .ctl__input {
+    appearance: none;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 5px 8px;
+    font: inherit;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--fg);
+    background: var(--bg);
+    width: 56px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: border-color 0.15s ease;
+  }
+  .ctl__input::placeholder { color: var(--fg-quiet); text-transform: none; }
+  .ctl__input:focus {
+    outline: 0;
+    border-color: var(--fg);
   }
 
   .btn {
@@ -96,10 +155,10 @@
     background: var(--bg);
     color: var(--fg);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 14px;
+    border-radius: 7px;
+    padding: 6px 12px;
     font: inherit;
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 500;
     cursor: pointer;
     display: inline-flex;
@@ -274,18 +333,40 @@
 <div class="page">
 
   <header class="head">
-    <div class="head__left">
-      <a class="crumb" href="/logo/">
-        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M7.5 3L4.5 6L7.5 9"/>
-        </svg>
-        Logo Lab
-      </a>
-      <h1>Mosaic</h1>
-      <p class="lede">A live wall of every tool, randomized. Click a tile to open it. Press <kbd>S</kbd> to shuffle.</p>
-    </div>
+    <a class="crumb" href="/logo/">
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M7.5 3L4.5 6L7.5 9"/>
+      </svg>
+      Logo Lab
+    </a>
+    <h1>Mosaic</h1>
+    <p class="lede">A live wall of every tool, randomized. Click a tile to open it. Press <kbd>S</kbd> to shuffle.</p>
 
-    <div class="head__actions">
+    <div class="toolbar" role="toolbar" aria-label="Mosaic controls">
+      <div class="ctl">
+        <span class="ctl__label">Color</span>
+        <div class="seg" role="radiogroup" aria-label="Color palette">
+          <button type="button" class="seg__opt is-active" role="radio" aria-checked="true" data-ctl="palette" data-value="mono">B&amp;W</button>
+          <button type="button" class="seg__opt" role="radio" aria-checked="false" data-ctl="palette" data-value="full">Full color</button>
+        </div>
+      </div>
+
+      <div class="ctl">
+        <span class="ctl__label">Style</span>
+        <div class="seg" role="radiogroup" aria-label="Mark style">
+          <button type="button" class="seg__opt" role="radio" aria-checked="false" data-ctl="style" data-value="letters">Letters</button>
+          <button type="button" class="seg__opt" role="radio" aria-checked="false" data-ctl="style" data-value="abstract">Abstract</button>
+          <button type="button" class="seg__opt is-active" role="radio" aria-checked="true" data-ctl="style" data-value="mixed">Mixed</button>
+        </div>
+      </div>
+
+      <div class="ctl">
+        <label class="ctl__label" for="monogram">Monogram</label>
+        <input type="text" class="ctl__input" id="monogram" maxlength="2" placeholder="any" autocomplete="off" spellcheck="false" aria-label="Monogram letters">
+      </div>
+
+      <div class="toolbar__spacer"></div>
+
       <button type="button" class="btn btn--primary btn--shuffle" id="shuffle" aria-label="Shuffle tiles">
         <svg class="ico-shuffle" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M2 3h2l5 6h2"/>
@@ -320,11 +401,25 @@
   const toolPath = window.LogoTools.toolPath;
 
   const ORIGIN = location.origin;
-  const TILE_COUNT = Math.min(9, TOOLS.length);
+  const TILE_COUNT = 9;
   const SEED_ALPHABET = 'abcdefghijklmnopqrstuvwxyz0123456789';
   const SEED_LEN = 8;
   const SHUFFLE_STAGGER_MS = 60;
   const MOUNT_ROOT_MARGIN = '300px';
+
+  /* Tools whose primary visual is a glyph (have a `ch` text field).
+     Used by the Style filter — Letters / Abstract / Mixed. */
+  const LETTER_TOOLS = new Set([
+    'echo-stripes', 'parallel-letters', 'brutalist-letters',
+    'line-warp', 'dot-grid'
+  ]);
+
+  /* Toolbar state. Drives the per-iframe URL params. */
+  const state = {
+    palette: 'mono',    // 'mono' | 'full'
+    style: 'mixed',     // 'letters' | 'abstract' | 'mixed'
+    monogram: '',       // '' or 1–2 chars from [A-Z0-9]
+  };
 
   /* ── Helpers ── */
 
@@ -352,8 +447,29 @@
 
   function embedUrl(slug, seed) {
     /* r=1 tells permalink.js to randomize every schema field via the seed.
-       Same URL → same render (deterministic), and the new tab matches the tile. */
-    return ORIGIN + toolPath(slug) + '#v=1&r=1&seed=' + seed;
+       Same URL → same render (deterministic), and the new tab matches the tile.
+       p (palette) and m (monogram) constrain the random output. */
+    const parts = ['v=1', 'r=1', 'seed=' + seed];
+    if (state.palette === 'mono') parts.push('p=mono');
+    if (state.monogram) parts.push('m=' + encodeURIComponent(state.monogram));
+    return ORIGIN + toolPath(slug) + '#' + parts.join('&');
+  }
+
+  function availableTools() {
+    if (state.style === 'letters')  return TOOLS.filter(t => LETTER_TOOLS.has(t.slug));
+    if (state.style === 'abstract') return TOOLS.filter(t => !LETTER_TOOLS.has(t.slug));
+    return TOOLS;
+  }
+
+  /* Pick `n` tools, allowing repeats only if the available set is smaller. */
+  function pickTools(n) {
+    const avail = availableTools();
+    if (avail.length === 0) return [];
+    const picks = shuffled(avail).slice(0, Math.min(n, avail.length));
+    while (picks.length < n) {
+      picks.push(avail[Math.floor(Math.random() * avail.length)]);
+    }
+    return picks;
   }
 
   /* ── Tile construction ── */
@@ -403,7 +519,7 @@
   }
 
   function buildTiles() {
-    const picks = shuffled(TOOLS).slice(0, TILE_COUNT);
+    const picks = pickTools(TILE_COUNT);
     grid.innerHTML = '';
     tiles.length = 0;
 
@@ -459,7 +575,7 @@
         console.warn('[mosaic] iframe timeout', t.slug);
         settle(false);
       }
-    }, 6000);
+    }, 12000);
 
     t.iframe = iframe;
     /* Insert before skeleton so it paints behind it until ready. */
@@ -496,7 +612,7 @@
     shuffleBtn.classList.add('is-spinning');
     shuffleBtn.disabled = true;
 
-    const picks = shuffled(TOOLS).slice(0, TILE_COUNT);
+    const picks = pickTools(TILE_COUNT);
 
     /* Reuse tile elements. Rebuild iframe entirely so fresh load listeners fire. */
     tiles.forEach((t, i) => {
@@ -555,6 +671,62 @@
   /* ── postMessage: ignore. We don't auto-resize tiles — they're square by design. ── */
   /* (The embed contract from tools-embed.js posts heights; we deliberately drop them
      so each tile keeps its 1:1 aspect ratio regardless of the tool's natural height.) */
+
+  /* ── Toolbar controls ─────────────────────────────────────────────────
+     - Style change   → tool set may change → full rebuild (new picks).
+     - Palette/monogram change → same picks, just rebuild iframe URLs. */
+
+  function rebuildAll() {
+    buildTiles();
+    setupMountObserver();
+  }
+
+  /* Same (slug, seed) per tile, but rerun loads with the new URL params. */
+  function reloadInPlace() {
+    tiles.forEach((t, i) => {
+      const url = embedUrl(t.slug, t.seed);
+      t.token++;
+      t.url = url;
+      t.settled = false;
+      t.mounted = false;
+      t.el.href = url;
+      t.el.classList.remove('is-ready', 'is-failed');
+      if (t.iframe) { t.iframe.remove(); t.iframe = null; }
+      setTimeout(() => mountTile(t), i * 30);
+    });
+  }
+
+  /* Segmented controls: Color (palette) and Style. */
+  document.querySelectorAll('.seg__opt').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const ctl = btn.dataset.ctl;
+      const value = btn.dataset.value;
+      if (state[ctl] === value) return;
+
+      const group = btn.parentElement;
+      group.querySelectorAll('.seg__opt').forEach((o) => {
+        const active = (o === btn);
+        o.classList.toggle('is-active', active);
+        o.setAttribute('aria-checked', String(active));
+      });
+
+      state[ctl] = value;
+      if (ctl === 'style') rebuildAll();
+      else                 reloadInPlace();
+    });
+  });
+
+  /* Monogram input: A–Z and 0–9, debounced. */
+  const monoInput = document.getElementById('monogram');
+  let monoTimer = null;
+  monoInput.addEventListener('input', () => {
+    const cleaned = monoInput.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 2);
+    if (cleaned !== monoInput.value) monoInput.value = cleaned;
+    if (state.monogram === cleaned) return;
+    state.monogram = cleaned;
+    clearTimeout(monoTimer);
+    monoTimer = setTimeout(reloadInPlace, 280);
+  });
 
   /* ── Boot ── */
   buildTiles();
