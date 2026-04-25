@@ -409,6 +409,20 @@
   .article-foot a { color: var(--fg-muted); text-decoration: none; }
   .article-foot a:hover { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
 
+  /* Inline Mosaic mention in the lede paragraph */
+  .mosaic-link {
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--fg-quiet);
+    transition: text-decoration-color 0.15s ease, text-underline-offset 0.15s ease;
+  }
+  .mosaic-link:hover {
+    text-decoration-color: var(--fg);
+    text-underline-offset: 4px;
+  }
+
   /* ── Debug panel (?debug=1) ── */
   .debug-panel {
     position: fixed;
@@ -467,7 +481,7 @@
       <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M7.5 3L4.5 6L7.5 9"/>
       </svg>
-      Index
+      Home
     </a>
     <div class="aside-title">Logo Lab</div>
     <ul id="toc"></ul>
@@ -480,7 +494,7 @@
 
       <p class="lede">Nine browser-based tools for generating minimalist marks. Each one trades on a narrow visual idea — displaced lines, interlocking rings, rounded-rect bitmaps — and gives you just enough knobs to find the good version. Every state has a shareable URL, every mark has a PNG/SVG export, and every tool embeds via iframe into anyone's site.</p>
 
-      <p>Keyboard: press <strong>J</strong>/<strong>K</strong> to move between sections, <strong>1–9</strong> to jump, <strong>T</strong> to return to the top. Every embed is live — tweak it here, or click <em>Open tool</em> for the full controls. Or skip the index and browse the <a href="/logo/mosaic/" style="color: var(--fg); text-decoration: underline; text-underline-offset: 3px;">Mosaic</a> — a randomized wall of every tool.</p>
+      <p>Keyboard: press <strong>J</strong>/<strong>K</strong> to move between sections, <strong>1–9</strong> to jump, <strong>T</strong> to return to the top. Every embed is live — tweak it here, or click <em>Open tool</em> for the full controls. Or skip the index and browse the <a class="mosaic-link" href="/logo/mosaic/">Mosaic</a> — a randomized wall of every tool.</p>
 
       <div id="sections"></div>
 
