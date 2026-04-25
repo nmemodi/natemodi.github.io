@@ -222,10 +222,13 @@ function renderToCtx(targetCtx, size, opts = {}) {
 
   const { px, py } = anchorPoint(anchor, size);
 
-  // Globally aligned stripe centers — all levels share the same y positions
+  // Top-edge alignment: every level's stripe shares its TOP at y_top[i]. Thicker
+  // (inner) levels extend further DOWN from that edge, so a thin outer trail and
+  // the thick inner bar visibly connect along the same horizontal line — the
+  // "shutter trail" that gives the source mark its motion.
   const stripeStep = size / stripes;
-  const yCenters = [];
-  for (let i = 0; i < stripes; i++) yCenters.push(stripeStep * (i + 0.5));
+  const yTops = [];
+  for (let i = 0; i < stripes; i++) yTops.push(stripeStep * i);
 
   // Outer-most level paints first; inner levels overpaint within their letter shape.
   // Innermost (lvl=0) gets the thickest stripes; each outer ring thins by `ratio`.
@@ -244,8 +247,8 @@ function renderToCtx(targetCtx, size, opts = {}) {
     const octx = off.getContext('2d');
 
     octx.fillStyle = lineColor;
-    for (const yc of yCenters) {
-      octx.fillRect(0, yc - stripeT / 2, size, stripeT);
+    for (const yt of yTops) {
+      octx.fillRect(0, yt, size, stripeT);
     }
 
     octx.globalCompositeOperation = 'destination-in';
@@ -315,8 +318,8 @@ function generateSVG() {
     const stripeT = thickness * Math.pow(ratio, lvl);
     svg += `<g clip-path="url(#es-lvl${lvl})">\n`;
     for (let i = 0; i < stripes; i++) {
-      const yc = stripeStep * (i + 0.5);
-      svg += `<rect x="0" y="${(yc - stripeT/2).toFixed(2)}" width="${size}" height="${stripeT.toFixed(2)}" fill="${lineColor}"/>\n`;
+      const yt = stripeStep * i;
+      svg += `<rect x="0" y="${yt.toFixed(2)}" width="${size}" height="${stripeT.toFixed(2)}" fill="${lineColor}"/>\n`;
     }
     svg += `</g>\n`;
   }
