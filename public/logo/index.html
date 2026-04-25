@@ -256,15 +256,16 @@
     outline-offset: -2px;
     z-index: 1;
   }
-  /* Render each tile iframe at 2x its visible size, then scale-down so the
-     tool gets a full-resolution canvas while the mark still fits the tile. */
+  /* Render each tile iframe at 3x its visible size, then scale-down so the
+     tool gets a full-resolution canvas while the mark still fits the tile.
+     3x is needed for variants whose multi-shape arrangements span ~800px. */
   .embed-grid .tile iframe {
     position: absolute;
     top: 0;
     left: 0;
-    width: 200%;
-    height: 200%;
-    transform: scale(0.5);
+    width: 300%;
+    height: 300%;
+    transform: scale(0.3333);
     transform-origin: top left;
     border: 0;
     background: var(--code-bg);
