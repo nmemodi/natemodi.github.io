@@ -47,6 +47,23 @@ describe('tools-registry', () => {
     });
   });
 
+  it('every tool has a well-formed credit block', () => {
+    window.LogoTools.TOOLS.forEach(t => {
+      expect(t.credit).toBeDefined();
+      expect(typeof t.credit.work).toBe('string');
+      expect(t.credit.work.length).toBeGreaterThan(0);
+      expect(Array.isArray(t.credit.designers)).toBe(true);
+      expect(t.credit.designers.length).toBeGreaterThan(0);
+      // year is number or decade-string like "1970s"
+      expect(['number', 'string']).toContain(typeof t.credit.year);
+      // url is either a logobook.com https URL or null
+      if (t.credit.url !== null) {
+        expect(typeof t.credit.url).toBe('string');
+        expect(t.credit.url.startsWith('https://logobook.com/')).toBe(true);
+      }
+    });
+  });
+
   it('all slugs are unique', () => {
     const slugs = window.LogoTools.TOOLS.map(t => t.slug);
     expect(new Set(slugs).size).toBe(slugs.length);

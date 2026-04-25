@@ -152,15 +152,45 @@
     margin: 48px 0 28px;
   }
 
-  /* Section header (h2 visually, h1 semantically to match liveline) */
+  /* Section header row: title on the left, prominent "Open in tool" on the right */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 4px;
+    scroll-margin-top: 32px;
+  }
+
   article .section-title {
     font-size: 14px;
     font-weight: 600;
     color: var(--fg);
-    margin-bottom: 4px;
     letter-spacing: -0.005em;
-    scroll-margin-top: 32px;
+    margin: 0;
   }
+
+  .section-head .open-tool {
+    color: var(--fg);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    white-space: nowrap;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .section-head .open-tool:hover {
+    border-color: var(--fg);
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .section-head .open-tool svg { width: 11px; height: 11px; }
 
   /* ── Embed surface ── */
   .embed-wrap {
@@ -315,6 +345,36 @@
     border-color: var(--fg-faded);
   }
   details.embed-snippet .snippet-copy.is-copied { color: #2f8f4a; }
+
+  /* ── Citation (logobook.com reference, below each section) ── */
+  .credit {
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--fg-faded);
+    font-style: italic;
+    letter-spacing: 0.003em;
+  }
+  .credit .credit-label {
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+    font-style: normal;
+    font-size: 10.5px;
+    color: var(--fg-quiet);
+    margin-right: 6px;
+  }
+  .credit a {
+    color: var(--fg-muted);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--fg-quiet);
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .credit a:hover {
+    color: var(--fg);
+    border-bottom-color: var(--fg);
+  }
 
   /* ── Toast ── */
   .toast {
@@ -480,9 +540,25 @@
     sec.dataset.slug = t.slug;
     sec.dataset.seed = t.defaultSeed;
 
+    /* Section head: title + prominent "Open in tool" link */
+    const head = document.createElement('div');
+    head.className = 'section-head';
+
     const h2 = document.createElement('h2');
     h2.className = 'section-title';
     h2.textContent = t.name;
+
+    const openTop = document.createElement('a');
+    openTop.className = 'open-tool';
+    openTop.href = toolPath(t.slug) + '#v=1&seed=' + t.defaultSeed;
+    openTop.target = '_blank';
+    openTop.rel = 'noopener';
+    openTop.innerHTML =
+      'Open in tool' +
+      '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h6v6"/><path d="M9 3L3 9"/></svg>';
+
+    head.appendChild(h2);
+    head.appendChild(openTop);
 
     const tag = document.createElement('p');
     tag.style.color = 'var(--fg-muted)';
@@ -513,14 +589,10 @@
       '</div>';
     wrap.appendChild(fb);
 
-    /* Action row */
+    /* Action row (secondary — Open-in-tool lives up in section-head now) */
     const actions = document.createElement('div');
     actions.className = 'actions';
     actions.innerHTML =
-      '<a href="' + toolPath(t.slug) + '#v=1&seed=' + t.defaultSeed + '" target="_blank" rel="noopener">' +
-        '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h6v6"/><path d="M9 3L3 9"/></svg>' +
-        'Open in tool' +
-      '</a>' +
       '<button type="button" data-action="copy-link" data-slug="' + t.slug + '" data-seed="' + t.defaultSeed + '">' +
         '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7.5L7.5 4.5"/><path d="M6 3l1.5-1.5a2.1 2.1 0 013 3L9 6"/><path d="M6 9l-1.5 1.5a2.1 2.1 0 01-3-3L3 6"/></svg>' +
         'Share link' +
@@ -549,12 +621,37 @@
     pre.appendChild(copy);
     snip.appendChild(pre);
 
-    sec.appendChild(h2);
+    sec.appendChild(head);
     sec.appendChild(tag);
     sec.appendChild(body);
     sec.appendChild(wrap);
     sec.appendChild(actions);
     sec.appendChild(snip);
+
+    /* Citation — historical logo reference (optional logobook.com link) */
+    if (t.credit) {
+      const credit = document.createElement('p');
+      credit.className = 'credit';
+      const designers = Array.isArray(t.credit.designers)
+        ? t.credit.designers.join(', ')
+        : (t.credit.designers || '');
+      const workNode = document.createElement(t.credit.url ? 'a' : 'span');
+      if (t.credit.url) {
+        workNode.href = t.credit.url;
+        workNode.target = '_blank';
+        workNode.rel = 'noopener noreferrer';
+      }
+      workNode.textContent = t.credit.work;
+      const labelSpan = document.createElement('span');
+      labelSpan.className = 'credit-label';
+      labelSpan.textContent = 'After';
+      credit.appendChild(labelSpan);
+      credit.appendChild(workNode);
+      credit.appendChild(document.createTextNode(
+        (designers ? ' · ' + designers : '') + ' · ' + t.credit.year
+      ));
+      sec.appendChild(credit);
+    }
 
     sections.appendChild(sep);
     sections.appendChild(sec);
