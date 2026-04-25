@@ -229,6 +229,57 @@
 
   .embed-wrap.is-ready .embed-skeleton { display: none; }
 
+  /* ── Variant grid (4-up tile mode for tools with multiple variants) ── */
+  .embed-grid {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 7 / 4;
+  }
+  .embed-grid .tile {
+    position: relative;
+    display: block;
+    background: var(--code-bg);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s ease;
+  }
+  .embed-grid .tile:hover { background: var(--bg); }
+  .embed-grid .tile:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: -2px;
+    z-index: 1;
+  }
+  .embed-grid .tile iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: var(--code-bg);
+    pointer-events: none;
+  }
+  .embed-grid .tile .embed-skeleton { font-size: 11px; }
+  .embed-grid .tile.is-ready .embed-skeleton { display: none; }
+  .embed-grid .tile.is-failed .embed-skeleton { display: none; }
+  .embed-grid .tile.is-failed::after {
+    content: '⚠';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fg-quiet);
+    font-size: 16px;
+  }
+
   @keyframes shimmer {
     0%   { background-position: 200% 0; }
     100% { background-position: -200% 0; }
@@ -596,25 +647,50 @@
     const body = document.createElement('p');
     body.textContent = t.blurb;
 
-    /* Embed wrapper */
-    const wrap = document.createElement('div');
-    wrap.className = 'embed-wrap';
-    wrap.dataset.slug = t.slug;
+    /* Embed surface — either a single iframe wrap, or a 2×2 variant grid. */
+    const variants = Array.isArray(t.variants) && t.variants.length > 0 ? t.variants : null;
 
-    const skel = document.createElement('div');
-    skel.className = 'embed-skeleton';
-    skel.textContent = 'Loading ' + t.name + '…';
-    wrap.appendChild(skel);
+    let wrap;
+    if (variants) {
+      wrap = document.createElement('div');
+      wrap.className = 'embed-grid';
+      wrap.dataset.slug = t.slug;
+      variants.forEach((hash, vi) => {
+        const tile = document.createElement('a');
+        tile.className = 'tile';
+        tile.href = toolPath(t.slug) + '#' + hash;
+        tile.target = '_blank';
+        tile.rel = 'noopener';
+        tile.dataset.slug = t.slug;
+        tile.dataset.variant = String(vi);
+        tile.dataset.hash = hash;
+        tile.setAttribute('aria-label', t.name + ' variant ' + (vi + 1));
+        const tskel = document.createElement('div');
+        tskel.className = 'embed-skeleton';
+        tskel.textContent = '';
+        tile.appendChild(tskel);
+        wrap.appendChild(tile);
+      });
+    } else {
+      wrap = document.createElement('div');
+      wrap.className = 'embed-wrap';
+      wrap.dataset.slug = t.slug;
 
-    /* Fallback (shown if iframe fails / times out) */
-    const fb = document.createElement('div');
-    fb.className = 'embed-fallback';
-    fb.innerHTML =
-      '<div>' +
-        '<div>Preview unavailable. </div>' +
-        '<a href="' + toolPath(t.slug) + '" target="_blank" rel="noopener">Open ' + t.name + ' in full &rarr;</a>' +
-      '</div>';
-    wrap.appendChild(fb);
+      const skel = document.createElement('div');
+      skel.className = 'embed-skeleton';
+      skel.textContent = 'Loading ' + t.name + '…';
+      wrap.appendChild(skel);
+
+      /* Fallback (shown if iframe fails / times out) */
+      const fb = document.createElement('div');
+      fb.className = 'embed-fallback';
+      fb.innerHTML =
+        '<div>' +
+          '<div>Preview unavailable. </div>' +
+          '<a href="' + toolPath(t.slug) + '" target="_blank" rel="noopener">Open ' + t.name + ' in full &rarr;</a>' +
+        '</div>';
+      wrap.appendChild(fb);
+    }
 
     /* Action row (secondary — Open-in-tool lives up in section-head now) */
     const actions = document.createElement('div');
@@ -768,6 +844,40 @@
     if (mountedSlugs.has(slug)) return;
     mountedSlugs.add(slug);
 
+    /* Variant-grid mode: mount one iframe per tile */
+    const grid = sec.querySelector('.embed-grid');
+    if (grid) {
+      Array.from(grid.querySelectorAll('a.tile')).forEach((tile) => {
+        const hash = tile.dataset.hash;
+        const iframe = document.createElement('iframe');
+        iframe.src = ORIGIN + toolPath(slug) + '#' + hash;
+        iframe.setAttribute('title', slug + ' variant ' + tile.dataset.variant + ' preview');
+        iframe.setAttribute('loading', 'lazy');
+        iframe.setAttribute('scrolling', 'no');
+        iframe.setAttribute('aria-hidden', 'true');
+        iframe.setAttribute('tabindex', '-1');
+
+        let settled = false;
+        const settle = (ok) => {
+          if (settled) return;
+          settled = true;
+          tile.classList.add(ok ? 'is-ready' : 'is-failed');
+        };
+        iframe.addEventListener('load', () => settle(true));
+        iframe.addEventListener('error', () => settle(false));
+        setTimeout(() => {
+          if (!settled) {
+            console.warn('[logo-lab] grid iframe timeout', slug, tile.dataset.variant);
+            settle(false);
+          }
+        }, 6000);
+
+        tile.insertBefore(iframe, tile.querySelector('.embed-skeleton'));
+      });
+      return;
+    }
+
+    /* Single-iframe mode (default) */
     const wrap = sec.querySelector('.embed-wrap');
     const seed = sec.dataset.seed;
 
