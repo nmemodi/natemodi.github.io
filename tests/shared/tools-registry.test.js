@@ -28,8 +28,8 @@ describe('tools-registry', () => {
     expect(Array.isArray(window.LogoTools.TOOLS)).toBe(true);
   });
 
-  it('has exactly 9 tools', () => {
-    expect(window.LogoTools.TOOLS.length).toBe(9);
+  it('has exactly 10 tools', () => {
+    expect(window.LogoTools.TOOLS.length).toBe(10);
   });
 
   it('every tool has required fields', () => {
