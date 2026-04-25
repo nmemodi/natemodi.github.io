@@ -160,6 +160,22 @@
       svg: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="0.7"><polygon points="40,12 55.6,17 64.7,30 64.7,50 55.6,63 40,68 24.4,63 15.3,50 15.3,30 24.4,17"/><polygon points="40,24 49.4,27.6 53.8,36 53.8,44 49.4,52.4 40,56 30.6,52.4 26.2,44 26.2,36 30.6,27.6"/><line x1="40" y1="12" x2="53.8" y2="36"/><line x1="55.6" y1="17" x2="53.8" y2="44"/><line x1="64.7" y1="30" x2="49.4" y2="52.4"/><line x1="64.7" y1="50" x2="40" y2="56"/><line x1="55.6" y1="63" x2="30.6" y2="52.4"/><line x1="40" y1="68" x2="26.2" y2="44"/><line x1="24.4" y1="63" x2="26.2" y2="36"/><line x1="15.3" y1="50" x2="30.6" y2="27.6"/><line x1="15.3" y1="30" x2="40" y2="24"/><line x1="24.4" y1="17" x2="49.4" y2="27.6"/></svg>'
     },
     {
+      slug: 'echo-stripes',
+      name: 'Echo Stripes',
+      tagline: 'Nested letters of horizontal stripes that thin out as they grow.',
+      blurb: 'A core letter built from thick black bars, ringed by larger ghost letters drawn in progressively thinner stripes. Each ring extends past the last like a slow shutter — the shape stays put, the lines feather outward. The trick is alignment: every stripe sits at the same y, just thicker where the inner letter contains it.',
+      defaultSeed: '1',
+      credit: {
+        work: 'Bather Belrose Boje',
+        designers: [
+          { name: 'Tim Larsen', url: null }
+        ],
+        year: 1981,
+        url: null
+      },
+      svg: '<svg viewBox="0 0 80 80" fill="currentColor" stroke="none"><rect x="22" y="16" width="36" height="6"/><rect x="22" y="28" width="36" height="6"/><rect x="22" y="40" width="36" height="6"/><rect x="22" y="52" width="36" height="6"/><rect x="22" y="64" width="36" height="6"/><rect x="10" y="18" width="60" height="2"/><rect x="10" y="30" width="60" height="2"/><rect x="10" y="42" width="60" height="2"/><rect x="10" y="54" width="60" height="2"/><rect x="10" y="66" width="60" height="2"/></svg>'
+    },
+    {
       slug: 'dot-grid',
       name: 'Dot Grid',
       tagline: 'Letters bitmap-rendered from a rounded-rectangle dot grid.',
