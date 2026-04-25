@@ -30,6 +30,9 @@
         if (n > max) return { ok: true, value: max, reason: 'clamped-hi', clamped: true };
         return { ok: true, value: n };
       },
+      randomize(rng) {
+        return Math.floor(min + rng() * (max - min + 1));
+      },
     };
   }
 
@@ -51,6 +54,10 @@
         if (n > max) return { ok: true, value: max, reason: 'clamped-hi', clamped: true };
         return { ok: true, value: Math.round(n * roundTo) / roundTo };
       },
+      randomize(rng) {
+        const v = min + rng() * (max - min);
+        return Math.round(v * roundTo) / roundTo;
+      },
     };
   }
 
@@ -71,6 +78,10 @@
         const raw = s.startsWith('#') ? s : '#' + s;
         if (!/^#[0-9a-fA-F]{6}$/.test(raw)) return { ok: false, value: defClean, reason: 'bad-hex' };
         return { ok: true, value: raw.toLowerCase() };
+      },
+      randomize(rng) {
+        const hex = Math.floor(rng() * 0x1000000).toString(16).padStart(6, '0');
+        return '#' + hex;
       },
     };
   }
@@ -94,6 +105,9 @@
         if (!set.has(s)) return { ok: false, value: def, reason: 'not-in-enum' };
         return { ok: true, value: s };
       },
+      randomize(rng) {
+        return values[Math.floor(rng() * values.length)];
+      },
     };
   }
 
@@ -107,6 +121,9 @@
         if (s === '1') return { ok: true, value: true };
         if (s === '0') return { ok: true, value: false };
         return { ok: false, value: !!def, reason: 'not-bool' };
+      },
+      randomize(rng) {
+        return rng() < 0.5;
       },
     };
   }
@@ -123,11 +140,18 @@
         if (!Number.isFinite(n) || n < 0) return { ok: false, value: defSeed, reason: 'bad-seed' };
         return { ok: true, value: n >>> 0 };
       },
+      randomize(rng) {
+        return Math.floor(rng() * 0xffffffff) >>> 0;
+      },
     };
   }
 
   /* ─── TEXT: charset-whitelisted, length-clamped string ─── */
-  function TEXT({ charset, maxLen, def }) {
+  /* `randomChoices` (optional) is a string of characters to pick from when
+     randomizing. Defaults to uppercase A–Z, which validates against every
+     letter-style charset currently in use across the tools. */
+  function TEXT({ charset, maxLen, def, randomChoices }) {
+    const pool = randomChoices || 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     return {
       type: 'text',
       default: def,
@@ -145,6 +169,11 @@
         if (s.length > maxLen) s = s.slice(0, maxLen);
         if (charset && !charset.test(s)) return { ok: false, value: def, reason: 'bad-charset' };
         return { ok: true, value: s };
+      },
+      randomize(rng) {
+        const ch = pool[Math.floor(rng() * pool.length)];
+        if (charset && !charset.test(ch)) return def;
+        return ch;
       },
     };
   }
