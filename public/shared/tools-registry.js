@@ -76,6 +76,12 @@
       tagline: 'Overlapping rings with controlled break-and-weave.',
       blurb: 'Two or three circles, sized and spaced so the rings touch and pass through each other. A weave toggle decides which ring reads as on top at every crossing. The ancient version of this is the Olympic rings; the modern version is every fintech logo with a venn-diagram wink.',
       defaultSeed: '3',
+      variants: [
+        'v=1&bg=380070&br=0&gp=1.4&n=4&r=107&sp=68&sw=17&wv=0',
+        'v=1&bg=ffffff&br=0&fg=000000&gp=2.9&n=4&r=47&sp=68&sw=48',
+        'v=1&bg=c3ff42&br=0&fg=000000&gp=4&n=5&r=114&sp=83&sw=20&wv=0',
+        'v=1&sp=66&wv=0'
+      ],
       credit: {
         work: 'Ota Dental Clinic',
         designers: [
@@ -92,6 +98,12 @@
       tagline: 'Letters drawn with vertical strip cuts through a solid fill.',
       blurb: 'Ignore the outline. A letter here is whatever shape you get when a dense grid of parallel vertical strips is punched through a colored block, then a second thin path weaves through the gaps. The typography is almost incidental — the field does the work.',
       defaultSeed: '12',
+      variants: [
+        'v=1&bg=673c40&jo=miter&n=10&sz=400&t=10',
+        'v=1&bg=000000&ch=Y&f=Georgia&g=34.5&jo=miter&n=3&sz=400&t=10',
+        'v=1&bg=ffffff&ch=M&fg=000000&g=2&n=7&sz=600&t=10',
+        'v=1&bg=020066&ch=W&f=ArialBlack&g=1&jo=bevel&n=40&sz=900&t=5'
+      ],
       credit: {
         work: 'Five G Marketing',
         designers: [
