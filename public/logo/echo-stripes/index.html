@@ -60,12 +60,20 @@
 
   <div class="control-group">
     <div class="section-label">Echoes</div>
+    <label>Anchor</label>
+    <select id="anchor">
+      <option value="bl" selected>Bottom-left</option>
+      <option value="br">Bottom-right</option>
+      <option value="tl">Top-left</option>
+      <option value="tr">Top-right</option>
+      <option value="c">Center</option>
+    </select>
     <label>Levels <span class="control-val" id="levelsVal">3</span></label>
     <input type="range" id="levels" min="1" max="5" value="3">
-    <label>Outer growth <span class="control-val" id="growthVal">1.30</span>×</label>
-    <input type="range" id="growth" min="1.05" max="1.7" step="0.01" value="1.30">
-    <label>Thinning ratio <span class="control-val" id="ratioVal">0.55</span></label>
-    <input type="range" id="ratio" min="0.5" max="0.75" step="0.01" value="0.55">
+    <label>Outer growth <span class="control-val" id="growthVal">1.45</span>×</label>
+    <input type="range" id="growth" min="1.05" max="2.0" step="0.01" value="1.45">
+    <label>Thinning ratio <span class="control-val" id="ratioVal">0.50</span></label>
+    <input type="range" id="ratio" min="0.3" max="0.85" step="0.01" value="0.50">
   </div>
 
   <div class="control-group">
@@ -115,6 +123,7 @@ const ctx = canvas.getContext('2d');
 const charInput    = document.getElementById('char');
 const fontSelect   = document.getElementById('font');
 const weightSelect = document.getElementById('weight');
+const anchorSelect = document.getElementById('anchor');
 const levelsEl     = document.getElementById('levels');
 const growthEl     = document.getElementById('growth');
 const ratioEl      = document.getElementById('ratio');
@@ -124,7 +133,7 @@ const sizeEl       = document.getElementById('size');
 const bgColorEl    = document.getElementById('bgColor');
 const lineColorEl  = document.getElementById('lineColor');
 
-const allInputs = [charInput, fontSelect, weightSelect, levelsEl, growthEl, ratioEl,
+const allInputs = [charInput, fontSelect, weightSelect, anchorSelect, levelsEl, growthEl, ratioEl,
                    stripesEl, thicknessEl, sizeEl, bgColorEl, lineColorEl];
 
 function updateLabels() {
@@ -162,11 +171,38 @@ function computeOuterFontSize(char, font, weight, canvasSize) {
   return Math.min(avail / m.w, avail / m.h) * ref;
 }
 
+// Returns the canvas point (px, py) where every letter's chosen corner sits.
+// All nested letters share this anchor point so they cascade out from it.
+function anchorPoint(anchor, canvasSize) {
+  const p = canvasSize * 0.06;
+  switch (anchor) {
+    case 'br': return { px: canvasSize - p, py: canvasSize - p };
+    case 'tl': return { px: p,              py: p };
+    case 'tr': return { px: canvasSize - p, py: p };
+    case 'c':  return { px: canvasSize / 2, py: canvasSize / 2 };
+    case 'bl':
+    default:   return { px: p,              py: canvasSize - p };
+  }
+}
+
+// Compute fillText (drawX, drawY) so the letter's bbox corner (per anchor) lands at (px, py).
+function placeLetter(anchor, m, px, py) {
+  switch (anchor) {
+    case 'br': return { drawX: px - m.w + m.l, drawY: py - (m.h - m.a) };
+    case 'tl': return { drawX: px + m.l,        drawY: py + m.a };
+    case 'tr': return { drawX: px - m.w + m.l,  drawY: py + m.a };
+    case 'c':  return { drawX: px - m.w / 2 + m.l, drawY: py - m.h / 2 + m.a };
+    case 'bl':
+    default:   return { drawX: px + m.l,        drawY: py - (m.h - m.a) };
+  }
+}
+
 function renderToCtx(targetCtx, size, opts = {}) {
   const rawChar    = charInput.value || 'B';
   const char       = rawChar.length > 1 ? rawChar.slice(-1) : rawChar;
   const font       = fontSelect.value;
   const weight     = weightSelect.value;
+  const anchor     = anchorSelect.value;
   const levels     = parseInt(levelsEl.value);
   const growth     = parseFloat(growthEl.value);
   const ratio      = parseFloat(ratioEl.value);
@@ -184,6 +220,8 @@ function renderToCtx(targetCtx, size, opts = {}) {
   const outerFontSize = computeOuterFontSize(char, font, weight, size);
   if (!outerFontSize) return;
 
+  const { px, py } = anchorPoint(anchor, size);
+
   // Globally aligned stripe centers — all levels share the same y positions
   const stripeStep = size / stripes;
   const yCenters = [];
@@ -196,10 +234,9 @@ function renderToCtx(targetCtx, size, opts = {}) {
     const fontSize = outerFontSize * scale;
     const stripeT = thickness * Math.pow(ratio, levels - 1 - lvl);
 
-    // Center letter on canvas at this scale
+    // Position letter so its anchor corner sits at the shared canvas anchor
     const m = measureChar(char, font, weight, fontSize, targetCtx);
-    const drawX = (size - m.w) / 2 + m.l;
-    const drawY = (size - m.h) / 2 + m.a;
+    const { drawX, drawY } = placeLetter(anchor, m, px, py);
 
     // Render stripes onto an offscreen, then mask with the letter shape
     const off = document.createElement('canvas');
@@ -243,6 +280,7 @@ function generateSVG() {
   const char       = rawChar.length > 1 ? rawChar.slice(-1) : rawChar;
   const font       = fontSelect.value;
   const weight     = weightSelect.value;
+  const anchor     = anchorSelect.value;
   const levels     = parseInt(levelsEl.value);
   const growth     = parseFloat(growthEl.value);
   const ratio      = parseFloat(ratioEl.value);
@@ -255,6 +293,7 @@ function generateSVG() {
   const outerFontSize = computeOuterFontSize(char, font, weight, size);
   if (!outerFontSize) return '';
 
+  const { px, py } = anchorPoint(anchor, size);
   const stripeStep = size / stripes;
   const escaped = escapeXml(char);
   const fontUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@${weight}&amp;display=swap`;
@@ -266,8 +305,7 @@ function generateSVG() {
     const scale = Math.pow(growth, -(levels - 1 - lvl));
     const fontSize = outerFontSize * scale;
     const m = measureChar(char, font, weight, fontSize);
-    const drawX = (size - m.w) / 2 + m.l;
-    const drawY = (size - m.h) / 2 + m.a;
+    const { drawX, drawY } = placeLetter(anchor, m, px, py);
     svg += `<clipPath id="es-lvl${lvl}"><text x="${drawX.toFixed(2)}" y="${drawY.toFixed(2)}" font-family="'${font}'" font-weight="${weight}" font-size="${fontSize.toFixed(2)}px">${escaped}</text></clipPath>\n`;
   }
   svg += `</defs>\n`;
@@ -292,9 +330,10 @@ const pschema = {
   ch: TEXT({ charset: /^.{1,2}$/u, maxLen: 2, def: 'B' }),
   f:  ENUM(['Orbitron','Audiowide','Russo One','Exo 2','Black Ops One','Rajdhani','Share Tech','Baumans','Electrolize','Michroma','Aldrich','Arial Black','Impact','Georgia','Courier New'], 'Arial Black'),
   fw: ENUM(['400','700','900'], '900'),
+  an: ENUM(['bl','br','tl','tr','c'], 'bl'),
   lv: INT_RANGE(1, 5, 3),
-  gr: FLOAT_RANGE(1.05, 1.7, 1.30, 2),
-  rt: FLOAT_RANGE(0.5, 0.75, 0.55, 2),
+  gr: FLOAT_RANGE(1.05, 2.0, 1.45, 2),
+  rt: FLOAT_RANGE(0.3, 0.85, 0.50, 2),
   st: INT_RANGE(6, 40, 14),
   tk: FLOAT_RANGE(4, 60, 22, 1),
   sz: INT_RANGE(400, 2400, 800),
@@ -305,6 +344,7 @@ const pschema = {
 function getPermalinkState() {
   return {
     ch: charInput.value || 'B', f: fontSelect.value, fw: weightSelect.value,
+    an: anchorSelect.value,
     lv: +levelsEl.value, gr: +growthEl.value, rt: +ratioEl.value,
     st: +stripesEl.value, tk: +thicknessEl.value, sz: +sizeEl.value,
     bg: bgColorEl.value, fg: lineColorEl.value,
@@ -312,6 +352,7 @@ function getPermalinkState() {
 }
 function applyPermalinkState(s) {
   charInput.value = s.ch; fontSelect.value = s.f; weightSelect.value = s.fw;
+  anchorSelect.value = s.an;
   levelsEl.value = s.lv; growthEl.value = s.gr; ratioEl.value = s.rt;
   stripesEl.value = s.st; thicknessEl.value = s.tk; sizeEl.value = s.sz;
   bgColorEl.value = s.bg; lineColorEl.value = s.fg;
@@ -340,7 +381,7 @@ new ToolExporter({
 allInputs.forEach(el => {
   el.addEventListener('input', () => { updateLabels(); render(); pm.update(); });
 });
-[fontSelect, weightSelect].forEach(el => {
+[fontSelect, weightSelect, anchorSelect].forEach(el => {
   el.addEventListener('change', () => pm.update());
 });
 
