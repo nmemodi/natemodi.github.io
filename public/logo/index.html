@@ -256,11 +256,16 @@
     outline-offset: -2px;
     z-index: 1;
   }
+  /* Render each tile iframe at 2x its visible size, then scale-down so the
+     tool gets a full-resolution canvas while the mark still fits the tile. */
   .embed-grid .tile iframe {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    transform: scale(0.5);
+    transform-origin: top left;
     border: 0;
     background: var(--code-bg);
     pointer-events: none;
