@@ -227,12 +227,12 @@ function renderToCtx(targetCtx, size, opts = {}) {
   const yCenters = [];
   for (let i = 0; i < stripes; i++) yCenters.push(stripeStep * (i + 0.5));
 
-  // Outer-most level paints first; inner levels overpaint within their letter shape
+  // Outer-most level paints first; inner levels overpaint within their letter shape.
+  // Innermost (lvl=0) gets the thickest stripes; each outer ring thins by `ratio`.
   for (let lvl = levels - 1; lvl >= 0; lvl--) {
-    // lvl=levels-1 is outermost (full size). Smaller levels shrink by 1/growth each step.
     const scale = Math.pow(growth, -(levels - 1 - lvl));
     const fontSize = outerFontSize * scale;
-    const stripeT = thickness * Math.pow(ratio, levels - 1 - lvl);
+    const stripeT = thickness * Math.pow(ratio, lvl);
 
     // Position letter so its anchor corner sits at the shared canvas anchor
     const m = measureChar(char, font, weight, fontSize, targetCtx);
@@ -312,7 +312,7 @@ function generateSVG() {
   svg += `<rect width="${size}" height="${size}" fill="${bgColor}"/>\n`;
 
   for (let lvl = levels - 1; lvl >= 0; lvl--) {
-    const stripeT = thickness * Math.pow(ratio, levels - 1 - lvl);
+    const stripeT = thickness * Math.pow(ratio, lvl);
     svg += `<g clip-path="url(#es-lvl${lvl})">\n`;
     for (let i = 0; i < stripes; i++) {
       const yc = stripeStep * (i + 0.5);
