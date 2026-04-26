@@ -82,18 +82,26 @@
   </div>
 
   <div class="control-group">
-    <div class="section-label">Colors</div>
+    <label>Background</label>
     <div class="color-row">
       <input type="color" id="bgColor" value="#cc0000">
-      <span class="color-hex">Background</span>
+      <span class="color-hex" id="bgColorVal">#cc0000</span>
     </div>
+  </div>
+
+  <div class="control-group">
+    <label>Backdrop</label>
     <div class="color-row">
       <input type="color" id="backdropColor" value="#ffffff">
-      <span class="color-hex">Backdrop</span>
+      <span class="color-hex" id="backdropColorVal">#ffffff</span>
     </div>
+  </div>
+
+  <div class="control-group">
+    <label>Dots</label>
     <div class="color-row">
       <input type="color" id="dotColor" value="#cc0000">
-      <span class="color-hex">Dots</span>
+      <span class="color-hex" id="dotColorVal">#cc0000</span>
     </div>
   </div>
 
@@ -482,8 +490,12 @@ wireSlider('offsetX', 'offsetX', v => v / 100, '%');
 wireSlider('offsetY', 'offsetY', v => v / 100, '%');
 
 ['bgColor', 'backdropColor', 'dotColor'].forEach(id => {
-  document.getElementById(id).addEventListener('input', e => {
-    state[id] = e.target.value; draw();
+  const el = document.getElementById(id);
+  const valEl = document.getElementById(id + 'Val');
+  el.addEventListener('input', e => {
+    state[id] = e.target.value;
+    valEl.textContent = e.target.value;
+    draw();
   });
 });
 
@@ -570,8 +582,11 @@ function applyState(s) {
   document.getElementById('dotShape').value = state.dotShape;
   document.getElementById('backdropShape').value = state.backdropShape;
   document.getElementById('bgColor').value = state.bgColor;
+  document.getElementById('bgColorVal').textContent = state.bgColor;
   document.getElementById('backdropColor').value = state.backdropColor;
+  document.getElementById('backdropColorVal').textContent = state.backdropColor;
   document.getElementById('dotColor').value = state.dotColor;
+  document.getElementById('dotColorVal').textContent = state.dotColor;
   document.getElementById('invert').checked = state.invert;
 
   const sliderMap = [

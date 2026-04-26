@@ -91,14 +91,18 @@
   </div>
 
   <div class="control-group">
-    <div class="section-label">Colors</div>
+    <label>Background</label>
     <div class="color-row">
       <input type="color" id="bgColor" value="#fdfdfc">
-      <span class="color-hex">Background</span>
+      <span class="color-hex" id="bgColorVal">#fdfdfc</span>
     </div>
+  </div>
+
+  <div class="control-group">
+    <label>Stripes</label>
     <div class="color-row">
       <input type="color" id="lineColor" value="#111111">
-      <span class="color-hex">Stripes</span>
+      <span class="color-hex" id="lineColorVal">#111111</span>
     </div>
   </div>
 
@@ -143,6 +147,8 @@ function updateLabels() {
   document.getElementById('stripesVal').textContent = stripesEl.value;
   document.getElementById('thicknessVal').textContent = thicknessEl.value;
   document.getElementById('sizeVal').textContent = sizeEl.value;
+  document.getElementById('bgColorVal').textContent = bgColorEl.value;
+  document.getElementById('lineColorVal').textContent = lineColorEl.value;
 }
 
 function measureChar(c, font, weight, fontSize, m_ctx) {
