@@ -195,6 +195,20 @@ body {
   color: var(--color-text-primary);
 }
 
+/* ── Index link (mirrors the "Home" treatment on /logo/) ── */
+.tool-index-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  color: var(--color-text-tertiary);
+  text-decoration: none;
+  font-size: 13px;
+  transition: color var(--ease-default);
+}
+.tool-index-link:hover { color: var(--color-text-primary); }
+.tool-index-link svg { width: 12px; height: 12px; flex-shrink: 0; }
+
 /* ── Hint text ── */
 .tool-hint {
   font-size: var(--text-sm);
