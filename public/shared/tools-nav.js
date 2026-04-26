@@ -35,7 +35,23 @@
     button.setAttribute('aria-expanded', String(open));
   }
 
+  function renderIndexLink() {
+    const sidebar = document.querySelector('.tool-sidebar');
+    if (!sidebar || sidebar.querySelector('.tool-index-link')) return;
+    const link = document.createElement('a');
+    link.className = 'tool-index-link';
+    link.href = INDEX_PATH;
+    link.innerHTML =
+      '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" ' +
+        'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ' +
+        'aria-hidden="true"><path d="M7.5 3L4.5 6L7.5 9"/></svg>' +
+      'Index';
+    sidebar.insertBefore(link, sidebar.firstChild);
+  }
+
   function render() {
+    renderIndexLink();
+
     header = document.querySelector('.tool-header');
     if (!header) return;
 
