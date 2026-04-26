@@ -34,23 +34,7 @@
   <div class="control-group">
     <div class="section-label">Typography</div>
     <label>Font</label>
-    <select id="font">
-      <option value="Orbitron" selected>Orbitron</option>
-      <option value="Audiowide">Audiowide</option>
-      <option value="Russo One">Russo One</option>
-      <option value="Exo 2">Exo 2</option>
-      <option value="Black Ops One">Black Ops One</option>
-      <option value="Rajdhani">Rajdhani</option>
-      <option value="Share Tech">Share Tech</option>
-      <option value="Baumans">Baumans</option>
-      <option value="Electrolize">Electrolize</option>
-      <option value="Michroma">Michroma</option>
-      <option value="Aldrich">Aldrich</option>
-      <option value="Arial Black">Arial Black</option>
-      <option value="Impact">Impact</option>
-      <option value="Georgia">Georgia</option>
-      <option value="Courier New">Courier New</option>
-    </select>
+    <select id="font"></select>
     <label>Weight</label>
     <select id="weight">
       <option value="100">Thin</option>
@@ -113,6 +97,7 @@
 <script src="/shared/rng.js"></script>
 <script src="/shared/permalink.js"></script>
 <script src="/shared/tools-export.js"></script>
+<script src="/shared/font-detect.js"></script>
 <script>
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -376,8 +361,24 @@ charInput.addEventListener('input', () => {
 });
 
 // ─── Init ───
+const FONT_CANDIDATES = ['Orbitron','Audiowide','Russo One','Exo 2','Black Ops One','Rajdhani','Share Tech','Baumans','Electrolize','Michroma','Aldrich','Arial Black','Impact','Georgia','Courier New'];
 updateLabels();
-document.fonts.ready.then(() => { render(); pm.decode(); });
+window.FontDetect.detectAvailableFonts(FONT_CANDIDATES).then(available => {
+  // Always include the page-loaded Google Fonts that pass detection; if none
+  // do (unlikely), fall back to whichever system fonts the candidate list has.
+  const fonts = available.length ? available : ['Arial Black'];
+  fontSelect.innerHTML = fonts
+    .map(f => `<option value="${f}">${f}</option>`)
+    .join('');
+  fontSelect.value = fonts[0];
+  render();
+  pm.decode();
+  if (!fonts.includes(fontSelect.value)) {
+    fontSelect.value = fonts[0];
+    render();
+    pm.update();
+  }
+});
 </script>
 <script src="/shared/tools-registry.js"></script>
 <script src="/shared/tools-nav.js"></script>
