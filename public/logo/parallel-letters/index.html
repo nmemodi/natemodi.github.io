@@ -84,14 +84,18 @@
   </div>
 
   <div class="control-group">
-    <div class="section-label">Colors</div>
+    <label>Background</label>
     <div class="color-row">
       <input type="color" id="bgColor" value="#e63946">
-      <span class="color-hex">Background</span>
+      <span class="color-hex" id="bgColorVal">#e63946</span>
     </div>
+  </div>
+
+  <div class="control-group">
+    <label>Lines</label>
     <div class="color-row">
       <input type="color" id="lineColor" value="#ffffff">
-      <span class="color-hex">Lines</span>
+      <span class="color-hex" id="lineColorVal">#ffffff</span>
     </div>
   </div>
 
@@ -134,6 +138,8 @@ function updateLabels() {
   document.getElementById('thicknessVal').textContent = thicknessEl.value;
   document.getElementById('gapVal').textContent = gapEl.value;
   document.getElementById('sizeVal').textContent = sizeEl.value;
+  document.getElementById('bgColorVal').textContent = bgColorEl.value;
+  document.getElementById('lineColorVal').textContent = lineColorEl.value;
 }
 
 // ─── Layout computation (shared by canvas + SVG) ───

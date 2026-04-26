@@ -19,6 +19,34 @@
         outline: none;
         cursor: pointer;
     }
+
+    .shape-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 3px;
+    }
+
+    .shape-btn {
+        aspect-ratio: 1;
+        background: var(--color-bg-elevated);
+        border: 2px solid transparent;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: all var(--ease-default);
+    }
+
+    .shape-btn:hover { background: var(--color-bg-hover); }
+    .shape-btn.active { border-color: var(--color-accent); background: #2a2020; }
+
+    .shape-btn canvas {
+        width: 65%;
+        height: 65%;
+        pointer-events: none;
+    }
 </style>
 </head>
 <body>
@@ -37,26 +65,7 @@
 
         <div class="control-group">
             <label>Shape</label>
-            <select id="shape">
-                <option value="circle" selected>Circle</option>
-                <option value="square">Square</option>
-                <option value="rounded-square">Rounded Square</option>
-                <option value="diamond">Diamond</option>
-                <option value="triangle">Triangle</option>
-                <option value="inverted-triangle">Inverted Triangle</option>
-                <option value="pentagon">Pentagon</option>
-                <option value="hexagon">Hexagon</option>
-                <option value="heptagon">Heptagon</option>
-                <option value="octagon">Octagon</option>
-                <option value="star-4">Star (4)</option>
-                <option value="star-5">Star (5)</option>
-                <option value="star-6">Star (6)</option>
-                <option value="cross">Cross</option>
-                <option value="semicircle">Semicircle</option>
-                <option value="oval">Oval</option>
-                <option value="teardrop">Teardrop</option>
-                <option value="shield">Shield</option>
-            </select>
+            <div class="shape-grid" id="shapeGrid"></div>
         </div>
 
         <div class="control-group">
@@ -638,6 +647,65 @@ function bindSelect(id, prop) {
     });
 }
 
+// ---- Shape picker ----
+const SHAPES_LIST = [
+    { id: 'circle',            name: 'Circle' },
+    { id: 'square',            name: 'Square' },
+    { id: 'rounded-square',    name: 'Rounded Square' },
+    { id: 'diamond',           name: 'Diamond' },
+    { id: 'triangle',          name: 'Triangle' },
+    { id: 'inverted-triangle', name: 'Inverted Triangle' },
+    { id: 'pentagon',          name: 'Pentagon' },
+    { id: 'hexagon',           name: 'Hexagon' },
+    { id: 'heptagon',          name: 'Heptagon' },
+    { id: 'octagon',           name: 'Octagon' },
+    { id: 'star-4',            name: 'Star (4)' },
+    { id: 'star-5',            name: 'Star (5)' },
+    { id: 'star-6',            name: 'Star (6)' },
+    { id: 'cross',             name: 'Cross' },
+    { id: 'semicircle',        name: 'Semicircle' },
+    { id: 'oval',              name: 'Oval' },
+    { id: 'teardrop',          name: 'Teardrop' },
+    { id: 'shield',            name: 'Shield' },
+];
+
+function buildShapePicker() {
+    const grid = document.getElementById('shapeGrid');
+    const dpr = window.devicePixelRatio || 1;
+
+    SHAPES_LIST.forEach(function(shape) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'shape-btn' + (shape.id === S.shape ? ' active' : '');
+        btn.dataset.shape = shape.id;
+        btn.title = shape.name;
+
+        const mini = document.createElement('canvas');
+        const sz = 28;
+        mini.width = sz * dpr;
+        mini.height = sz * dpr;
+        mini.style.width = sz + 'px';
+        mini.style.height = sz + 'px';
+
+        const mctx = mini.getContext('2d');
+        mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        mctx.fillStyle = '#999';
+        mctx.translate(sz / 2, sz / 2);
+        mctx.fill(shapePath(shape.id, sz * 0.36));
+
+        btn.appendChild(mini);
+        grid.appendChild(btn);
+
+        btn.addEventListener('click', function() {
+            S.shape = shape.id;
+            grid.querySelectorAll('.shape-btn').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            draw();
+            pm.update();
+        });
+    });
+}
+
 bindRange('count', 'count');
 bindRange('size', 'size');
 bindRange('spacing', 'spacing');
@@ -651,7 +719,6 @@ bindRange('sliceOffset', 'sliceOffset', true);
 bindColor('bgColor', 'bgColor');
 bindColor('fillColor', 'fillColor');
 bindColor('lineColor', 'lineColor');
-bindSelect('shape', 'shape');
 bindSelect('curveType', 'curveType');
 
 function syncUI() {
@@ -669,7 +736,9 @@ function syncUI() {
         document.getElementById(id).value = S[prop];
         document.getElementById(id + 'Val').textContent = S[prop];
     }
-    document.getElementById('shape').value = S.shape;
+    document.querySelectorAll('#shapeGrid .shape-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.shape === S.shape);
+    });
     document.getElementById('curveType').value = S.curveType;
 }
 
@@ -780,7 +849,7 @@ const pm = new window.PermalinkManager({
     toolName: 'sliced-shapes',
     schema: pschema, getState: getPermalinkState, applyState: applyPermalinkState,
 });
-['count','shape','size','spacing','curveType','baseAngle','angleSpread',
+['count','size','spacing','curveType','baseAngle','angleSpread',
  'curvature','gapWidth','lineWidth','taper','sliceOffset',
  'bgColor','fillColor','lineColor'].forEach(id => {
     const el = document.getElementById(id);
@@ -811,6 +880,7 @@ new ToolExporter({
 });
 
 // ---- Init ----
+buildShapePicker();
 resize();
 pm.decode();
     </script>

@@ -28,14 +28,18 @@
   </div>
 
   <div class="control-group">
-    <div class="section-label">Colors</div>
+    <label>Background</label>
     <div class="color-row">
-      <label>Background</label>
       <input type="color" id="bgColor" value="#ffffff">
+      <span class="color-hex" id="bgColorVal">#ffffff</span>
     </div>
+  </div>
+
+  <div class="control-group">
+    <label>Shape</label>
     <div class="color-row">
-      <label>Shape</label>
       <input type="color" id="fgColor" value="#111111">
+      <span class="color-hex" id="fgColorVal">#111111</span>
     </div>
   </div>
 
@@ -339,8 +343,17 @@ wireSlider('padding', 'padding', v => v/100, '%');
 wireSlider('lineWidth', 'lineWidth', v => v/100, '%');
 wireSlider('depthMult', 'depthMult', v => v/100, '%');
 
-document.getElementById('bgColor').addEventListener('input', e => { state.bgColor = e.target.value; draw(); });
-document.getElementById('fgColor').addEventListener('input', e => { state.fgColor = e.target.value; draw(); });
+function bindColor(id, prop) {
+  const el = document.getElementById(id);
+  const valEl = document.getElementById(id + 'Val');
+  el.addEventListener('input', e => {
+    state[prop] = e.target.value;
+    valEl.textContent = e.target.value;
+    draw();
+  });
+}
+bindColor('bgColor', 'bgColor');
+bindColor('fgColor', 'fgColor');
 
 // ─── Permalink ───
 const { INT_RANGE, COLOR, TEXT } = window.LogoSchema;
@@ -378,7 +391,9 @@ function applyState(s) {
   charInput.value = state.letter;
   document.querySelectorAll('.picker-btn').forEach(b => b.classList.toggle('active', b.textContent === state.letter));
   document.getElementById('bgColor').value = state.bgColor;
+  document.getElementById('bgColorVal').textContent = state.bgColor;
   document.getElementById('fgColor').value = state.fgColor;
+  document.getElementById('fgColorVal').textContent = state.fgColor;
   const setSlider = (id, rawVal, suffix) => {
     const el = document.getElementById(id);
     const val = document.getElementById(id + 'Val');

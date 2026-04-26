@@ -114,6 +114,22 @@
     <input type="range" id="radius" min="0" max="40" value="10" step="1">
   </div>
 
+  <div class="control-group">
+    <label>Background</label>
+    <div class="color-row">
+      <input type="color" id="bgColor" value="#ffffff">
+      <span class="color-hex" id="bgColorVal">#ffffff</span>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label>Lines</label>
+    <div class="color-row">
+      <input type="color" id="fgColor" value="#000000">
+      <span class="color-hex" id="fgColorVal">#000000</span>
+    </div>
+  </div>
+
   <label class="toggle-row">
     <input type="checkbox" id="showMap">
     <span>Show displacement map</span>
@@ -121,7 +137,7 @@
 
   <label class="toggle-row">
     <input type="checkbox" id="invert">
-    <span>Invert colors</span>
+    <span>Swap colors</span>
   </label>
 
   <div class="btn-row">
@@ -164,6 +180,8 @@ const controls = {
   radius: document.getElementById('radius'),
   showMap: document.getElementById('showMap'),
   invert: document.getElementById('invert'),
+  bgColor: document.getElementById('bgColor'),
+  fgColor: document.getElementById('fgColor'),
 };
 
 const defaults = {
@@ -171,6 +189,7 @@ const defaults = {
   lines: 13, displacement: 65, blur: 28, ridge: 0, gap: 0.35,
   letterSize: 0.72, margin: 25, radius: 10,
   showMap: false, invert: false,
+  bgColor: '#ffffff', fgColor: '#000000',
 };
 
 function getParams() {
@@ -191,6 +210,8 @@ function getParams() {
     radius: +controls.radius.value,
     showMap: controls.showMap.checked,
     invert: controls.invert.checked,
+    bgColor: controls.bgColor.value,
+    fgColor: controls.fgColor.value,
   };
 }
 
@@ -206,6 +227,8 @@ function updateLabels() {
   document.getElementById('offsetYVal').textContent = controls.offsetY.value + 'px';
   document.getElementById('marginVal').textContent = controls.margin.value + 'px';
   document.getElementById('radiusVal').textContent = controls.radius.value + 'px';
+  document.getElementById('bgColorVal').textContent = controls.bgColor.value;
+  document.getElementById('fgColorVal').textContent = controls.fgColor.value;
 }
 
 function resetDefaults() {
@@ -225,6 +248,8 @@ function resetDefaults() {
   controls.radius.value = defaults.radius;
   controls.showMap.checked = defaults.showMap;
   controls.invert.checked = defaults.invert;
+  controls.bgColor.value = defaults.bgColor;
+  controls.fgColor.value = defaults.fgColor;
   updateLabels();
   render();
 }
@@ -369,8 +394,8 @@ function render() {
   const p = getParams();
   const dispData = createDisplacementMap(p);
 
-  const bg = p.invert ? '#000' : '#fff';
-  const fg = p.invert ? '#fff' : '#000';
+  const bg = p.invert ? p.fgColor : p.bgColor;
+  const fg = p.invert ? p.bgColor : p.fgColor;
 
   // Clear
   ctx.fillStyle = bg;
@@ -513,8 +538,8 @@ function generateSVG() {
   const p = getParams();
   const dispData = createDisplacementMap(p);
   const paths = generateSVGPaths(p, dispData);
-  const fg = p.invert ? '#fff' : '#000';
-  const bg = p.invert ? '#000' : '#fff';
+  const fg = p.invert ? p.bgColor : p.fgColor;
+  const bg = p.invert ? p.fgColor : p.bgColor;
 
   let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SIZE} ${SIZE}" width="${SIZE}" height="${SIZE}">\n`;
   svg += `  <rect width="${SIZE}" height="${SIZE}" fill="${bg}"/>\n`;
@@ -531,8 +556,8 @@ function renderToCanvas(exportCtx, width, height, opts) {
   const dispData = createDisplacementMap(p);
   const scale = width / SIZE;
 
-  const bg = opts && opts.transparent ? 'transparent' : (p.invert ? '#000' : '#fff');
-  const fg = p.invert ? '#fff' : '#000';
+  const bg = opts && opts.transparent ? 'transparent' : (p.invert ? p.fgColor : p.bgColor);
+  const fg = p.invert ? p.bgColor : p.fgColor;
 
   if (bg !== 'transparent') {
     exportCtx.fillStyle = bg;
@@ -598,7 +623,7 @@ Object.values(controls).forEach(el => {
 });
 
 // --- Permalink ---
-const { INT_RANGE, FLOAT_RANGE, ENUM, BOOL, TEXT } = window.LogoSchema;
+const { INT_RANGE, FLOAT_RANGE, ENUM, BOOL, TEXT, COLOR } = window.LogoSchema;
 const schema = {
   lt: TEXT({ charset: /^[A-Za-z0-9]{1,2}$/, maxLen: 2, def: 'S' }),
   f:  ENUM(['Helvetica Neue', 'Arial Black', 'Georgia', 'Impact', 'Futura', 'Times New Roman'], 'Helvetica Neue'),
@@ -616,6 +641,8 @@ const schema = {
   cr: INT_RANGE(0, 40, 10),
   sm: BOOL(false),
   iv: BOOL(false),
+  bg: COLOR('#ffffff'),
+  fg: COLOR('#000000'),
 };
 
 function getPermalinkState() {
@@ -636,6 +663,8 @@ function getPermalinkState() {
     cr: +controls.radius.value,
     sm: controls.showMap.checked,
     iv: controls.invert.checked,
+    bg: controls.bgColor.value,
+    fg: controls.fgColor.value,
   };
 }
 function applyPermalinkState(s) {
@@ -655,6 +684,8 @@ function applyPermalinkState(s) {
   controls.radius.value = s.cr;
   controls.showMap.checked = s.sm;
   controls.invert.checked = s.iv;
+  controls.bgColor.value = s.bg;
+  controls.fgColor.value = s.fg;
   updateLabels();
   render();
 }
@@ -675,7 +706,7 @@ new ToolExporter({
   getCanvas: () => canvas,
   getSVG: () => generateSVG(),
   renderToCanvas: renderToCanvas,
-  getBackgroundColor: () => getParams().invert ? '#000000' : '#ffffff',
+  getBackgroundColor: () => { const p = getParams(); return p.invert ? p.fgColor : p.bgColor; },
   baseWidth: SIZE,
   baseHeight: SIZE,
   getPermalink: () => pm.getPermalink(),
