@@ -456,13 +456,9 @@
             const maskGroup = new Group();
             const overGroup = new Group();
 
-            // Base angular span where the over-strand "occupies" the under circle.
-            const baseSpan = Math.min((sw * gapMul) / r, Math.PI / 3);
-            // Mask span on the under circle controls visible gap width.
-            const breakSpan = Math.min(baseSpan * (1 + bw * 0.9), Math.PI / 2.5);
-            // Over-arc span on the over circle: slightly wider than the mask
-            // so seams are covered, but not so wide it bleeds into other crossings.
-            const overSpan = Math.min(breakSpan + Math.max(0.02, baseSpan * 0.2), Math.PI / 2);
+            // Mask width: covers under stroke + a visible "gap" controlled by
+            // the gap/break sliders.
+            const maskWidth = sw + sw * Math.max(0.1, gapMul * 0.15 + bw * 0.6);
 
             for (const c of crossings) {
                 const overIdx = overOf[c.id];
@@ -470,19 +466,37 @@
                 const overCenter = positions[overIdx];
                 const underCenter = positions[underIdx];
 
-                const underAngle = Math.atan2(c.pt.y - underCenter.y, c.pt.x - underCenter.x);
-                const overAngle  = Math.atan2(c.pt.y - overCenter.y,  c.pt.x - overCenter.x);
+                // Geometry: angular distance on the over circle to clear the
+                // under stroke. The over-circle's distance-from-under-center
+                // changes at rate |d·√(4r²-d²)/(2r)| per radian at the crossing.
+                // To gain sw/2 (cross the under stroke edge): δα = sw·r/(d·√(4r²-d²)).
+                const dx = overCenter.x - underCenter.x;
+                const dy = overCenter.y - underCenter.y;
+                const dCenters = Math.sqrt(dx * dx + dy * dy);
+                const radicand = Math.max(0, 4 * r * r - dCenters * dCenters);
+                const rate = dCenters * Math.sqrt(radicand) / (2 * r);
+                const exitSpan = (rate > 1e-4) ? (sw / 2) / rate : 0.25;
 
-                // Mask the under circle's stroke at the crossing.
-                const maskPts = makeArc(underCenter, r, underAngle - breakSpan, underAngle + breakSpan, 28);
+                // safeSpan: enough that the mask's caps land outside the under
+                // stroke entirely. The visible cut on the under is then bounded
+                // by the mask's parallel sides — which are offset arcs of the
+                // OVER circle, so the cut edges follow its natural curvature.
+                const safeSpan = Math.min(exitSpan * 2.2 + 0.05, Math.PI / 3);
+
+                const overAngle = Math.atan2(c.pt.y - overCenter.y, c.pt.x - overCenter.x);
+
+                // Mask along the OVER circle (not the under).
+                const maskPts = makeArc(overCenter, r, overAngle - safeSpan, overAngle + safeSpan, 36);
                 const mask = new Path(maskPts);
                 mask.strokeColor = config.bgColor;
-                mask.strokeWidth = sw + 2;
-                mask.strokeCap = 'butt';
+                mask.strokeWidth = maskWidth;
+                mask.strokeCap = 'round';
                 maskGroup.addChild(mask);
 
-                // Redraw the over circle's arc on top.
-                const overPts = makeArc(overCenter, r, overAngle - overSpan, overAngle + overSpan, 28);
+                // Redraw the over circle's arc on top, slightly wider than the
+                // mask so seams stay covered.
+                const overSpan = Math.min(safeSpan + 0.04, Math.PI / 3);
+                const overPts = makeArc(overCenter, r, overAngle - overSpan, overAngle + overSpan, 36);
                 const over = new Path(overPts);
                 over.strokeColor = config.fgColor;
                 over.strokeWidth = sw;
