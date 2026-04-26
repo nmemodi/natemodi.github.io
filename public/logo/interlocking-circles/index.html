@@ -469,33 +469,38 @@
                 // Geometry: angular distance on the over circle to clear the
                 // under stroke. The over-circle's distance-from-under-center
                 // changes at rate |d·√(4r²-d²)/(2r)| per radian at the crossing.
-                // To gain sw/2 (cross the under stroke edge): δα = sw·r/(d·√(4r²-d²)).
                 const dx = overCenter.x - underCenter.x;
                 const dy = overCenter.y - underCenter.y;
                 const dCenters = Math.sqrt(dx * dx + dy * dy);
                 const radicand = Math.max(0, 4 * r * r - dCenters * dCenters);
                 const rate = dCenters * Math.sqrt(radicand) / (2 * r);
-                const exitSpan = (rate > 1e-4) ? (sw / 2) / rate : 0.25;
-
-                // safeSpan: enough that the mask's caps land outside the under
-                // stroke entirely. The visible cut on the under is then bounded
-                // by the mask's parallel sides — which are offset arcs of the
-                // OVER circle, so the cut edges follow its natural curvature.
-                const safeSpan = Math.min(exitSpan * 2.2 + 0.05, Math.PI / 3);
+                // Need to gain (sw + maskWidth)/2 in distance so the butt-cap's
+                // perpendicular endpoints (which extend ±maskWidth/2 radially
+                // from the over circle) all land safely outside the under
+                // stroke. Otherwise the cap edge prints a flat line on the
+                // under = squared cut.
+                const exitGain = (sw + maskWidth) / 2;
+                const exitSpan = (rate > 1e-4) ? exitGain / rate : 0.3;
+                // safeSpan: caps land outside the under stroke entirely. Cut on
+                // the under is then bounded by the mask's parallel sides —
+                // offset arcs of the OVER circle, so it curves along it.
+                const safeSpan = Math.min(exitSpan + 0.06, Math.PI / 3);
 
                 const overAngle = Math.atan2(c.pt.y - overCenter.y, c.pt.x - overCenter.x);
 
-                // Mask along the OVER circle (not the under).
+                // Mask along the OVER circle. Butt caps so the mask doesn't
+                // protrude tangentially past safeSpan (round caps would print
+                // bg "ticks" on the over circle past the over-arc redraw).
                 const maskPts = makeArc(overCenter, r, overAngle - safeSpan, overAngle + safeSpan, 36);
                 const mask = new Path(maskPts);
                 mask.strokeColor = config.bgColor;
                 mask.strokeWidth = maskWidth;
-                mask.strokeCap = 'round';
+                mask.strokeCap = 'butt';
                 maskGroup.addChild(mask);
 
-                // Redraw the over circle's arc on top, slightly wider than the
-                // mask so seams stay covered.
-                const overSpan = Math.min(safeSpan + 0.04, Math.PI / 3);
+                // Redraw the over circle's arc on top, marginally wider than
+                // the mask so AA seams stay covered.
+                const overSpan = Math.min(safeSpan + 0.02, Math.PI / 3);
                 const overPts = makeArc(overCenter, r, overAngle - overSpan, overAngle + overSpan, 36);
                 const over = new Path(overPts);
                 over.strokeColor = config.fgColor;
