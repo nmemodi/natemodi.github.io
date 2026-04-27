@@ -31,6 +31,7 @@
   <p class="tool-hint">Create logos from displaced lines</p>
 
   <div class="control-group">
+    <div class="section-label">Typography</div>
     <label>Letter</label>
     <input type="text" id="letter" value="S" maxlength="2">
   </div>
@@ -52,6 +53,26 @@
   </div>
 
   <div class="control-group">
+    <label>Letter Size <span class="val" id="letterSizeVal"></span></label>
+    <input type="range" id="letterSize" min="0.3" max="1.0" value="0.72" step="0.01">
+  </div>
+
+  <div class="control-group">
+    <div class="section-label">Lines</div>
+    <label>Count <span class="val" id="linesVal"></span></label>
+    <input type="range" id="lines" min="5" max="25" value="13" step="1">
+    <label>Displacement <span class="val" id="dispVal"></span></label>
+    <input type="range" id="displacement" min="0" max="150" value="65" step="1">
+    <label>Blur (Smoothing) <span class="val" id="blurVal"></span></label>
+    <input type="range" id="blur" min="5" max="60" value="28" step="1">
+    <label>Ridge <span class="val" id="ridgeVal"></span></label>
+    <input type="range" id="ridge" min="0" max="100" value="0" step="1">
+    <label>Gap Ratio <span class="val" id="gapVal"></span></label>
+    <input type="range" id="gap" min="0.1" max="0.7" value="0.35" step="0.01">
+  </div>
+
+  <div class="control-group">
+    <div class="section-label">Transform</div>
     <label>Rotation <span class="val" id="rotationVal"></span></label>
     <input type="range" id="rotation" min="0" max="359" value="0" step="1">
   </div>
@@ -68,54 +89,20 @@
   </div>
 
   <div class="control-group">
-    <label>Lines <span class="val" id="linesVal"></span></label>
-    <input type="range" id="lines" min="5" max="25" value="13" step="1">
-  </div>
-
-  <div class="control-group">
-    <label>Displacement <span class="val" id="dispVal"></span></label>
-    <input type="range" id="displacement" min="0" max="150" value="65" step="1">
-  </div>
-
-  <div class="control-group">
-    <label>Blur (Smoothing) <span class="val" id="blurVal"></span></label>
-    <input type="range" id="blur" min="5" max="60" value="28" step="1">
-  </div>
-
-  <div class="control-group">
-    <label>Ridge <span class="val" id="ridgeVal"></span></label>
-    <input type="range" id="ridge" min="0" max="100" value="0" step="1">
-  </div>
-
-  <div class="control-group">
-    <label>Gap Ratio <span class="val" id="gapVal"></span></label>
-    <input type="range" id="gap" min="0.1" max="0.7" value="0.35" step="0.01">
-  </div>
-
-  <div class="control-group">
-    <label>Letter Size <span class="val" id="letterSizeVal"></span></label>
-    <input type="range" id="letterSize" min="0.3" max="1.0" value="0.72" step="0.01">
-  </div>
-
-  <div class="control-group">
+    <div class="section-label">Frame</div>
     <label>Margin <span class="val" id="marginVal"></span></label>
     <input type="range" id="margin" min="0" max="80" value="25" step="1">
-  </div>
-
-  <div class="control-group">
     <label>Corner Radius <span class="val" id="radiusVal"></span></label>
     <input type="range" id="radius" min="0" max="40" value="10" step="1">
   </div>
 
   <div class="control-group">
+    <div class="section-label">Color</div>
     <label>Background</label>
     <div class="color-row">
       <input type="color" id="bgColor" value="#ffffff">
       <span class="color-hex" id="bgColorVal">#ffffff</span>
     </div>
-  </div>
-
-  <div class="control-group">
     <label>Lines</label>
     <div class="color-row">
       <input type="color" id="fgColor" value="#000000">
@@ -123,15 +110,17 @@
     </div>
   </div>
 
-  <label class="toggle-row">
-    <input type="checkbox" id="showMap">
-    <span>Show displacement map</span>
-  </label>
-
-  <label class="toggle-row">
-    <input type="checkbox" id="invert">
-    <span>Swap colors</span>
-  </label>
+  <div class="control-group">
+    <div class="section-label">Options</div>
+    <label class="toggle-row">
+      <input type="checkbox" id="showMap">
+      <span>Show displacement map</span>
+    </label>
+    <label class="toggle-row">
+      <input type="checkbox" id="invert">
+      <span>Swap colors</span>
+    </label>
+  </div>
 
   <div class="btn-row">
     <button class="btn btn-secondary" onclick="resetDefaults()">Reset</button>

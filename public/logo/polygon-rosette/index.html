@@ -29,67 +29,49 @@
         <p class="tool-hint">Lattice patterns from concentric polygons with woven diagonal connections.</p>
 
         <div class="control-group">
+            <div class="section-label">Geometry</div>
             <label>Sides <span class="val" id="sidesVal">10</span></label>
             <input type="range" id="sides" min="3" max="24" value="10" step="1">
-        </div>
-
-        <div class="control-group">
             <label>Outer Radius <span class="val" id="outerRadiusVal">250</span></label>
             <input type="range" id="outerRadius" min="80" max="400" value="250">
-        </div>
-
-        <div class="control-group">
             <label>Inner Ratio <span class="val" id="innerRatioVal">0.58</span></label>
             <input type="range" id="innerRatio" min="0.10" max="0.95" value="0.58" step="0.01">
-        </div>
-
-        <div class="control-group">
             <label>Skip <span class="val" id="skipVal">2</span></label>
             <input type="range" id="skip" min="1" max="5" value="2" step="1">
-        </div>
-
-        <div class="control-group">
             <label>Stroke <span class="val" id="strokeWidthVal">5</span></label>
             <input type="range" id="strokeWidth" min="1" max="30" value="5">
-        </div>
-
-        <div class="control-group">
             <label>Rotation <span class="val" id="rotationVal">0</span>&deg;</label>
             <input type="range" id="rotation" min="0" max="360" value="0" step="0.5">
         </div>
 
-        <label class="toggle-row">
-            <input type="checkbox" id="showOuter" checked>
-            <span>Outer Ring</span>
-        </label>
-
-        <label class="toggle-row">
-            <input type="checkbox" id="showInner" checked>
-            <span>Inner Ring</span>
-        </label>
-
-        <label class="toggle-row">
-            <input type="checkbox" id="weave">
-            <span>Weave</span>
-        </label>
-
-        <div id="weaveControls">
-            <div class="control-group">
+        <div class="control-group">
+            <div class="section-label">Display</div>
+            <label class="toggle-row">
+                <input type="checkbox" id="showOuter" checked>
+                <span>Outer Ring</span>
+            </label>
+            <label class="toggle-row">
+                <input type="checkbox" id="showInner" checked>
+                <span>Inner Ring</span>
+            </label>
+            <label class="toggle-row">
+                <input type="checkbox" id="weave">
+                <span>Weave</span>
+            </label>
+            <div id="weaveControls">
                 <label>Gap <span class="val" id="gapVal">1.8</span></label>
                 <input type="range" id="gap" min="0.5" max="4.0" value="1.8" step="0.1">
             </div>
         </div>
 
         <div class="control-group">
+            <div class="section-label">Color</div>
             <label>Background</label>
             <div class="color-row">
                 <input type="color" id="bgColor" value="#cc0000">
                 <span class="color-hex" id="bgColorVal">#cc0000</span>
             </div>
-        </div>
-
-        <div class="control-group">
-            <label>Stroke Color</label>
+            <label>Stroke</label>
             <div class="color-row">
                 <input type="color" id="fgColor" value="#f0f0f0">
                 <span class="color-hex" id="fgColorVal">#f0f0f0</span>
@@ -97,7 +79,7 @@
         </div>
 
         <div class="control-group">
-            <label>Presets</label>
+            <div class="section-label">Presets</div>
             <div class="presets">
                 <button class="preset-btn" data-preset="rosette">Rosette</button>
                 <button class="preset-btn" data-preset="hexStar">Hex Star</button>
