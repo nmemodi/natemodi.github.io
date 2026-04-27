@@ -189,6 +189,89 @@
             return null;
         }
 
+        // ---- Weave parity ----
+        // Globally-consistent over/under assignment across all diagonals (the
+        // n right + n left diagonals are treated as 2n "strands"). Walk each
+        // strand in parameter order, alternating over/under at successive
+        // crossings; per-strand parity is propagated by BFS across shared
+        // crossings so every crossing has exactly one strand over.
+        function computeDiagonalWeaveOrder(rightDiags, leftDiags) {
+            const n = rightDiags.length;
+            const strands = [...rightDiags, ...leftDiags];
+            const m = strands.length;
+
+            const crossings = [];                     // { id, i, j, pt }
+            const perStrand = Array.from({ length: m }, () => []);
+
+            for (let ri = 0; ri < n; ri++) {
+                for (let li = 0; li < n; li++) {
+                    const ix = segIntersect(
+                        rightDiags[ri][0], rightDiags[ri][1],
+                        leftDiags[li][0], leftDiags[li][1]
+                    );
+                    if (!ix) continue;
+                    const id = crossings.length;
+                    const i = ri;
+                    const j = n + li;
+                    crossings.push({ id, i, j, pt: ix.point });
+                    perStrand[i].push({ id, t: ix.t });
+                    perStrand[j].push({ id, t: ix.u });
+                }
+            }
+
+            // Sort each strand's crossings by parameter along the strand.
+            for (let s = 0; s < m; s++) perStrand[s].sort((a, b) => a.t - b.t);
+
+            // For each crossing, remember its sorted index on each strand.
+            const idLoc = {};
+            for (let s = 0; s < m; s++) {
+                for (let k = 0; k < perStrand[s].length; k++) {
+                    const id = perStrand[s][k].id;
+                    if (!idLoc[id]) idLoc[id] = {};
+                    idLoc[id][s] = k;
+                }
+            }
+
+            // BFS: starting parity per strand. over_at(strand, k) = (parity[strand] + k) mod 2.
+            // Each crossing constrains the two strands: exactly one is over.
+            const parity = new Array(m).fill(-1);
+            for (let start = 0; start < m; start++) {
+                if (parity[start] !== -1) continue;
+                parity[start] = 0;
+                const queue = [start];
+                while (queue.length) {
+                    const s = queue.shift();
+                    for (const cross of perStrand[s]) {
+                        const c = crossings[cross.id];
+                        const other = (c.i === s) ? c.j : c.i;
+                        const kS = idLoc[c.id][s];
+                        const kOther = idLoc[c.id][other];
+                        const overS = (parity[s] + kS) % 2;
+                        const requiredParityOther = ((1 - overS) - kOther % 2 + 4) % 2;
+                        if (parity[other] === -1) {
+                            parity[other] = requiredParityOther;
+                            queue.push(other);
+                        }
+                        // Already-set conflicts are tolerated: resolved at render.
+                    }
+                }
+            }
+
+            // Decide over-strand for each crossing.
+            const overOf = new Array(crossings.length);
+            for (const c of crossings) {
+                const kI = idLoc[c.id][c.i];
+                const kJ = idLoc[c.id][c.j];
+                const overI = (parity[c.i] + kI) % 2;
+                const overJ = (parity[c.j] + kJ) % 2;
+                if (overI === 1 && overJ === 0)      overOf[c.id] = c.i;
+                else if (overJ === 1 && overI === 0) overOf[c.id] = c.j;
+                else                                 overOf[c.id] = (kI % 2 === 0) ? c.i : c.j;
+            }
+
+            return { crossings, overOf, strands };
+        }
+
         // ---- Render ----
         function draw() {
             project.clear();
@@ -264,76 +347,67 @@
             // --- Weave layer ---
             if (!config.weave || isDegen) return;
 
-            // Find all intersections between right and left diagonals
-            // Group crossings per right-diagonal so we can alternate properly
-            const crossingsPerRight = rightDiags.map(() => []);
+            // Globally-consistent over/under per crossing (BFS-propagated
+            // parity over the right + left diagonal strands).
+            const { crossings, overOf, strands } = computeDiagonalWeaveOrder(rightDiags, leftDiags);
 
-            for (let ri = 0; ri < n; ri++) {
-                for (let li = 0; li < n; li++) {
-                    const ix = segIntersect(
-                        rightDiags[ri][0], rightDiags[ri][1],
-                        leftDiags[li][0], leftDiags[li][1]
-                    );
-                    if (!ix) continue;
-                    crossingsPerRight[ri].push({ li, point: ix.point, t: ix.t, u: ix.u });
-                }
-                // Sort by parameter along the right diagonal
-                crossingsPerRight[ri].sort((a, b) => a.t - b.t);
-            }
-
-            // Also find intersections between diagonals and polygon edges
-            // (for weaving diags over/under the rings)
+            // Polygon edges (outer + inner rings) sit OVER the diagonals —
+            // they form the frame of the rosette.
             const edgeSegs = [];
             if (config.showOuter) {
                 for (let i = 0; i < n; i++) {
-                    edgeSegs.push([outer[i], outer[(i + 1) % n], 'outer']);
+                    edgeSegs.push([outer[i], outer[(i + 1) % n]]);
                 }
             }
             if (config.showInner) {
                 for (let i = 0; i < n; i++) {
-                    edgeSegs.push([inner[i], inner[(i + 1) % n], 'inner']);
+                    edgeSegs.push([inner[i], inner[(i + 1) % n]]);
                 }
             }
+            const allDiags = [...rightDiags, ...leftDiags];
 
-            // Apply weave at diagonal-diagonal crossings
-            for (let ri = 0; ri < n; ri++) {
-                crossingsPerRight[ri].forEach((crossing, idx) => {
-                    // Alternate: even index = right over, odd = left over
-                    const rightOver = idx % 2 === 0;
+            // Two-pass render: every mask first, then every over-strand.
+            // Without this a neighbor's break-mask can paint over a nearby
+            // over-strand at dense crossings (the source of muddled crossings
+            // in tight rosettes).
+            const maskGroup = new Group();
+            const overGroup = new Group();
 
-                    const overSeg = rightOver ? rightDiags[ri] : leftDiags[crossing.li];
-                    const dir = overSeg[1].subtract(overSeg[0]).normalize();
-                    const maskLen = sw * config.gap;
+            // Diagonal-vs-diagonal weave.
+            for (const c of crossings) {
+                const overIdx = overOf[c.id];
+                const overSeg = strands[overIdx];
+                const dir = overSeg[1].subtract(overSeg[0]).normalize();
+                const maskLen = sw * config.gap;
 
-                    // Mask: erase both lines at crossing with background color
-                    const mask = new Path.Line(
-                        crossing.point.subtract(dir.multiply(maskLen)),
-                        crossing.point.add(dir.multiply(maskLen))
-                    );
-                    mask.strokeColor = config.bgColor;
-                    mask.strokeWidth = sw * 2.5;
-                    mask.strokeCap = 'square';
+                // Mask along the over-strand. Butt caps so the mask doesn't
+                // protrude tangentially past the endpoint — square caps print
+                // bg ticks past the over redraw at acute-angle crossings.
+                const mask = new Path.Line(
+                    c.pt.subtract(dir.multiply(maskLen)),
+                    c.pt.add(dir.multiply(maskLen))
+                );
+                mask.strokeColor = config.bgColor;
+                mask.strokeWidth = sw * 2.5;
+                mask.strokeCap = 'butt';
+                maskGroup.addChild(mask);
 
-                    // Over: redraw the over line segment
-                    const overLen = maskLen * 1.15;
-                    const over = new Path.Line(
-                        crossing.point.subtract(dir.multiply(overLen)),
-                        crossing.point.add(dir.multiply(overLen))
-                    );
-                    over.strokeColor = config.fgColor;
-                    over.strokeWidth = sw;
-                    over.strokeCap = 'butt';
-                });
+                const overLen = maskLen * 1.15;
+                const over = new Path.Line(
+                    c.pt.subtract(dir.multiply(overLen)),
+                    c.pt.add(dir.multiply(overLen))
+                );
+                over.strokeColor = config.fgColor;
+                over.strokeWidth = sw;
+                over.strokeCap = 'butt';
+                overGroup.addChild(over);
             }
 
-            // Weave diagonals with polygon edges
-            const allDiags = [...rightDiags, ...leftDiags];
+            // Diagonal-vs-edge weave (rings sit over diagonals).
             for (const diag of allDiags) {
                 for (const edge of edgeSegs) {
                     const ix = segIntersect(diag[0], diag[1], edge[0], edge[1]);
                     if (!ix) continue;
-
-                    // Polygon edges go OVER the diagonals (they form the frame)
                     const edgeDir = edge[1].subtract(edge[0]).normalize();
                     const maskLen = sw * config.gap * 0.8;
 
@@ -343,7 +417,8 @@
                     );
                     mask.strokeColor = config.bgColor;
                     mask.strokeWidth = sw * 2.5;
-                    mask.strokeCap = 'square';
+                    mask.strokeCap = 'butt';
+                    maskGroup.addChild(mask);
 
                     const over = new Path.Line(
                         ix.point.subtract(edgeDir.multiply(maskLen * 1.15)),
@@ -352,6 +427,7 @@
                     over.strokeColor = config.fgColor;
                     over.strokeWidth = sw;
                     over.strokeCap = 'butt';
+                    overGroup.addChild(over);
                 }
             }
         }
