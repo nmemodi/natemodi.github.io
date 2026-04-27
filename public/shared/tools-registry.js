@@ -79,8 +79,8 @@
       variants: [
         'v=1&bg=060d2d&br=0&fg=ebeaea&gp=0.5&ly=ring&n=7&r=75&ro=91&sp=91&sw=30',
         'v=1&ro=90&sw=46',
-        'v=1&bg=ffffff&br=0&fg=000000&gp=2.9&ly=ring&n=4&r=87&sp=68&sw=62',
-        'v=1&bg=72ff14&br=0&fg=000000&gp=2.9&ly=ring&n=5&r=115&sp=109&sw=61&wv=0'
+        'v=1&bg=72ff14&br=0&fg=000000&gp=2.9&ly=ring&n=5&nb=2&r=138&sp=161&sw=13',
+        'v=1&bg=ffffff&br=0&fg=000000&gp=2.9&ly=ring&n=4&r=87&sp=68&sw=62'
       ],
       credit: {
         work: 'Ota Dental Clinic',
@@ -191,8 +191,8 @@
       variants: [
         'v=1&bg=ff4242&sw=18',
         'v=1&bg=1a1a1a&fg=ffffff&ir=0.1&n=14&r=261&sw=18',
-        'v=1&bg=007bff&fg=ffffff&ir=0.54&n=17&r=262&sk=1&sw=14',
-        'v=1&bg=0e251b&fg=ffeedb&g=2.2&ir=0.5&n=3&r=260&rt=256&sk=1&sw=18'
+        'v=1&bg=0e251b&fg=ffeedb&g=2.2&ir=0.5&n=3&r=260&rt=256&sk=1&sw=18',
+        'v=1&bg=007bff&fg=ffffff&ir=0.54&n=17&r=262&sk=1&sw=14'
       ],
       credit: {
         work: 'Grace',
@@ -215,9 +215,9 @@
       defaultSeed: '1',
       variants: [
         'v=1&an=c&bg=1328c9&fg=ffffff&gr=1.47&rt=0.39&tk=90',
-        'v=1&bg=c913a7&ch=A&fg=ffffff&gr=2&lv=2&rt=0.09&st=4&tk=90',
+        'v=1&an=c&bg=280608&ch=J&fg=fffee0&gr=1.55&rt=0.57&st=20&tk=90',
         'v=1&ch=X&gr=1.55&rt=0.21',
-        'v=1&an=c&bg=280608&ch=J&fg=fffee0&gr=1.55&rt=0.57&st=20&tk=90'
+        'v=1&bg=c913a7&ch=A&fg=ffffff&gr=2&lv=2&rt=0.09&st=4&tk=90'
       ],
       credit: {
         work: 'Bather Belrose Boje',
@@ -237,9 +237,9 @@
       defaultSeed: '42',
       variants: [
         'v=1&bd=fcffe5&bg=000000&bs=circle&ch=X&dc=000000&ds=100&ff=Georgia&gc=22&ls=105&mg=7&oy=5&th=5',
+        'v=1&bg=ffffff&dc=000000&ds=100&gc=7&ls=132&mg=5&ox=-3&oy=12&pa=0&th=9',
         'v=1&bd=85baff&bg=0f0449&ch=H&dc=17014b&ds=100&gc=13&ls=110&mg=4&oy=5&sh=hexagon&th=5',
-        'v=1&bd=000000&bg=000000&ch=J&dc=d1ff52&ds=100&ff=Georgia&gc=20&ls=132&mg=5&oy=7&pa=0&sh=diamond&th=9',
-        'v=1&bg=ffffff&dc=000000&ds=100&gc=7&ls=132&mg=5&ox=-3&oy=12&pa=0&th=9'
+        'v=1&bd=000000&bg=000000&ch=J&dc=d1ff52&ds=100&ff=Georgia&gc=20&ls=132&mg=5&oy=7&pa=0&sh=diamond&th=9'
       ],
       credit: {
         work: 'LaSalle Steel',

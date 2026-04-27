@@ -56,31 +56,19 @@
         </div>
         <p class="tool-hint">Shapes bisected by curved lines at varying angles. Adjust controls to explore.</p>
 
-        <div class="section-label">Layout</div>
-
         <div class="control-group">
+            <div class="section-label">Shape</div>
+            <div class="shape-grid" id="shapeGrid"></div>
             <label>Count <span class="val" id="countVal">3</span></label>
             <input type="range" id="count" min="1" max="12" value="3" step="1">
-        </div>
-
-        <div class="control-group">
-            <label>Shape</label>
-            <div class="shape-grid" id="shapeGrid"></div>
-        </div>
-
-        <div class="control-group">
             <label>Size <span class="val" id="sizeVal">100</span></label>
             <input type="range" id="size" min="30" max="250" value="100">
-        </div>
-
-        <div class="control-group">
             <label>Spacing <span class="val" id="spacingVal">220</span></label>
             <input type="range" id="spacing" min="40" max="400" value="220">
         </div>
 
-        <div class="section-label">Slice</div>
-
         <div class="control-group">
+            <div class="section-label">Slice</div>
             <label>Curve Type</label>
             <select id="curveType">
                 <option value="arc" selected>Arc</option>
@@ -89,63 +77,35 @@
                 <option value="s-curve">S-Curve</option>
                 <option value="zigzag">Zigzag</option>
             </select>
-        </div>
-
-        <div class="control-group">
-            <label>Base Angle <span class="val" id="baseAngleVal">0</span>&deg;</label>
-            <input type="range" id="baseAngle" min="-180" max="180" value="0" step="1">
-        </div>
-
-        <div class="control-group">
-            <label>Angle Spread <span class="val" id="angleSpreadVal">25</span>&deg;</label>
-            <input type="range" id="angleSpread" min="0" max="90" value="25" step="1">
-        </div>
-
-        <div class="control-group">
             <label>Curvature <span class="val" id="curvatureVal">0.35</span></label>
             <input type="range" id="curvature" min="0" max="1" value="0.35" step="0.01">
-        </div>
-
-        <div class="control-group">
+            <label>Base Angle <span class="val" id="baseAngleVal">0</span>&deg;</label>
+            <input type="range" id="baseAngle" min="-180" max="180" value="0" step="1">
+            <label>Angle Spread <span class="val" id="angleSpreadVal">25</span>&deg;</label>
+            <input type="range" id="angleSpread" min="0" max="90" value="25" step="1">
             <label>Gap Width <span class="val" id="gapWidthVal">8</span></label>
             <input type="range" id="gapWidth" min="1" max="40" value="8" step="0.5">
-        </div>
-
-        <div class="control-group">
             <label>Line Width <span class="val" id="lineWidthVal">0</span></label>
             <input type="range" id="lineWidth" min="0" max="8" value="0" step="0.5">
-        </div>
-
-        <div class="control-group">
             <label>Taper <span class="val" id="taperVal">0</span></label>
             <input type="range" id="taper" min="0" max="1" value="0" step="0.01">
-        </div>
-
-        <div class="control-group">
             <label>Offset <span class="val" id="sliceOffsetVal">0</span></label>
             <input type="range" id="sliceOffset" min="-0.5" max="0.5" value="0" step="0.01">
         </div>
 
-        <div class="section-label">Style</div>
-
         <div class="control-group">
+            <div class="section-label">Color</div>
             <label>Background</label>
             <div class="color-row">
                 <input type="color" id="bgColor" value="#c8c8c8">
                 <span class="color-hex" id="bgColorVal">#c8c8c8</span>
             </div>
-        </div>
-
-        <div class="control-group">
             <label>Shape Fill</label>
             <div class="color-row">
                 <input type="color" id="fillColor" value="#2a2a2a">
                 <span class="color-hex" id="fillColorVal">#2a2a2a</span>
             </div>
-        </div>
-
-        <div class="control-group">
-            <label>Line Color</label>
+            <label>Line</label>
             <div class="color-row">
                 <input type="color" id="lineColor" value="#000000">
                 <span class="color-hex" id="lineColorVal">#000000</span>
