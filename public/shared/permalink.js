@@ -191,6 +191,59 @@
       return base + this._encodeHash();
     }
 
+    /** Apply an arbitrary hash string (e.g. a preset). Missing keys reset
+        to schema defaults — this gives presets clean, deterministic state. */
+    applyHash(hashStr) {
+      if (!hashStr) return false;
+      const body = String(hashStr).startsWith('#') ? String(hashStr).slice(1) : String(hashStr);
+      const parsed = this._parse(body);
+      if (!parsed) return false;
+      if (parsed.v !== SCHEMA_VERSION) return false;
+      const { state } = this._validate(parsed);
+      try { this.applyState(state); }
+      catch (e) {
+        this._warn('applyHash', 'applyState threw', { error: e && e.message });
+        return false;
+      }
+      this._writeHash();
+      return true;
+    }
+
+    /** Apply a hash only if the URL has no meaningful hash. Used to make
+        each tool's first-load state match the landing page's top-left embed. */
+    applyDefaultIfEmpty(hashStr) {
+      const raw = window.location.hash || '';
+      if (raw && raw !== '#' && raw !== '#' + HELP_SENTINEL) return false;
+      return this.applyHash(hashStr);
+    }
+
+    /** Build the 4 preset buttons from the registry's variants[] for this
+        tool, and apply variants[0] as the initial state when no hash is
+        present. The container element must already exist in the DOM
+        (`<div class="presets" id="presets"></div>`). */
+    setupPresets() {
+      const tool = window.LogoTools && window.LogoTools.findBySlug
+        ? window.LogoTools.findBySlug(this.toolName)
+        : null;
+      if (!tool || !Array.isArray(tool.variants) || tool.variants.length === 0) return;
+
+      const container = document.getElementById('presets');
+      if (container) {
+        container.innerHTML = '';
+        tool.variants.forEach((hash, i) => {
+          const btn = document.createElement('button');
+          btn.className = 'preset-btn';
+          btn.type = 'button';
+          btn.textContent = String(i + 1);
+          btn.setAttribute('aria-label', tool.name + ' preset ' + (i + 1));
+          btn.addEventListener('click', () => this.applyHash(hash));
+          container.appendChild(btn);
+        });
+      }
+
+      this.applyDefaultIfEmpty(tool.variants[0]);
+    }
+
     /** Copy current permalink to clipboard. */
     async copyLink() {
       this.flush();

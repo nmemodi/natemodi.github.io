@@ -81,14 +81,7 @@
 
         <div class="control-group">
             <label>Presets</label>
-            <div class="presets">
-                <button class="preset-btn" data-preset="classic">Classic</button>
-                <button class="preset-btn" data-preset="swiss">Swiss</button>
-                <button class="preset-btn" data-preset="retro">Retro</button>
-                <button class="preset-btn" data-preset="bloom">Bloom</button>
-                <button class="preset-btn" data-preset="minimal">Minimal</button>
-                <button class="preset-btn" data-preset="deco">Deco</button>
-            </div>
+            <div class="presets" id="presets"></div>
         </div>
 
         <button class="btn btn-primary btn-full btn-export">Export</button>
@@ -107,6 +100,7 @@
     <script src="/shared/rng.js"></script>
     <script src="/shared/permalink.js"></script>
     <script src="/shared/tools-export.js"></script>
+    <script src="/shared/tools-registry.js"></script>
     <script>
         // ===== Shape Helpers =====
         function polyPoints(n, r, rot) {
@@ -381,16 +375,6 @@
 
         var config = Object.assign({}, DEFAULT_CONFIG);
 
-        // ===== Presets =====
-        var PRESETS = {
-            classic:  { shape: 'circle',    size: 240, gap: 18,  rotation: 0,   bgColor: '#f0ece4', fgColor: '#1a1a1a' },
-            swiss:    { shape: 'square',    size: 220, gap: 22,  rotation: 0,   bgColor: '#111111', fgColor: '#e63946' },
-            retro:    { shape: 'star5',     size: 240, gap: 30,  rotation: 0,   bgColor: '#1a1a2e', fgColor: '#ffd700' },
-            bloom:    { shape: 'flower',    size: 260, gap: 26,  rotation: 0,   bgColor: '#1b4332', fgColor: '#d4a373' },
-            minimal:  { shape: 'diamond',   size: 200, gap: 60,  rotation: 0,   bgColor: '#f5f5f0', fgColor: '#222222' },
-            deco:     { shape: 'octagon',   size: 230, gap: 14,  rotation: 0,   bgColor: '#2b2d42', fgColor: '#c9a227' }
-        };
-
         // ===== Canvas Setup =====
         var canvas = document.getElementById('canvas');
         var wrap = document.querySelector('.tool-canvas');
@@ -583,22 +567,10 @@
         bindColor('bgColor', 'bgColor');
         bindColor('fgColor', 'fgColor');
 
-        // Presets
-        document.querySelectorAll('.preset-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                var p = PRESETS[this.dataset.preset];
-                if (!p) return;
-                Object.assign(config, p);
-                syncUI();
-                render();
-            });
-        });
-
-        // Reset
+        // Reset → first landing-page variant (the new default)
         document.getElementById('resetBtn').addEventListener('click', function() {
-            Object.assign(config, DEFAULT_CONFIG);
-            syncUI();
-            render();
+            var tool = window.LogoTools && window.LogoTools.findBySlug('shape-tiles');
+            if (tool && tool.variants && tool.variants[0]) pm.applyHash(tool.variants[0]);
         });
 
         // Randomize — uses seeded RNG for reproducibility. Each click picks a new seed
@@ -653,7 +625,7 @@
         ['size','gap','rotation','bgColor','fgColor'].forEach(function(id) {
             document.getElementById(id).addEventListener('input', function() { pm.update(); });
         });
-        document.querySelectorAll('.preset-btn, #resetBtn, #randomBtn').forEach(function(btn) {
+        document.querySelectorAll('#resetBtn, #randomBtn').forEach(function(btn) {
             btn.addEventListener('click', function() { pm.update(); });
         });
 
@@ -685,8 +657,8 @@
         buildShapePicker();
         render();
         pm.decode();
+        pm.setupPresets();
     </script>
-<script src="/shared/tools-registry.js"></script>
 <script src="/shared/tools-nav.js"></script>
 </body>
 </html>
