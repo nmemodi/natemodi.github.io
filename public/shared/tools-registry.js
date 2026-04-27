@@ -123,9 +123,9 @@
       defaultSeed: '5',
       variants: [
         'v=1&g=120',
-        'v=1&bg=000000&fg=ffffff&g=97&rt=45&sh=ring&sz=241',
+        'v=1&bg=ff47dd&fg=2e2d29&g=85&rt=68&sh=diamond&sz=240',
         'v=1&bg=0b562f&fg=ffffff&g=97&rt=45&sh=petal&sz=241',
-        'v=1&fg=4c4a43&g=85&rt=68&sh=diamond&sz=240'
+        'v=1&bg=000000&fg=ffffff&g=97&rt=45&sh=ring&sz=241'
       ],
       credit: {
         work: 'Dayton Hudson Corporation',
@@ -167,10 +167,10 @@
       blurb: 'Kazumasa Nagai\'s Minami-nihon broadcasting mark (1983) is a solid circle striped with diagonal cuts that match the background, so the slashes read as part of the field rather than lines on top. The tool reproduces that and parameterizes it. Pick a containing shape (circle, square, hexagon, or triangle), then set angle, count, line width, taper, and spread. A checkbox locks the line color to the ground.',
       defaultSeed: '11',
       variants: [
-        'v=1',
-        'v=1&a=90&bg=0d0d0d&ex=60&lc=0d0d0d&lw=26&n=5&sc=c7f8ff&sp=86&tp=100',
+        'v=1&a=135&bg=e3e3e3&ex=-1&lc=e3e3e3&n=9&sh=square&sp=26&tp=100',
+        'v=1&a=90&bg=0d0d0d&ex=60&lc=0d0d0d&lw=26&n=5&sc=e4ff14&sh=hexagon&sp=86&tp=100',
         'v=1&a=135&bg=ffccf4&ex=60&lc=ffccf4&lw=40&n=9&sc=930b81&sp=10&tp=100',
-        'v=1&a=45&bg=fbf7e5&ex=60&lc=fbf7e5&lw=40&n=9&sc=454545&sp=100&tp=100'
+        'v=1&a=45&bg=fbf7e5&ex=60&lc=fbf7e5&lw=40&n=5&sc=454545&sp=100&tp=100'
       ],
       credit: {
         work: 'Minami-nihon',
@@ -192,7 +192,7 @@
         'v=1&bg=ff4242&sw=18',
         'v=1&bg=1a1a1a&fg=ffffff&ir=0.1&n=14&r=261&sw=18',
         'v=1&bg=0e251b&fg=ffeedb&g=2.2&ir=0.5&n=3&r=260&rt=256&sk=1&sw=18',
-        'v=1&bg=007bff&fg=ffffff&ir=0.54&n=17&r=262&sk=1&sw=14'
+        'v=1&bg=007bff&fg=ffffff&ir=0.3&n=4&r=262&rt=148&sw=30'
       ],
       credit: {
         work: 'Grace',
@@ -217,7 +217,7 @@
         'v=1&an=c&bg=1328c9&fg=ffffff&gr=1.47&rt=0.39&tk=90',
         'v=1&an=c&bg=280608&ch=J&fg=fffee0&gr=1.55&rt=0.57&st=20&tk=90',
         'v=1&ch=X&gr=1.55&rt=0.21',
-        'v=1&bg=c913a7&ch=A&fg=ffffff&gr=2&lv=2&rt=0.09&st=4&tk=90'
+        'v=1&an=c&bg=c913a7&ch=A&f=Audiowide&fg=ffffff&gr=2&lv=1&rt=0.25&sz=700&tk=65'
       ],
       credit: {
         work: 'Bather Belrose Boje',

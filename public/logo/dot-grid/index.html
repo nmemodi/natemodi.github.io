@@ -641,7 +641,13 @@ new ToolExporter({
 });
 
 window.addEventListener('resize', draw);
-document.fonts.ready.then(() => { draw(); pm.decode(); pm.setupPresets(); });
+
+// Force-load Google Fonts before first draw. document.fonts.ready alone resolves
+// before lazy @font-face fonts actually download, which causes the canvas to
+// silently fall back to a serif when the iframe-embedded preview renders fast.
+const PRELOAD_FONTS = ['Archivo Black', 'Inter', 'Playfair Display', 'Space Mono'];
+Promise.all(PRELOAD_FONTS.map(f => document.fonts.load(`100px "${f}"`)))
+  .then(() => { draw(); pm.decode(); pm.setupPresets(); });
 </script>
 <script src="/shared/tools-nav.js"></script>
 </body>
