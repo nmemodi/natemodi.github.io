@@ -77,10 +77,10 @@
       blurb: 'Two or three circles, sized and spaced so the rings touch and pass through each other. A weave toggle decides which ring reads as on top at every crossing. The ancient version of this is the Olympic rings; the modern version is every fintech logo with a venn-diagram wink.',
       defaultSeed: '3',
       variants: [
-        'v=1&bg=380070&br=0&gp=1.4&n=4&r=107&sp=68&sw=17&wv=0',
-        'v=1&bg=ffffff&br=0&fg=000000&gp=2.9&n=4&r=47&sp=68&sw=48',
-        'v=1&bg=c3ff42&br=0&fg=000000&gp=4&n=5&r=114&sp=83&sw=20&wv=0',
-        'v=1&sp=66&wv=0'
+        'v=1&bg=060d2d&br=0&fg=ebeaea&gp=0.5&ly=ring&n=7&r=75&ro=91&sp=91&sw=30',
+        'v=1&ro=90&sw=46',
+        'v=1&bg=ffffff&br=0&fg=000000&gp=2.9&ly=ring&n=4&r=87&sp=68&sw=62',
+        'v=1&bg=72ff14&br=0&fg=000000&gp=2.9&ly=ring&n=5&r=115&sp=109&sw=61&wv=0'
       ],
       credit: {
         work: 'Ota Dental Clinic',
@@ -166,6 +166,12 @@
       tagline: 'A containing shape striped with diagonals that match the ground.',
       blurb: 'A circle, square or hexagon, filled with a solid. Then diagonal slashes of the background color cut across it. When the slashes match the ground behind, the mark breathes — it reads as "shape with attitude" rather than "shape plus lines." Borderline cliché; useful because of it.',
       defaultSeed: '11',
+      variants: [
+        'v=1',
+        'v=1&a=90&bg=0d0d0d&ex=60&lc=0d0d0d&lw=26&n=5&sc=c7f8ff&sp=86&tp=100',
+        'v=1&a=135&bg=ffccf4&ex=60&lc=ffccf4&lw=40&n=9&sc=930b81&sp=10&tp=100',
+        'v=1&a=45&bg=fbf7e5&ex=60&lc=fbf7e5&lw=40&n=9&sc=454545&sp=100&tp=100'
+      ],
       credit: {
         work: 'Minami-nihon',
         designers: [
@@ -182,6 +188,12 @@
       tagline: 'Concentric polygons connected by diagonals — geometric rosettes.',
       blurb: 'Start with a polygon, nest a smaller version inside it, draw the spokes between corresponding vertices. Every rotation setting produces a new mark; most of them look like the flag of a country that does not exist yet. Works well scaled down to a favicon.',
       defaultSeed: '6',
+      variants: [
+        'v=1&bg=ff4242&sw=18',
+        'v=1&bg=1a1a1a&fg=ffffff&ir=0.1&n=14&r=261&sw=18',
+        'v=1&bg=007bff&fg=ffffff&ir=0.54&n=17&r=262&sk=1&sw=14',
+        'v=1&bg=0e251b&fg=ffeedb&g=2.2&ir=0.5&n=3&r=260&rt=256&sk=1&sw=18'
+      ],
       credit: {
         work: 'Grace',
         designers: [
@@ -201,6 +213,12 @@
       tagline: 'Nested letters of horizontal stripes that thin out as they grow.',
       blurb: 'A core letter built from thick black bars, ringed by larger ghost letters drawn in progressively thinner stripes. Each ring extends past the last like a slow shutter — the shape stays put, the lines feather outward. The trick is alignment: every stripe sits at the same y, just thicker where the inner letter contains it.',
       defaultSeed: '1',
+      variants: [
+        'v=1&an=c&bg=1328c9&fg=ffffff&gr=1.47&rt=0.39&tk=90',
+        'v=1&bg=c913a7&ch=A&fg=ffffff&gr=2&lv=2&rt=0.09&st=4&tk=90',
+        'v=1&ch=X&gr=1.55&rt=0.21',
+        'v=1&an=c&bg=280608&ch=J&fg=fffee0&gr=1.55&rt=0.57&st=20&tk=90'
+      ],
       credit: {
         work: 'Bather Belrose Boje',
         designers: [
@@ -217,6 +235,12 @@
       tagline: 'Letters bitmap-rendered from a rounded-rectangle dot grid.',
       blurb: 'A grid of rounded squares, each either on or off depending on whether the letterform passes through it. Nudge the corner radius toward fifty percent and you get dots; leave it near zero and you get pixel blocks. Reads like a 1980s train-station split-flap display.',
       defaultSeed: '42',
+      variants: [
+        'v=1&bd=fcffe5&bg=000000&bs=circle&ch=X&dc=000000&ds=100&ff=Georgia&gc=22&ls=105&mg=7&oy=5&th=5',
+        'v=1&bd=85baff&bg=0f0449&ch=H&dc=17014b&ds=100&gc=13&ls=110&mg=4&oy=5&sh=hexagon&th=5',
+        'v=1&bd=000000&bg=000000&ch=J&dc=d1ff52&ds=100&ff=Georgia&gc=20&ls=132&mg=5&oy=7&pa=0&sh=diamond&th=9',
+        'v=1&bg=ffffff&dc=000000&ds=100&gc=7&ls=132&mg=5&ox=-3&oy=12&pa=0&th=9'
+      ],
       credit: {
         work: 'LaSalle Steel',
         designers: [
