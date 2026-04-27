@@ -99,10 +99,10 @@
       blurb: 'Ignore the outline. A letter here is whatever shape you get when a dense grid of parallel vertical strips is punched through a colored block, then a second thin path weaves through the gaps. The typography is almost incidental — the field does the work.',
       defaultSeed: '12',
       variants: [
-        'v=1&bg=673c40&jo=miter&n=10&sz=400&t=10',
-        'v=1&bg=000000&ch=Y&f=Georgia&g=34.5&jo=miter&n=3&sz=400&t=10',
-        'v=1&bg=ffffff&ch=M&fg=000000&g=2&n=7&sz=600&t=10',
-        'v=1&bg=020066&ch=W&f=ArialBlack&g=1&jo=bevel&n=40&sz=900&t=5'
+        'v=1&bg=673c40&f=ArialBlack&g=1&jo=miter&n=7&sz=400&t=10',
+        'v=1&bg=000000&ch=Y&f=Georgia&g=23&jo=miter&n=3&sz=400&t=9',
+        'v=1&bg=ffffff&ch=N&f=&fg=000000&g=2&n=7&sz=600&t=10',
+        'v=1&bg=020066&ch=W&f=&g=24&jo=bevel&sz=900&t=10'
       ],
       credit: {
         work: 'Five G Marketing',
