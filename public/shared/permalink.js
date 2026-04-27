@@ -253,7 +253,6 @@
         if (navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(url);
           this._flashPillCopied();
-          this._toast('Link copied');
           return true;
         }
       } catch (e) {
@@ -273,7 +272,6 @@
         document.body.removeChild(ta);
         if (ok) {
           this._flashPillCopied();
-          this._toast('Link copied');
           return true;
         }
       } catch (e) {
