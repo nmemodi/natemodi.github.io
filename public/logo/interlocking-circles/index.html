@@ -111,15 +111,7 @@
 
         <div class="control-group">
             <label>Presets</label>
-            <div class="presets">
-                <button class="preset-btn" data-preset="classic">Classic</button>
-                <button class="preset-btn" data-preset="olympic">Olympic</button>
-                <button class="preset-btn" data-preset="trinity">Trinity</button>
-                <button class="preset-btn" data-preset="chain">Chain</button>
-                <button class="preset-btn" data-preset="tight">Tight</button>
-                <button class="preset-btn" data-preset="loose">Loose</button>
-                <button class="preset-btn" data-preset="venn">Venn</button>
-            </div>
+            <div class="presets" id="presets"></div>
         </div>
 
         <div class="btn-row">
@@ -137,6 +129,7 @@
     <script src="/shared/rng.js"></script>
     <script src="/shared/permalink.js"></script>
     <script src="/shared/tools-export.js"></script>
+    <script src="/shared/tools-registry.js"></script>
     <script>
         paper.install(window);
 
@@ -171,17 +164,6 @@
         let positions = [];
         let dragIdx = null;
         let dragOffset = null;
-
-        // ---- Presets ----
-        const presets = {
-            classic:  { numCircles: 2, layout: 'auto', neighbors: 1, radius: 150, strokeWidth: 28, spacing: 110, rotation: 0, weave: true, gap: 1.5, breakWidth: 0.7, bgColor: '#cc0000', fgColor: '#f0f0f0' },
-            olympic:  { numCircles: 5, layout: 'auto', neighbors: 1, radius: 70,  strokeWidth: 14, spacing: 80,  rotation: 0, weave: true, gap: 1.4, breakWidth: 0.6, bgColor: '#1a1a2e', fgColor: '#e0e0e0' },
-            trinity:  { numCircles: 3, layout: 'ring', neighbors: 1, radius: 120, strokeWidth: 24, spacing: 100, rotation: 0, weave: true, gap: 1.5, breakWidth: 0.7, bgColor: '#1b4332', fgColor: '#d4a373' },
-            chain:    { numCircles: 4, layout: 'ring', neighbors: 1, radius: 80,  strokeWidth: 16, spacing: 90,  rotation: 0, weave: true, gap: 1.3, breakWidth: 0.6, bgColor: '#222222', fgColor: '#ffd700' },
-            tight:    { numCircles: 2, layout: 'auto', neighbors: 1, radius: 150, strokeWidth: 36, spacing: 70,  rotation: 0, weave: true, gap: 1.8, breakWidth: 0.5, bgColor: '#0d1b2a', fgColor: '#e0fbfc' },
-            loose:    { numCircles: 2, layout: 'auto', neighbors: 1, radius: 150, strokeWidth: 20, spacing: 180, rotation: 0, weave: true, gap: 1.2, breakWidth: 0.8, bgColor: '#2b2d42', fgColor: '#ef233c' },
-            venn:     { numCircles: 6, layout: 'ring', neighbors: 3, radius: 130, strokeWidth: 18, spacing: 110, rotation: 0, weave: true, gap: 1.4, breakWidth: 0.6, bgColor: '#101820', fgColor: '#fee715' },
-        };
 
         // ---- Geometry helpers ----
         function circleIntersections(c1, r1, c2, r2) {
@@ -645,24 +627,10 @@
             draw();
         });
 
-        // Presets
-        document.querySelectorAll('.preset-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const p = presets[this.dataset.preset];
-                if (!p) return;
-                Object.assign(config, p);
-                syncUI();
-                initPositions();
-                draw();
-            });
-        });
-
-        // Reset
+        // Reset → first landing-page variant (the new default)
         document.getElementById('resetBtn').addEventListener('click', function() {
-            Object.assign(config, presets.classic);
-            syncUI();
-            initPositions();
-            draw();
+            const tool = window.LogoTools && window.LogoTools.findBySlug('interlocking-circles');
+            if (tool && tool.variants && tool.variants[0]) pm.applyHash(tool.variants[0]);
         });
 
         // ─── Permalink ───
@@ -711,9 +679,7 @@
             const evt = (el.type === 'checkbox' || el.tagName === 'SELECT') ? 'change' : 'input';
             el.addEventListener(evt, () => pm.update());
         });
-        document.querySelectorAll('.preset-btn, #resetBtn').forEach(btn => {
-            btn.addEventListener('click', () => pm.update());
-        });
+        document.getElementById('resetBtn').addEventListener('click', () => pm.update());
 
         // Export
         new ToolExporter({
@@ -753,9 +719,9 @@
             initPositions();
             draw();
             pm.decode();
+            pm.setupPresets();
         });
     </script>
-<script src="/shared/tools-registry.js"></script>
 <script src="/shared/tools-nav.js"></script>
 </body>
 </html>

@@ -107,6 +107,11 @@
   </div>
 
   <div class="control-group">
+    <label>Presets</label>
+    <div class="presets" id="presets"></div>
+  </div>
+
+  <div class="control-group">
     <button class="btn btn-primary btn-full btn-export" id="openExport">Export</button>
   </div>
 </div>
@@ -120,6 +125,7 @@
 <script src="/shared/rng.js"></script>
 <script src="/shared/permalink.js"></script>
 <script src="/shared/tools-export.js"></script>
+<script src="/shared/tools-registry.js"></script>
 <script>
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -420,9 +426,8 @@ charInput.addEventListener('input', () => {
 });
 
 updateLabels();
-document.fonts.ready.then(() => { render(); pm.decode(); });
+document.fonts.ready.then(() => { render(); pm.decode(); pm.setupPresets(); });
 </script>
-<script src="/shared/tools-registry.js"></script>
 <script src="/shared/tools-nav.js"></script>
 </body>
 </html>

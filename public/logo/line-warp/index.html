@@ -133,6 +133,11 @@
     <span>Swap colors</span>
   </label>
 
+  <div class="control-group">
+    <label>Presets</label>
+    <div class="presets" id="presets"></div>
+  </div>
+
   <div class="btn-row">
     <button class="btn btn-secondary" onclick="resetDefaults()">Reset</button>
     <button class="btn btn-primary btn-export">Export</button>
@@ -149,6 +154,7 @@
 <script src="/shared/permalink.js"></script>
 <script src="/shared/tools-export.js"></script>
 <script src="/shared/font-detect.js"></script>
+<script src="/shared/tools-registry.js"></script>
 <script>
 const FONT_CANDIDATES = ['Helvetica Neue', 'Arial Black', 'Georgia', 'Impact', 'Futura', 'Times New Roman'];
 const SIZE = 800;
@@ -720,6 +726,7 @@ window.FontDetect.detectAvailableFonts(FONT_CANDIDATES).then(available => {
   controls.font.value = defaults.font;
   render();
   pm.decode();
+  pm.setupPresets();
   if (!fonts.includes(controls.font.value)) {
     controls.font.value = fonts[0];
     render();
@@ -727,7 +734,6 @@ window.FontDetect.detectAvailableFonts(FONT_CANDIDATES).then(available => {
   }
 });
 </script>
-<script src="/shared/tools-registry.js"></script>
 <script src="/shared/tools-nav.js"></script>
 </body>
 </html>

@@ -98,14 +98,7 @@
 
         <div class="control-group">
             <label>Presets</label>
-            <div class="presets">
-                <button class="preset-btn" data-preset="rosette">Rosette</button>
-                <button class="preset-btn" data-preset="hexStar">Hex Star</button>
-                <button class="preset-btn" data-preset="celtic">Celtic</button>
-                <button class="preset-btn" data-preset="crown">Crown</button>
-                <button class="preset-btn" data-preset="simple">Simple</button>
-                <button class="preset-btn" data-preset="twisted">Twisted</button>
-            </div>
+            <div class="presets" id="presets"></div>
         </div>
 
         <button class="btn btn-primary btn-export" id="openExport">Export</button>
@@ -121,6 +114,7 @@
     <script src="/shared/rng.js"></script>
     <script src="/shared/permalink.js"></script>
     <script src="/shared/tools-export.js"></script>
+    <script src="/shared/tools-registry.js"></script>
     <script>
         paper.install(window);
 
@@ -149,16 +143,6 @@
             gap: 1.8,
             bgColor: '#cc0000',
             fgColor: '#f0f0f0'
-        };
-
-        // ---- Presets ----
-        const presets = {
-            rosette: { sides: 10, outerRadius: 250, innerRatio: 0.58, skip: 2, strokeWidth: 5, rotation: 0, showOuter: true, showInner: true, weave: false, gap: 1.8, bgColor: '#cc0000', fgColor: '#f0f0f0' },
-            hexStar: { sides: 6, outerRadius: 280, innerRatio: 0.50, skip: 2, strokeWidth: 6, rotation: 0, showOuter: true, showInner: true, weave: false, gap: 2.0, bgColor: '#1a1a2e', fgColor: '#e0e0e0' },
-            celtic:  { sides: 8, outerRadius: 260, innerRatio: 0.50, skip: 2, strokeWidth: 8, rotation: 0, showOuter: true, showInner: true, weave: true, gap: 2.2, bgColor: '#1b4332', fgColor: '#d4a373' },
-            crown:   { sides: 16, outerRadius: 280, innerRatio: 0.65, skip: 3, strokeWidth: 3, rotation: 0, showOuter: true, showInner: true, weave: false, gap: 1.5, bgColor: '#0d1b2a', fgColor: '#e0fbfc' },
-            simple:  { sides: 10, outerRadius: 260, innerRatio: 0.60, skip: 1, strokeWidth: 3, rotation: 0, showOuter: true, showInner: true, weave: false, gap: 1.5, bgColor: '#222222', fgColor: '#ffffff' },
-            twisted: { sides: 12, outerRadius: 260, innerRatio: 0.42, skip: 3, strokeWidth: 4, rotation: 15, showOuter: true, showInner: true, weave: true, gap: 2.0, bgColor: '#2b2d42', fgColor: '#ef233c' },
         };
 
         // ---- Geometry ----
@@ -527,22 +511,10 @@
             draw();
         });
 
-        // Presets
-        document.querySelectorAll('.preset-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const p = presets[this.dataset.preset];
-                if (!p) return;
-                Object.assign(config, p);
-                syncUI();
-                draw();
-            });
-        });
-
-        // Reset
+        // Reset → first landing-page variant (the new default)
         document.getElementById('resetBtn').addEventListener('click', function() {
-            Object.assign(config, presets.rosette);
-            syncUI();
-            draw();
+            const tool = window.LogoTools && window.LogoTools.findBySlug('polygon-rosette');
+            if (tool && tool.variants && tool.variants[0]) pm.applyHash(tool.variants[0]);
         });
 
         // ---- Permalink ----
@@ -588,8 +560,7 @@
             const evt = (el.type === 'checkbox') ? 'change' : 'input';
             el.addEventListener(evt, () => pm.update());
         });
-        document.querySelectorAll('.preset-btn, #resetBtn').forEach(btn =>
-            btn.addEventListener('click', () => pm.update()));
+        document.getElementById('resetBtn').addEventListener('click', () => pm.update());
 
         // ---- Export ----
         new ToolExporter({
@@ -627,9 +598,9 @@
             resizeCanvas();
             draw();
             pm.decode();
+            pm.setupPresets();
         });
     </script>
-<script src="/shared/tools-registry.js"></script>
 <script src="/shared/tools-nav.js"></script>
 </body>
 </html>

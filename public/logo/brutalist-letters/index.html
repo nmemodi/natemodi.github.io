@@ -72,6 +72,11 @@
   </div>
 
   <div class="control-group">
+    <label>Presets</label>
+    <div class="presets" id="presets"></div>
+  </div>
+
+  <div class="control-group">
     <div class="section-label">Export</div>
     <button class="btn btn-primary btn-full btn-export">Export</button>
   </div>
@@ -86,6 +91,7 @@
 <script src="/shared/rng.js"></script>
 <script src="/shared/permalink.js"></script>
 <script src="/shared/tools-export.js"></script>
+<script src="/shared/tools-registry.js"></script>
 <script>
 // ─── Letter cut definitions ───
 // Each cut is a path: array of [x,y] points in 0-1 normalized coords.
@@ -436,8 +442,8 @@ new ToolExporter({
 window.addEventListener('resize', draw);
 draw();
 pm.decode();
+pm.setupPresets();
 </script>
-<script src="/shared/tools-registry.js"></script>
 <script src="/shared/tools-nav.js"></script>
 </body>
 </html>

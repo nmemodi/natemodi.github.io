@@ -119,17 +119,9 @@
             </div>
         </div>
 
-        <div class="section-label">Presets</div>
-
         <div class="control-group">
-            <div class="presets">
-                <button class="preset-btn" data-preset="classic">Classic</button>
-                <button class="preset-btn" data-preset="minimal">Minimal</button>
-                <button class="preset-btn" data-preset="venetian">Venetian</button>
-                <button class="preset-btn" data-preset="burst">Burst</button>
-                <button class="preset-btn" data-preset="bold">Bold</button>
-                <button class="preset-btn" data-preset="inverse">Inverse</button>
-            </div>
+            <label>Presets</label>
+            <div class="presets" id="presets"></div>
         </div>
 
         <div class="btn-row">
@@ -147,6 +139,7 @@
     <script src="/shared/rng.js"></script>
     <script src="/shared/permalink.js"></script>
     <script src="/shared/tools-export.js"></script>
+    <script src="/shared/tools-registry.js"></script>
     <script>
         // ---- State ----
         const config = {
@@ -162,15 +155,6 @@
             shapeColor: '#1a1a1a',
             lineColor: '#c8c8c8',
             matchBg: true
-        };
-
-        const presets = {
-            classic:   { numLines: 11, angle: 30,  lineWidth: 5,  taper: 0.95, spread: 0.65, extension: 3,  shape: 'circle',   shapeSize: 200, bgColor: '#c8c8c8', shapeColor: '#1a1a1a', lineColor: '#c8c8c8', matchBg: true },
-            minimal:   { numLines: 4,  angle: 20,  lineWidth: 12, taper: 0.85, spread: 0.45, extension: 0,  shape: 'circle',   shapeSize: 220, bgColor: '#f0f0f0', shapeColor: '#222222', lineColor: '#f0f0f0', matchBg: true },
-            venetian:  { numLines: 22, angle: 90,  lineWidth: 4,  taper: 0.15, spread: 0.88, extension: 12, shape: 'square',   shapeSize: 200, bgColor: '#e8e0d4', shapeColor: '#2a1f14', lineColor: '#e8e0d4', matchBg: true },
-            burst:     { numLines: 28, angle: 45,  lineWidth: 2,  taper: 1.0,  spread: 0.92, extension: 18, shape: 'circle',   shapeSize: 200, bgColor: '#0a0a0a', shapeColor: '#f0f0f0', lineColor: '#0a0a0a', matchBg: true },
-            bold:      { numLines: 3,  angle: 0,   lineWidth: 22, taper: 0,    spread: 0.35, extension: 25, shape: 'hexagon',  shapeSize: 200, bgColor: '#1a1a2e', shapeColor: '#e63946', lineColor: '#1a1a2e', matchBg: true },
-            inverse:   { numLines: 9,  angle: 140, lineWidth: 6,  taper: 0.75, spread: 0.6,  extension: 0,  shape: 'circle',   shapeSize: 220, bgColor: '#111111', shapeColor: '#e8e8e8', lineColor: '#111111', matchBg: true },
         };
 
         // ---- Canvas setup ----
@@ -492,22 +476,10 @@
             });
         }
 
-        // Presets
-        document.querySelectorAll('.preset-btn:not(.shape-btn)').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const p = presets[this.dataset.preset];
-                if (!p) return;
-                Object.assign(config, JSON.parse(JSON.stringify(p)));
-                syncUI();
-                draw();
-            });
-        });
-
-        // Reset
+        // Reset → first landing-page variant (the new default)
         document.getElementById('resetBtn').addEventListener('click', function () {
-            Object.assign(config, JSON.parse(JSON.stringify(presets.classic)));
-            syncUI();
-            draw();
+            const tool = window.LogoTools && window.LogoTools.findBySlug('slash-mark');
+            if (tool && tool.variants && tool.variants[0]) pm.applyHash(tool.variants[0]);
         });
 
         // Resize
@@ -562,7 +534,7 @@
             const evt = (el.type === 'checkbox') ? 'change' : 'input';
             el.addEventListener(evt, () => pm.update());
         });
-        document.querySelectorAll('.shape-btn, .preset-btn, #resetBtn').forEach(btn =>
+        document.querySelectorAll('.shape-btn, #resetBtn').forEach(btn =>
             btn.addEventListener('click', () => pm.update()));
 
         new ToolExporter({
@@ -589,8 +561,8 @@
         // Go
         draw();
         pm.decode();
+        pm.setupPresets();
     </script>
-<script src="/shared/tools-registry.js"></script>
 <script src="/shared/tools-nav.js"></script>
 </body>
 </html>

@@ -154,16 +154,7 @@
 
         <div class="control-group">
             <label>Presets</label>
-            <div class="presets">
-                <button class="preset-btn" data-preset="modernist">Modernist</button>
-                <button class="preset-btn" data-preset="zen">Zen</button>
-                <button class="preset-btn" data-preset="brutalist">Brutalist</button>
-                <button class="preset-btn" data-preset="ribbon">Ribbon</button>
-                <button class="preset-btn" data-preset="lattice">Lattice</button>
-                <button class="preset-btn" data-preset="bauhaus">Bauhaus</button>
-                <button class="preset-btn" data-preset="sashimi">Sashimi</button>
-                <button class="preset-btn" data-preset="eclipse">Eclipse</button>
-            </div>
+            <div class="presets" id="presets"></div>
         </div>
 
         <div class="btn-row">
@@ -181,6 +172,7 @@
     <script src="/shared/rng.js"></script>
     <script src="/shared/permalink.js"></script>
     <script src="/shared/tools-export.js"></script>
+    <script src="/shared/tools-registry.js"></script>
     <script>
 const canvasEl = document.getElementById('canvas');
 const ctx = canvasEl.getContext('2d');
@@ -203,18 +195,6 @@ const S = {
     bgColor: '#c8c8c8',
     fillColor: '#2a2a2a',
     lineColor: '#000000',
-};
-
-// ---- Presets ----
-const presets = {
-    modernist: { count: 3, shape: 'circle', size: 100, spacing: 220, curveType: 'arc', baseAngle: 0, angleSpread: 25, curvature: 0.35, gapWidth: 8, lineWidth: 0, taper: 0, sliceOffset: 0, bgColor: '#c8c8c8', fillColor: '#2a2a2a', lineColor: '#000000' },
-    zen: { count: 5, shape: 'circle', size: 70, spacing: 155, curveType: 'sine', baseAngle: -10, angleSpread: 15, curvature: 0.3, gapWidth: 6, lineWidth: 0, taper: 0.4, sliceOffset: 0, bgColor: '#f5f0eb', fillColor: '#1a1a1a', lineColor: '#000000' },
-    brutalist: { count: 4, shape: 'square', size: 90, spacing: 200, curveType: 'straight', baseAngle: 15, angleSpread: 30, curvature: 0, gapWidth: 10, lineWidth: 2, taper: 0, sliceOffset: 0, bgColor: '#e8e0d4', fillColor: '#111111', lineColor: '#e8e0d4' },
-    ribbon: { count: 3, shape: 'circle', size: 100, spacing: 230, curveType: 's-curve', baseAngle: 0, angleSpread: 20, curvature: 0.6, gapWidth: 7, lineWidth: 0, taper: 0.5, sliceOffset: 0, bgColor: '#1a1a2e', fillColor: '#e0e0e0', lineColor: '#000000' },
-    lattice: { count: 6, shape: 'hexagon', size: 55, spacing: 125, curveType: 'zigzag', baseAngle: 0, angleSpread: 40, curvature: 0.4, gapWidth: 5, lineWidth: 1, taper: 0, sliceOffset: 0, bgColor: '#0d1b2a', fillColor: '#e0fbfc', lineColor: '#e0fbfc' },
-    bauhaus: { count: 3, shape: 'circle', size: 110, spacing: 250, curveType: 'straight', baseAngle: -20, angleSpread: 20, curvature: 0, gapWidth: 12, lineWidth: 3, taper: 0, sliceOffset: 0.1, bgColor: '#f0e6d3', fillColor: '#cc0000', lineColor: '#1a1a1a' },
-    sashimi: { count: 4, shape: 'oval', size: 80, spacing: 180, curveType: 'arc', baseAngle: 5, angleSpread: 12, curvature: 0.25, gapWidth: 5, lineWidth: 0, taper: 0.7, sliceOffset: 0.05, bgColor: '#ffffff', fillColor: '#333333', lineColor: '#000000' },
-    eclipse: { count: 3, shape: 'circle', size: 100, spacing: 230, curveType: 'arc', baseAngle: 30, angleSpread: 35, curvature: 0.5, gapWidth: 9, lineWidth: 0, taper: 0.3, sliceOffset: -0.1, bgColor: '#0a0a0a', fillColor: '#f0f0f0', lineColor: '#ffffff' },
 };
 
 // ---- Resize ----
@@ -742,17 +722,6 @@ function syncUI() {
     document.getElementById('curveType').value = S.curveType;
 }
 
-// Presets
-document.querySelectorAll('.preset-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const p = presets[this.dataset.preset];
-        if (!p) return;
-        Object.assign(S, p);
-        syncUI();
-        draw();
-    });
-});
-
 // Randomize — uses seeded RNG (mulberry32) so Randomize + share = reproducible
 function applyRandom(seed) {
     const rand = window.LogoRNG.mulberry32(seed);
@@ -857,8 +826,7 @@ const pm = new window.PermalinkManager({
     const evt = (el.tagName === 'SELECT') ? 'change' : 'input';
     el.addEventListener(evt, () => pm.update());
 });
-document.querySelectorAll('.preset-btn, #randomBtn').forEach(btn =>
-    btn.addEventListener('click', () => pm.update()));
+document.getElementById('randomBtn').addEventListener('click', () => pm.update());
 
 new ToolExporter({
     toolName: 'sliced-shapes',
@@ -883,8 +851,8 @@ new ToolExporter({
 buildShapePicker();
 resize();
 pm.decode();
+pm.setupPresets();
     </script>
-    <script src="/shared/tools-registry.js"></script>
     <script src="/shared/tools-nav.js"></script>
 </body>
 </html>

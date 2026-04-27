@@ -128,6 +128,11 @@
   </div>
 
   <div class="control-group">
+    <label>Presets</label>
+    <div class="presets" id="presets"></div>
+  </div>
+
+  <div class="control-group">
     <button class="btn btn-primary btn-full btn-export" id="openExport">Export</button>
   </div>
 </div>
@@ -141,6 +146,7 @@
 <script src="/shared/rng.js"></script>
 <script src="/shared/permalink.js"></script>
 <script src="/shared/tools-export.js"></script>
+<script src="/shared/tools-registry.js"></script>
 <script>
 const state = {
   letter: 'L',
@@ -640,9 +646,8 @@ new ToolExporter({
 });
 
 window.addEventListener('resize', draw);
-document.fonts.ready.then(() => { draw(); pm.decode(); });
+document.fonts.ready.then(() => { draw(); pm.decode(); pm.setupPresets(); });
 </script>
-<script src="/shared/tools-registry.js"></script>
 <script src="/shared/tools-nav.js"></script>
 </body>
 </html>
