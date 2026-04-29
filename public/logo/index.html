@@ -487,14 +487,14 @@
   .article-foot a { color: var(--fg-faded); text-decoration: none; border-bottom: 1px dotted var(--fg-quiet); }
   .article-foot a:hover { color: var(--fg); border-bottom-color: var(--fg); }
 
-  /* Two entry points — icon-led, no border, lets typography carry the
-     hierarchy. Iconoir binoculars (Explorer, "look across") and tools
-     (Individual tools, "build with"). The icons do the wayfinding so
-     the previous arrow glyphs are dropped. */
+  /* Stacked entry points — Explorer first, then Individual tools.
+     Iconoir binoculars + tools lead each row. A small direction glyph
+     follows the title (→ for Explorer, ↓ for Individual tools) so the
+     destination is unambiguous: cross-link vs in-page jump. */
   .entry-points {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 28px;
+    grid-template-columns: 1fr;
+    gap: 18px;
     margin: 28px 0 32px;
   }
   .entry {
@@ -514,23 +514,33 @@
     transition: color 0.18s ease;
   }
   .entry:hover .entry__icon { color: var(--fg); }
+  .entry__title-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
   .entry__title {
     font-size: 14px;
     font-weight: 600;
     letter-spacing: -0.005em;
-    display: inline-block;
     border-bottom: 1px solid transparent;
     transition: border-color 0.15s ease;
   }
   .entry:hover .entry__title { border-bottom-color: var(--fg); }
+  .entry__arrow {
+    color: var(--fg-faded);
+    font-size: 13px;
+    line-height: 1;
+    transition: color 0.15s ease, transform 0.15s ease;
+  }
+  .entry:hover .entry__arrow { color: var(--fg); }
+  .entry[data-dir="right"]:hover .entry__arrow { transform: translateX(2px); }
+  .entry[data-dir="down"]:hover  .entry__arrow { transform: translateY(2px); }
   .entry__sub {
     font-size: 13px;
     color: var(--fg-muted);
     line-height: 1.45;
     margin-top: 4px;
-  }
-  @media (max-width: 540px) {
-    .entry-points { grid-template-columns: 1fr; gap: 22px; }
   }
 
   /* ── Debug panel (?debug=1) ── */
@@ -613,7 +623,7 @@
       <p>Two ways in: see them all together in the Explorer, or jump straight to a tool below to play with the controls.</p>
 
       <div class="entry-points">
-        <a class="entry" href="/logo/explorer/">
+        <a class="entry" data-dir="right" href="/logo/explorer/">
           <svg class="entry__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M21.5 14L20 9C20 9 19.5 7 17.5 7C17.5 7 17.5 5 15.5 5C13.5 5 13.5 7 13.5 7H10.5C10.5 7 10.5 5 8.5 5C6.5 5 6.5 7 6.5 7C4.5 7 4 9 4 9L2.5 14"/>
             <path d="M6 20C8.20914 20 10 18.2091 10 16C10 13.7909 8.20914 12 6 12C3.79086 12 2 13.7909 2 16C2 18.2091 3.79086 20 6 20Z"/>
@@ -621,11 +631,14 @@
             <path d="M12 16C13.1046 16 14 15.1046 14 14C14 12.8954 13.1046 12 12 12C10.8954 12 10 12.8954 10 14C10 15.1046 10.8954 16 12 16Z"/>
           </svg>
           <div>
-            <div class="entry__title">Explorer</div>
+            <div class="entry__title-row">
+              <span class="entry__title">Explorer</span>
+              <span class="entry__arrow" aria-hidden="true">→</span>
+            </div>
             <div class="entry__sub">A shuffled gallery of hand-picked outputs from every tool.</div>
           </div>
         </a>
-        <a class="entry" href="#sections">
+        <a class="entry" data-dir="down" href="#sections">
           <svg class="entry__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M10.0503 10.6066L2.97923 17.6777C2.19818 18.4587 2.19818 19.7251 2.97923 20.5061C3.76027 21.2872 5.0266 21.2872 5.80765 20.5061L12.8787 13.4351"/>
             <path d="M17.1927 13.7994L21.071 17.6777C21.8521 18.4587 21.8521 19.7251 21.071 20.5061C20.29 21.2872 19.0236 21.2872 18.2426 20.5061L12.0341 14.2977"/>
@@ -633,7 +646,10 @@
             <path d="M10.0503 10.6066C9.2065 8.45359 9.37147 5.62861 11.111 3.8891C12.8505 2.14958 16.0607 1.76778 17.8285 2.82844L14.7878 5.86911L14.5052 8.98015L17.6162 8.69754L20.6569 5.65686C21.7176 7.42463 21.3358 10.6349 19.5963 12.3744C17.8567 14.1139 15.0318 14.2789 12.8788 13.435"/>
           </svg>
           <div>
-            <div class="entry__title">Individual tools</div>
+            <div class="entry__title-row">
+              <span class="entry__title">Individual tools</span>
+              <span class="entry__arrow" aria-hidden="true">↓</span>
+            </div>
             <div class="entry__sub">One section per tool with controls, presets, and exports.</div>
           </div>
         </a>
