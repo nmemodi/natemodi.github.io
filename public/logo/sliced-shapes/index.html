@@ -737,22 +737,144 @@ const exportH = 800;
 
 // ---- Permalink ----
 const LS = window.LogoSchema;
+/* Re-checked landing-page variants — lw=0 in ALL of them; rogue outlines
+   in earlier output came from my biased-but-nonzero lw. Forcing exact 0.
+   Geometry: shape diameter = 2*sz, total extent = (c−1)*sp + 2*sz, plus
+   diagonal fan-out from ba/as adding ~15-30% effective spread. Variants
+   assume ~700-800px canvas; curator iframes ~400px. So target total has
+   to be tighter than variants and account for diagonal extent.
+
+   Color: lc (line/cut color) coupled to fc so any visible cut matches
+   the shape — bg/fc harmony comes from the smart-pair generator. */
 const pschema = {
-    c:  LS.INT_RANGE(1, 12, 3),
+    /* Distribution: 80% single hero (centered, varied cuts via lc.post),
+       15% pair (variant-zone interlock), 5% trio (fanned). */
+    c: {
+      ...LS.WEIGHTED_INT_RANGE(1, 12, 3, { rmin: 1, rmax: 3 }),
+      randomize(rng) {
+        const r = rng();
+        if (r < 0.80) return 1;
+        if (r < 0.95) return 2;
+        return 3;
+      },
+    },
     sh: LS.ENUM(['circle','square','rounded-square','diamond','triangle','inverted-triangle','pentagon','hexagon','heptagon','octagon','star-4','star-5','star-6','cross','semicircle','oval','teardrop','shield'], 'circle'),
-    sz: LS.INT_RANGE(30, 250, 100),
-    sp: LS.INT_RANGE(40, 400, 220),
-    cv: LS.ENUM(['arc','sine','straight','s-curve','zigzag'], 'arc'),
-    ba: LS.INT_RANGE(-180, 180, 0),
-    as: LS.INT_RANGE(0, 90, 25),
-    cu: LS.FLOAT_RANGE(0, 1, 0.35, 2),
-    gw: LS.FLOAT_RANGE(1, 40, 8, 1),
-    lw: LS.FLOAT_RANGE(0, 8, 0, 1),
-    tp: LS.FLOAT_RANGE(0, 1, 0, 2),
-    so: LS.FLOAT_RANGE(-0.5, 0.5, 0, 2),
+    /* sz post is c- AND shape-aware: round shapes (circle/oval/etc.)
+       need a higher sp/sz ratio (~1.5+) for the clean "kissing" look,
+       so we shrink sz to leave canvas budget for that spacing. Sharp
+       shapes can run larger because they interlock cleanly at sp ≈ sz. */
+    sz: {
+      ...LS.WEIGHTED_INT_RANGE(30, 250, 100, { rmin: 60, rmax: 110 }),
+      post(state, rng) {
+        const c = (typeof state.c === 'number') ? state.c : 2;
+        const sh = state.sh || 'circle';
+        const isRound = ['circle','oval','semicircle','teardrop','rounded-square'].includes(sh);
+        if (c === 1) return 95 + Math.floor(rng() * 30);  // [95, 125] hero
+        if (c === 2) return isRound
+          ? 65 + Math.floor(rng() * 25)   // [65, 90]  round pair (small to fit kiss)
+          : 80 + Math.floor(rng() * 25);  // [80, 105] sharp pair
+        return isRound
+          ? 50 + Math.floor(rng() * 15)   // [50, 65]  round trio
+          : 55 + Math.floor(rng() * 20);  // [55, 75]  sharp trio
+      },
+    },
+    /* sp ratio is c- and shape-aware:
+         Round shapes (circle/oval/semicircle/teardrop/rounded-square)
+           c=2: sp/sz ∈ [1.50, 1.85] — clean "kissing" interlock
+           c=3: sp/sz ∈ [1.40, 1.70]
+         Sharp/angular shapes (diamond, cross, polygon, star, shield)
+           c=2: sp/sz ∈ [0.95, 1.50] — variant-zone overlap (v2: 0.95, v3: 1.08)
+           c=3: sp/sz ∈ [1.05, 1.35]
+       Hard-capped so total extent never exceeds 320 (canvas-safe). */
+    sp: {
+      ...LS.WEIGHTED_INT_RANGE(40, 400, 220, { rmin: 100, rmax: 250 }),
+      post(state, rng) {
+        const c  = (typeof state.c  === 'number') ? state.c  : 2;
+        const sz = (typeof state.sz === 'number') ? state.sz : 100;
+        const sh = state.sh || 'circle';
+        if (c <= 1) return Math.round(sz * 1.5);
+        const ROUND = new Set(['circle','oval','semicircle','teardrop','rounded-square']);
+        const isRound = ROUND.has(sh);
+        const ratio = isRound
+          ? (c === 2 ? 1.50 + rng() * 0.35 : 1.40 + rng() * 0.30)
+          : (c === 2 ? 0.95 + rng() * 0.55 : 1.05 + rng() * 0.30);
+        const desired = Math.round(sz * ratio);
+        const maxSp   = Math.floor((320 - 2 * sz) / (c - 1));
+        return Math.max(40, Math.min(400, Math.min(desired, maxSp)));
+      },
+    },
+    /* Cuts read clean only when the slice direction is consistent — variants
+       use cv=arc with cu=0 (effectively straight), ba near 0 or ±180 (which
+       are equivalent), as=0 (3/4) or 38 (1/4). Random curves at random
+       angles produce dissonant compositions. */
+    cv: LS.ENUM_WEIGHTED([
+      ['straight', 5], ['arc', 2], ['sine', 1], ['s-curve', 0.3], ['zigzag', 0.3],
+    ], 'arc'),
+    ba: LS.WEIGHTED_INT_RANGE(-180, 180, 0, { rmin: -12, rmax: 12 }),
+    /* as = 0 in 3/4 variants, 38 in 1/4. Bias heavy toward 0 with a
+       jump to a moderate-fan secondary mode. */
+    as: {
+      ...LS.WEIGHTED_INT_RANGE(0, 90, 25, { rmin: 0, rmax: 30 }),
+      randomize(rng) {
+        if (rng() < 0.7) return 0;
+        return 15 + Math.floor(rng() * 25); // [15, 40]
+      },
+    },
+    /* Variant 1 (defaults) ships with cu=0.35 (gentle arc). Variants 2-4
+       explicitly disable curve. Mix: 75% straight, 25% gentle arc — the
+       latter matches the default homepage embed look. */
+    cu: {
+      ...LS.FLOAT_RANGE(0, 1, 0.35, 2),
+      randomize(rng) {
+        return rng() < 0.75 ? 0 : Math.round((0.20 + rng() * 0.20) * 100) / 100;
+      },
+    },
+    gw: LS.WEIGHTED_FLOAT_RANGE(1, 40, 8, 1, { rmin: 14, rmax: 30 }),
+    /* All variants ship with lw/tp/so at default 0. Force to 0 always —
+       any non-zero values produced the haphazard outlines/tapers. */
+    lw: { ...LS.FLOAT_RANGE(0, 8, 0, 1), randomize: () => 0 },
+    tp: { ...LS.FLOAT_RANGE(0, 1, 0, 2), randomize: () => 0 },
+    so: { ...LS.FLOAT_RANGE(-0.5, 0.5, 0, 2), randomize: () => 0 },
     bg: LS.COLOR('#c8c8c8'),
     fc: LS.COLOR('#2a2a2a'),
-    lc: LS.COLOR('#000000'),
+    /* lc.post does three things — runs AFTER all other fields:
+       (1) ~30% of shuffles, snap state to a homepage-variant template.
+       (2) Else if c=1 (single hero), re-roll the cut params wildly —
+           with only one shape on canvas, the slice IS the visual
+           interest, so we want diverse curve types, gaps, tapers,
+           offsets, and angles.
+       (3) Always couple lc to fc so any visible cut blends with shape. */
+    lc: {
+      ...LS.COLOR('#000000'),
+      post(state, rng) {
+        /* Templates only apply to multi-shape (c≥2) outputs so single-
+           hero shuffles always render as single hero with varied cuts. */
+        if (state.c >= 2 && rng() < 0.60) {
+          const TEMPLATES = [
+            { c: 2, sh: 'diamond', sz: 100, sp: 95,  cv: 'arc', ba: -7,  as: 0,  cu: 0,    gw: 22 },
+            { c: 2, sh: 'cross',   sz: 100, sp: 108, cv: 'arc', ba: 0,   as: 0,  cu: 0,    gw: 22 },
+            { c: 3, sh: 'circle',  sz: 60,  sp: 90,  cv: 'arc', ba: 0,   as: 25, cu: 0.35, gw: 8  },
+            { c: 3, sh: 'shield',  sz: 55,  sp: 95,  cv: 'arc', ba: 0,   as: 38, cu: 0,    gw: 18 },
+          ];
+          Object.assign(state, TEMPLATES[Math.floor(rng() * TEMPLATES.length)]);
+        } else if (state.c === 1) {
+          /* Single hero — slice is the only visual variety. Sample cut
+             params widely from the full range. */
+          const cvWeights = [['straight', 3], ['arc', 3], ['sine', 2.5], ['s-curve', 2], ['zigzag', 1.5]];
+          const cvTotal = cvWeights.reduce((s, x) => s + x[1], 0);
+          let cvR = rng() * cvTotal;
+          for (const [v, w] of cvWeights) { cvR -= w; if (cvR <= 0) { state.cv = v; break; } }
+
+          state.cu = rng() < 0.35 ? 0 : Math.round((0.15 + rng() * 0.40) * 100) / 100;     // 65% curved
+          state.gw = Math.round((10 + rng() * 28) * 10) / 10;                              // [10, 38]
+          state.tp = rng() < 0.55 ? 0 : Math.round((0.20 + rng() * 0.45) * 100) / 100;     // 45% taper
+          state.so = rng() < 0.55 ? 0 : Math.round((-0.15 + rng() * 0.30) * 100) / 100;    // 45% offset
+          state.ba = Math.floor(-30 + rng() * 61);                                          // [-30, 30]
+          state.as = 0; // no fan with single shape
+        }
+        return (typeof state.fc === 'string') ? state.fc : '#000000';
+      },
+    },
     sd: LS.SEED(0),
 };
 S.seed = 0;

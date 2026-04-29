@@ -360,15 +360,17 @@ bindColor('bgColor', 'bgColor');
 bindColor('fgColor', 'fgColor');
 
 // ─── Permalink ───
-const { INT_RANGE, COLOR, TEXT } = window.LogoSchema;
+const { INT_RANGE, COLOR, TEXT, WEIGHTED_INT_RANGE } = window.LogoSchema;
+/* Variants: cr=16 (all), dp 132-147 (high), lw 14-18, pa 12 (all).
+   Tightenings keep the brutalist "deep extrusion + chunky stroke" feel. */
 const schema = {
   ch: TEXT({ charset: /^[A-Z0-9]$/, maxLen: 1, def: 'G' }),
   bg: COLOR('#ffffff'),
   fg: COLOR('#111111'),
-  cr: INT_RANGE(0, 50, 22),
-  pa: INT_RANGE(0, 25, 8),
-  lw: INT_RANGE(5, 45, 22),
-  dp: INT_RANGE(30, 200, 100),
+  cr: WEIGHTED_INT_RANGE(0, 50, 22, { rmin: 10, rmax: 24 }),
+  pa: WEIGHTED_INT_RANGE(0, 25, 8,  { rmin: 8,  rmax: 16 }),
+  lw: WEIGHTED_INT_RANGE(5, 45, 22, { rmin: 12, rmax: 24 }),
+  dp: WEIGHTED_INT_RANGE(30, 200, 100, { rmin: 110, rmax: 165 }),
 };
 
 function getState() {

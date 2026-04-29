@@ -511,26 +511,140 @@ document.getElementById('invert').addEventListener('change', e => {
 });
 
 // ─── Permalink ───
-const { INT_RANGE, COLOR, ENUM, BOOL, TEXT } = window.LogoSchema;
+const {
+  INT_RANGE, COLOR, ENUM, BOOL, TEXT,
+  WEIGHTED_INT_RANGE, ENUM_WEIGHTED,
+} = window.LogoSchema;
+/* Rendering: dots tile cells; coverage > th means dot is "on" (drawn).
+   Variants have invariants:
+     ds=100 (full dot — never partial) ALWAYS
+     th ≤ 9                              ALWAYS (high th = letter vanishes)
+     ls ≥ 105                            ALWAYS (letter dominates field)
+     mg 4-7, pa 0 or default, oy 5-12   (centered, slight downward)
+   gc varies 7-22 (sparse to dense). 4 dot shapes, 3 border options.
+   Color coupling: bg→smart bg, dc→smart fg (post), bd→smart fg or accent.
+
+   Mode lottery in dc.post: 5 archetypes from rendering capabilities. */
 const schema = {
   ch: TEXT({ charset: /^[A-Za-z0-9]$/, maxLen: 1, def: 'L' }),
-  ff: ENUM(['Archivo Black', 'Inter', 'Playfair Display', 'Space Mono', 'Arial', 'Georgia', 'Impact', 'Courier New'], 'Archivo Black'),
-  fw: ENUM(['400', '700', '900'], '900'),
-  gc: INT_RANGE(5, 32, 12),
-  ds: INT_RANGE(40, 100, 92),
-  th: INT_RANGE(5, 95, 30),
-  sh: ENUM(['circle', 'square', 'rounded-square', 'diamond', 'hexagon', 'triangle'], 'circle'),
-  bs: ENUM(['square', 'circle', 'none'], 'square'),
-  br: INT_RANGE(0, 50, 0),
+  ff: ENUM_WEIGHTED([
+    ['Archivo Black', 5], ['Impact', 3], ['Georgia', 3],
+    ['Playfair Display', 2], ['Inter', 1], ['Arial', 1],
+    ['Space Mono', 0.4], ['Courier New', 0.3],
+  ], 'Archivo Black'),
+  fw: ENUM_WEIGHTED([['900', 5], ['700', 2], ['400', 0.5]], '900'),
+  /* gc — must stay ≥10 so individual dots remain distinguishable.
+     At gc<10, large dots merge into a solid blob (especially for round
+     letters like O/Q) and the dot-grid aesthetic disappears entirely. */
+  gc: {
+    ...INT_RANGE(5, 32, 12),
+    randomize(rng) {
+      const r = rng();
+      if (r < 0.45) return 11 + Math.floor(rng() * 5);   // [11, 15] medium
+      return 16 + Math.floor(rng() * 8);                 // [16, 23] dense
+    },
+  },
+  /* ds forced to 100 — variants are 100 in every case. Partial dots fight
+     the "letter as dot mosaic" aesthetic. */
+  ds: { ...INT_RANGE(40, 100, 92), randomize: () => 100 },
+  /* th low — variants 5 or 9. Higher means letter doesn't have enough
+     coverage to register as "on". */
+  th: WEIGHTED_INT_RANGE(5, 95, 30, { rmin: 5, rmax: 12 }),
+  /* sh weighted — variants used circle (default), hexagon, diamond.
+     Square/rounded-square also OK. Triangle rare. */
+  sh: ENUM_WEIGHTED([
+    ['circle', 5], ['hexagon', 3], ['diamond', 2.5],
+    ['square', 2], ['rounded-square', 2], ['triangle', 1],
+  ], 'circle'),
+  bs: ENUM_WEIGHTED([['none', 5], ['square', 2], ['circle', 2]], 'square'),
+  br: WEIGHTED_INT_RANGE(0, 50, 0, { rmin: 0, rmax: 8 }),
   bg: COLOR('#cc0000'),
   bd: COLOR('#ffffff'),
   dc: COLOR('#cc0000'),
-  mg: INT_RANGE(0, 15, 3),
-  pa: INT_RANGE(0, 25, 10),
-  ls: INT_RANGE(50, 150, 90),
-  ox: INT_RANGE(-30, 30, 0),
-  oy: INT_RANGE(-30, 30, 0),
-  in: BOOL(false),
+  mg: WEIGHTED_INT_RANGE(0, 15, 3, { rmin: 3, rmax: 7 }),
+  /* pa weighted toward 0 (variants explicit 0, or default). */
+  pa: {
+    ...INT_RANGE(0, 25, 10),
+    randomize(rng) {
+      if (rng() < 0.5) return 0;
+      return 5 + Math.floor(rng() * 8); // [5, 12]
+    },
+  },
+  ls: WEIGHTED_INT_RANGE(50, 150, 90, { rmin: 105, rmax: 135 }),
+  ox: WEIGHTED_INT_RANGE(-30, 30, 0, { rmin: -2, rmax: 2 }),
+  /* oy tighter — too-positive values push the negative-space pattern
+     below the visual center. Variants used 5-12; keeping a smaller
+     range avoids the bottom-heavy outputs. */
+  oy: WEIGHTED_INT_RANGE(-30, 30, 0, { rmin: -2, rmax: 6 }),
+  /* `in` (invert) is set explicitly per mode in dc.post (50% random
+     flips break the visual archetypes). */
+  in: { ...BOOL(false), randomize: () => false },
+};
+
+/* Post-pass: couple dc and bd to the smart-pair, then 5-mode lottery
+   (or 25% template snap to homepage variants). dc.post runs late so
+   bg's smart-pair is available via opts. bd.post runs after dc. */
+schema.dc = {
+  ...schema.dc,
+  post(state, rng, opts) {
+    /* Mode lottery + template injection */
+    if (rng() < 0.25) {
+      const TEMPLATES = [
+        /* Variant-2-style with gc bumped to 11 so dots stay distinguishable. */
+        { gc: 11, ds: 100, th: 9, sh: 'circle',  bs: 'none', mg: 5, pa: 0,  ls: 132, ox: -3, oy: 8,  ff: 'Archivo Black' },
+        /* Medium hexagon (variant 3 style) */
+        { gc: 13, ds: 100, th: 5, sh: 'hexagon', bs: 'none', mg: 4, pa: 10, ls: 110, ox: 0,  oy: 5,  ff: 'Archivo Black' },
+        /* Dense diamond (variant 4 style) */
+        { gc: 20, ds: 100, th: 9, sh: 'diamond', bs: 'none', mg: 5, pa: 0,  ls: 132, ox: 0,  oy: 7,  ff: 'Georgia' },
+        /* Very dense circle (variant 1 style — bs='circle' backdrop dropped
+           because it requires a 3-color scheme we can't yet auto-couple). */
+        { gc: 22, ds: 100, th: 5, sh: 'circle',  bs: 'none',   mg: 7, pa: 5, ls: 105, ox: 0, oy: 5, ff: 'Georgia' },
+      ];
+      Object.assign(state, TEMPLATES[Math.floor(rng() * TEMPLATES.length)]);
+    } else {
+      /* Mode lottery — 5 distinct dot-grid archetypes.
+         in (invert) is set explicitly per mode so we never get random
+         flips that break the visual archetype. */
+      const m = rng();
+      if (m < 0.40) {
+        /* Mode A: classic dot-letter — letter formed of dots (40%) */
+        state.in = false;
+      } else if (m < 0.65) {
+        /* Mode B: dense (high gc) — letter from many small dots */
+        state.gc = 18 + Math.floor(rng() * 7);
+        state.in = false;
+      } else {
+        /* Mode D: NEGATIVE SPACE (dense diamond/hex pattern with letter
+           as a hole) — 35% to amplify the look the user liked. */
+        state.in = true;
+        state.gc = 11 + Math.floor(rng() * 9); // [11, 19]
+        const negShapes = ['diamond', 'hexagon', 'square', 'circle'];
+        state.sh = negShapes[Math.floor(rng() * negShapes.length)];
+        state.bs = 'none';
+        state.mg = 3 + Math.floor(rng() * 4); // [3, 6] tight margin
+        state.pa = 0;
+        state.ds = 100;
+      }
+      /* Force bs='none' for all non-template modes — backdrop creates
+         3-color compositions that need careful coupling we don't have. */
+      state.bs = 'none';
+    }
+    /* Couple dc to smart-pair fg (was random hex) so dot color always
+       contrasts with bg. */
+    if (opts && opts.palette === 'mono' && opts.monoFg) return opts.monoFg;
+    if (opts && opts._fullPair) return opts._fullPair[1];
+    return state.dc;
+  },
+};
+schema.bd = {
+  ...schema.bd,
+  post(state, rng, opts) {
+    /* bd defaults to matching dc (cleanest brand look). When border isn't
+       visible (bs=none), this doesn't matter. */
+    if (opts && opts.palette === 'mono' && opts.monoFg) return opts.monoFg;
+    if (opts && opts._fullPair) return opts._fullPair[1];
+    return state.bd;
+  },
 };
 
 function getState() {

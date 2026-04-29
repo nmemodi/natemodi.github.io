@@ -614,18 +614,47 @@
         });
 
         // ─── Permalink ───
-        const { INT_RANGE, FLOAT_RANGE, COLOR, BOOL, ENUM } = window.LogoSchema;
+        const {
+          INT_RANGE, FLOAT_RANGE, COLOR, BOOL, ENUM,
+          WEIGHTED_INT_RANGE, WEIGHTED_FLOAT_RANGE, ENUM_WEIGHTED,
+        } = window.LogoSchema;
+        /* Variant analysis: the aesthetic depends on sp/r ratio (variants
+           cluster at 0.78-1.21). Independent randomization produced either
+           single-blob merges (sp << r) or separated islands (sp >> r).
+           Post-pass couples sp to r so circles always interlock cleanly.
+           br stays near 0 — variants explicitly set br=0 in every case. */
         const schema = {
-            n:  INT_RANGE(2, 15, 2),
-            ly: ENUM(['auto', 'ring', 'grid', 'line'], 'auto'),
-            nb: INT_RANGE(1, 7, 1),
-            r:  INT_RANGE(30, 300, 150),
-            sw: INT_RANGE(2, 80, 28),
-            sp: INT_RANGE(10, 400, 110),
+            n:  WEIGHTED_INT_RANGE(2, 15, 2, { rmin: 4, rmax: 7 }),
+            ly: ENUM_WEIGHTED([
+              ['ring', 5], ['auto', 2], ['grid', 1], ['line', 0.3],
+            ], 'auto'),
+            /* nb controls ring-layout density. Variants used 1 (3/4) or 2 (1/4)
+               only — never higher. Higher values produce dense webs that
+               don't match the curated petal-arrangement aesthetic. */
+            nb: {
+              ...INT_RANGE(1, 7, 1),
+              randomize: (rng) => rng() < 0.8 ? 1 : 2,
+            },
+            r:  WEIGHTED_INT_RANGE(30, 300, 150, { rmin: 75, rmax: 160 }),
+            sw: WEIGHTED_INT_RANGE(2, 80, 28, { rmin: 14, rmax: 60 }),
+            /* sp shuffle value is overwritten in post — kept here only so
+               the schema iteration phase consumes 1 rng call (preserves
+               the rng phase for downstream fields). */
+            sp: {
+              ...WEIGHTED_INT_RANGE(10, 400, 110, { rmin: 60, rmax: 200 }),
+              post(state, rng) {
+                const r = (typeof state.r === 'number') ? state.r : 100;
+                const ratio = 0.75 + rng() * 0.55; // [0.75, 1.30)
+                return Math.max(10, Math.min(400, Math.round(r * ratio)));
+              },
+            },
             ro: INT_RANGE(-180, 180, 0),
-            wv: BOOL(true),
-            gp: FLOAT_RANGE(0.5, 4, 1.5, 2),
-            br: FLOAT_RANGE(0, 1.5, 0.7, 2),
+            /* Every variant ships with weave ON (default). The 50/50 BOOL
+               randomizer was flipping it off half the time → solid filled
+               circles merge into one blob. Bias heavy toward true. */
+            wv: { ...BOOL(true), randomize: (rng) => rng() < 0.9 },
+            gp: WEIGHTED_FLOAT_RANGE(0.5, 4, 1.5, 2, { rmin: 0.5, rmax: 3.2 }),
+            br: WEIGHTED_FLOAT_RANGE(0, 1.5, 0.7, 2, { rmin: 0, rmax: 0.1 }),
             bg: COLOR('#cc0000'),
             fg: COLOR('#f0f0f0'),
         };

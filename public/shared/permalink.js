@@ -139,14 +139,35 @@
         const seedStr = parsed.seed || '0';
         const rng = _mulberry32(_hashSeed(seedStr));
         const opts = {};
-        if (parsed.p === 'mono') opts.palette = 'mono';
+        if (parsed.p === 'mono') {
+          opts.palette = 'mono';
+          /* Pre-compute a guaranteed-contrast bg/fg pair from tightened
+             dark/light ramps. COLOR.randomize consumes opts.monoBg/monoFg
+             when the field key is `bg` or `fg`. Other color fields (border,
+             accent) fall back to an independent ramp pick. */
+          const dark  = ['#000000','#0d0d0d','#1a1a1a'][Math.floor(rng() * 3)];
+          const light = ['#f0f0f0','#f8f8f8','#ffffff'][Math.floor(rng() * 3)];
+          if (rng() < 0.5) { opts.monoBg = dark;  opts.monoFg = light; }
+          else             { opts.monoBg = light; opts.monoFg = dark;  }
+        }
         if (parsed.m && typeof parsed.m === 'string' && parsed.m.length > 0) {
           opts.monogram = parsed.m;
         }
         for (const [key, field] of Object.entries(this.schema)) {
           if (parsed[key] !== undefined) continue;
           if (typeof field.randomize === 'function') {
-            state[key] = field.randomize(rng, opts);
+            state[key] = field.randomize(rng, opts, key);
+          }
+        }
+        /* Post-pass: a field's `post(state, rng, opts)` can derive its
+           value from already-randomized siblings — used for coupling
+           (e.g. line-warp's oy must track d so the displaced bump peak
+           lands near the canvas center). Runs after every standard
+           randomize so post hooks see the full state. */
+        for (const [key, field] of Object.entries(this.schema)) {
+          if (parsed[key] !== undefined) continue;
+          if (typeof field.post === 'function') {
+            state[key] = field.post(state, rng, opts);
           }
         }
       }

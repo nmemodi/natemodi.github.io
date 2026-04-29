@@ -300,10 +300,21 @@
             ctx.fill();
         }
 
+        /* Triangles render top-heavy when their geometric center is at h/2
+           (the apex grabs visual weight while the base anchors below).
+           Shifting cy down by ~15% of the shape size moves the visual mass
+           into the lower half of the frame, where the eye expects it. */
+        function shapeCenter(shape, w, h, size) {
+            const cx = w / 2;
+            let cy = h / 2;
+            if (shape === 'triangle') cy += size * 0.15;
+            return { cx, cy };
+        }
+
         // ---- Main draw ----
         function draw() {
             const { ctx, w, h } = setupCanvas();
-            const cx = w / 2, cy = h / 2;
+            const { cx, cy } = shapeCenter(config.shape, w, h, config.shapeSize);
 
             ctx.fillStyle = config.bgColor;
             ctx.fillRect(0, 0, w, h);
@@ -321,7 +332,7 @@
 
         // ---- Render to arbitrary canvas (for export) ----
         function renderToExportCanvas(ctx, w, h, opts) {
-            const cx = w / 2, cy = h / 2;
+            const { cx, cy } = shapeCenter(config.shape, w, h, config.shapeSize);
 
             if (!opts.transparent) {
                 ctx.fillStyle = config.bgColor;
@@ -344,7 +355,7 @@
             const pad = 30;
             const sz = config.shapeSize + pad;
             const vw = sz * 2, vh = sz * 2;
-            const cx = vw / 2, cy = vh / 2;
+            const { cx, cy } = shapeCenter(config.shape, vw, vh, config.shapeSize);
 
             let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${vw} ${vh}" width="${vw}" height="${vh}">\n`;
             svg += `<rect width="${vw}" height="${vh}" fill="${config.bgColor}"/>\n`;
@@ -490,20 +501,113 @@
         const exportSize = () => (config.shapeSize + pad) * 2;
 
         // ---- Permalink ----
-        const { INT_RANGE, FLOAT_RANGE, COLOR, ENUM, BOOL } = window.LogoSchema;
+        const {
+          INT_RANGE, FLOAT_RANGE, COLOR, ENUM, BOOL,
+          WEIGHTED_INT_RANGE, ENUM_WEIGHTED,
+        } = window.LogoSchema;
+        /* Variant decoding:
+             v1: a=135 sh=square  n=9 sp=26  ex=-1 lw= 5 tp=100
+             v2: a= 90 sh=hexagon n=5 sp=86  ex=60 lw=26 tp=100
+             v3: a=135 sh=circle  n=9 sp=10  ex=60 lw=40 tp=100
+             v4: a= 45 sh=circle  n=5 sp=100 ex=60 lw=40 tp=100
+           Patterns: a always multiple of 45; n always odd (5 or 9);
+           tp always 100; sp varies wide (10-100); lw correlates with sz;
+           ex=60 in 3/4 cases; lc ALWAYS = bg (cuts invisible outside shape).
+           Color: bg→smart-pair bg, sc→smart-pair fg, lc→bg (post-coupled). */
         const pschema = {
-            n:  INT_RANGE(1, 30, 11),
-            a:  INT_RANGE(0, 180, 30),
-            lw: INT_RANGE(1, 40, 5),
-            tp: INT_RANGE(0, 100, 95),
-            sp: INT_RANGE(10, 100, 65),
-            ex: INT_RANGE(-30, 60, 3),
-            sh: ENUM(['circle','square','hexagon','triangle'], 'circle'),
-            sz: INT_RANGE(50, 350, 200),
+            /* Force odd line counts (variants used 5 or 9 only). */
+            n: {
+              ...INT_RANGE(1, 30, 11),
+              randomize(rng) {
+                const w = [[5, 4], [9, 4], [7, 2], [11, 1], [3, 1]];
+                const t = w.reduce((s, x) => s + x[1], 0);
+                let r = rng() * t;
+                for (const [v, ww] of w) { r -= ww; if (r <= 0) return v; }
+                return 5;
+              },
+            },
+            /* a anchored to 45/90/135 ±5° (variants used these exactly). */
+            a: {
+              ...INT_RANGE(0, 180, 30),
+              randomize(rng) {
+                const anchors = [45, 90, 135];
+                const base = anchors[Math.floor(rng() * anchors.length)];
+                const jitter = Math.floor(-5 + rng() * 11); // ±5°
+                return Math.max(0, Math.min(180, base + jitter));
+              },
+            },
+            /* lw randomize is throwaway — coupled to sz in post (lw = sz * 0.10-0.22). */
+            lw: WEIGHTED_INT_RANGE(1, 40, 5, { rmin: 8, rmax: 40 }),
+            /* tp forced to 100 (every variant uses max taper). */
+            tp: { ...INT_RANGE(0, 100, 95), randomize: () => 100 },
+            sp: WEIGHTED_INT_RANGE(10, 100, 65, { rmin: 25, rmax: 100 }),
+            /* ex=60 in 3/4 variants. Heavy bias to 60, occasional default. */
+            ex: {
+              ...INT_RANGE(-30, 60, 3),
+              randomize(rng) {
+                if (rng() < 0.75) return 60;
+                return Math.floor(-5 + rng() * 15); // [-5, 9] near default
+              },
+            },
+            sh: ENUM_WEIGHTED([
+              ['triangle', 5], ['circle', 2.5], ['square', 2], ['hexagon', 2],
+            ], 'circle'),
+            sz: WEIGHTED_INT_RANGE(50, 350, 200, { rmin: 140, rmax: 195 }),
             bg: COLOR('#c8c8c8'),
-            sc: COLOR('#1a1a1a'),
-            lc: COLOR('#c8c8c8'),
-            mb: BOOL(true),
+            /* sc post-coupled to the smart-pair fg (or mono fg) so the shape
+               color is harmonious with bg, not a random clash. */
+            sc: {
+              ...COLOR('#1a1a1a'),
+              post(state, rng, opts) {
+                if (opts && opts.palette === 'mono' && opts.monoFg) return opts.monoFg;
+                if (opts && opts._fullPair) return opts._fullPair[1];
+                return state.sc;
+              },
+            },
+            /* lc ALWAYS matches bg — variants set this explicitly in every case. */
+            lc: {
+              ...COLOR('#c8c8c8'),
+              post(state) {
+                return state.bg;
+              },
+            },
+            mb: { ...BOOL(true), randomize: (rng) => rng() < 0.9 },
+        };
+
+        /* Coupling lw to sz must happen in post AFTER sz is finalized, then
+           ~30% of shuffles get snapped to one of the 4 homepage-variant
+           templates. We hijack lw.post for both. */
+        pschema.lw = {
+          ...pschema.lw,
+          post(state, rng) {
+            // Template injection
+            if (rng() < 0.30) {
+              const TEMPLATES = [
+                /* Diagonal \ slash through a square */
+                { a: 135, sh: 'square',   n: 9, sp: 26,  ex: -1, lw: 8,  tp: 100, sz: 170 },
+                /* Horizontal slashes through a hexagon */
+                { a:  90, sh: 'hexagon',  n: 5, sp: 86,  ex: 60, lw: 26, tp: 100, sz: 170 },
+                /* Horizontal slashes through a circle */
+                { a:  90, sh: 'circle',   n: 7, sp: 50,  ex: 60, lw: 25, tp: 100, sz: 170 },
+                /* Diagonal / slash through a circle (varied spread) */
+                { a:  45, sh: 'circle',   n: 5, sp: 100, ex: 60, lw: 35, tp: 100, sz: 170 },
+                /* Diagonal / through square (mirror of v1) */
+                { a:  45, sh: 'square',   n: 9, sp: 26,  ex: -1, lw: 8,  tp: 100, sz: 170 },
+                /* Horizontal slashes through triangle */
+                { a:  90, sh: 'triangle', n: 5, sp: 70,  ex: 60, lw: 22, tp: 100, sz: 170 },
+                /* Diagonal \ on triangle (variety) */
+                { a: 135, sh: 'triangle', n: 7, sp: 60,  ex: 60, lw: 22, tp: 100, sz: 170 },
+                /* Horizontal slashes on square */
+                { a:  90, sh: 'square',   n: 7, sp: 60,  ex: 60, lw: 22, tp: 100, sz: 170 },
+              ];
+              Object.assign(state, TEMPLATES[Math.floor(rng() * TEMPLATES.length)]);
+              return state.lw;
+            }
+            // Otherwise: couple lw to sz (variant ratios were 0.04, 0.13, 0.20, 0.20)
+            const sz = (typeof state.sz === 'number') ? state.sz : 170;
+            const ratio = 0.10 + rng() * 0.12; // [0.10, 0.22]
+            return Math.max(1, Math.min(40, Math.round(sz * ratio)));
+          },
         };
         function getPermalinkState() {
             return {

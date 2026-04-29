@@ -613,23 +613,60 @@ Object.values(controls).forEach(el => {
 });
 
 // --- Permalink ---
-const { INT_RANGE, FLOAT_RANGE, ENUM, BOOL, TEXT, COLOR } = window.LogoSchema;
+const {
+  INT_RANGE, FLOAT_RANGE, ENUM, BOOL, TEXT, COLOR,
+  WEIGHTED_INT_RANGE, WEIGHTED_FLOAT_RANGE, BIMODAL, ENUM_WEIGHTED,
+} = window.LogoSchema;
+
+/* Random-shuffle constraints — derived from the hand-curated homepage
+   variants. Sliders still expose the full range; only `r=1` shuffles
+   are tightened. Failure modes we trim:
+     - washed-out / invisible letters → cap low end of `ls`, `g`, `d`
+     - blob mess from mid-ridge        → BIMODAL on `rd` (snap 0 or 100)
+     - body-type fonts read weak       → ENUM_WEIGHTED toward display fonts */
 const schema = {
   lt: TEXT({ charset: /^[A-Za-z0-9]{1,2}$/, maxLen: 2, def: 'S' }),
-  f:  ENUM(['Helvetica Neue', 'Arial Black', 'Georgia', 'Impact', 'Futura', 'Times New Roman'], 'Helvetica Neue'),
+  f:  ENUM_WEIGHTED([
+        ['Futura', 4],
+        ['Arial Black', 4],
+        ['Impact', 3],
+        ['Helvetica Neue', 3],
+        ['Georgia', 1],
+        ['Times New Roman', 0.5],
+      ], 'Helvetica Neue'),
   fw: ENUM(['900', '800', '700', '600'], '900'),
   r:  INT_RANGE(0, 359, 0),
-  ox: INT_RANGE(-200, 200, 0),
-  oy: INT_RANGE(-200, 200, 0),
-  n:  INT_RANGE(5, 25, 13),
-  d:  INT_RANGE(0, 150, 65),
-  b:  INT_RANGE(5, 60, 28),
-  rd: INT_RANGE(0, 100, 0),
-  g:  FLOAT_RANGE(0.1, 0.7, 0.35, 2),
-  ls: FLOAT_RANGE(0.3, 1.0, 0.72, 2),
-  m:  INT_RANGE(0, 80, 25),
+  ox: WEIGHTED_INT_RANGE(-200, 200, 0, { rmin: -20, rmax: 20 }),
+  /* oy is derived from d in post-pass so the visible bump centroid lands
+     near canvas center. Geometry:
+       letter_center = 400 + oy
+       bump_peak     = letter_top − d  = 400 + oy − ls·400 − d
+       bump_bottom   = letter_bot      = 400 + oy + ls·400
+       bump_centroid = (peak + bottom) / 2 = 400 + oy − d/2
+     So oy = d/2 + offset, where offset directly equals the centroid's
+     pixel deviation from canvas center. We bias offset slightly positive
+     (letter sits a hair below dead-center, matching homepage variants).
+     Slider bounds remain ±200 — manual control is unaffected. */
+  oy: {
+    ...WEIGHTED_INT_RANGE(-200, 200, 0, { rmin: 40, rmax: 80 }),
+    post(state, rng) {
+      const d = (typeof state.d === 'number') ? state.d : 90;
+      const offset = Math.floor(-5 + rng() * 25); // [−5, +20) → centroid in [395, 420)
+      const v = Math.round(d / 2) + offset;
+      return Math.max(-200, Math.min(200, v));
+    },
+  },
+  n:  WEIGHTED_INT_RANGE(5, 25, 13, { rmin: 6, rmax: 22 }),
+  d:  WEIGHTED_INT_RANGE(0, 150, 65, { rmin: 55, rmax: 130 }),
+  b:  WEIGHTED_INT_RANGE(5, 60, 28, { rmin: 18, rmax: 45 }),
+  rd: BIMODAL(0, 100, 0, { weight: 0.4 }),
+  g:  WEIGHTED_FLOAT_RANGE(0.1, 0.7, 0.35, 2, { rmin: 0.4, rmax: 0.7, pow: 0.6 }),
+  ls: WEIGHTED_FLOAT_RANGE(0.3, 1.0, 0.72, 2, { rmin: 0.75, rmax: 1.0, pow: 0.6 }),
+  m:  WEIGHTED_INT_RANGE(0, 80, 25, { rmin: 10, rmax: 50 }),
   cr: INT_RANGE(0, 40, 10),
-  sm: BOOL(false),
+  /* sm is a debug overlay (renders the heightmap instead of the letter).
+     Never randomize it — only manual toggle. */
+  sm: { ...BOOL(false), randomize: () => false },
   iv: BOOL(false),
   bg: COLOR('#ffffff'),
   fg: COLOR('#000000'),

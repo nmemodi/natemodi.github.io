@@ -243,7 +243,12 @@
             project.clear();
 
             const cx = view.center.x;
-            const cy = view.center.y;
+            /* Triangles (n=3) render top-heavy when their geometric center
+               sits at the canvas center — the apex grabs visual weight
+               while mass anchors below. Shift cy down by ~15% of R so the
+               visual centroid lands where the eye expects. */
+            let cy = view.center.y;
+            if (config.sides === 3) cy += config.outerRadius * 0.15;
             const n = config.sides;
             const R = config.outerRadius;
             const r = R * config.innerRatio;
@@ -500,20 +505,105 @@
         });
 
         // ---- Permalink ----
-        const { INT_RANGE, FLOAT_RANGE, COLOR, BOOL } = window.LogoSchema;
+        const {
+          INT_RANGE, FLOAT_RANGE, COLOR, BOOL,
+          WEIGHTED_INT_RANGE, WEIGHTED_FLOAT_RANGE, ENUM_WEIGHTED,
+        } = window.LogoSchema;
+        /* Variant decode:
+             v1: defaults + sw=18 (10 sides, ir=.58, sk=2, rt=0, g=1.8)
+             v2: n=14 r=261 ir=.10 sw=18
+             v3: n= 3 r=260 ir=.50 sk=1 sw=18 rt=256 g=2.2
+             v4: n= 4 r=262 ir=.30 sw=30 rt=148
+           Patterns: sw always ≥18 (heavy stroke); r ~260 in standalone
+           (homepage canvas ~600px); n varies 3-14; sk usually 2 (one
+           variant uses 1); rt either 0 or specific large angle.
+           ⚠ For curator/mosaic 400px iframes, r=260 overflows. Templates
+           are scaled down to r=170. so/si/wv defaults preserved. */
         const pschema = {
-            n:  INT_RANGE(3, 24, 10),
-            r:  INT_RANGE(80, 400, 250),
-            ir: FLOAT_RANGE(0.10, 0.95, 0.58, 2),
-            sk: INT_RANGE(1, 5, 2),
-            sw: INT_RANGE(1, 30, 5),
+            /* n flattened across full range — more polygon variety. */
+            n: {
+              ...INT_RANGE(3, 24, 10),
+              randomize(rng) {
+                /* Even weighting across the design-useful range. */
+                const w = [[3,1.2],[4,1.2],[5,1],[6,1.2],[7,1],[8,1.2],[9,0.8],[10,1],[11,0.8],[12,1],[13,0.8],[14,1],[15,0.6],[16,0.6]];
+                const t = w.reduce((s, x) => s + x[1], 0);
+                let r = rng() * t;
+                for (const [v, ww] of w) { r -= ww; if (r <= 0) return v; }
+                return 6;
+              },
+            },
+            r:  WEIGHTED_INT_RANGE(80, 400, 250, { rmin: 140, rmax: 185 }),
+            /* Wider ir — allows shallow-nest, deep-nest, and extremes. */
+            ir: WEIGHTED_FLOAT_RANGE(0.10, 0.95, 0.58, 2, { rmin: 0.12, rmax: 0.78 }),
+            /* sk ∈ {1,2,3} — adds star patterns to the mix. */
+            sk: {
+              ...INT_RANGE(1, 5, 2),
+              randomize(rng) {
+                const r = rng();
+                if (r < 0.50) return 2;  // standard rosette
+                if (r < 0.80) return 1;  // simple connect
+                return 3;                 // star pattern
+              },
+            },
+            /* sw widened — allow thinner, more elegant strokes occasionally. */
+            sw: WEIGHTED_INT_RANGE(1, 30, 5, { rmin: 10, rmax: 30, pow: 0.6 }),
             rt: FLOAT_RANGE(0, 360, 0, 1),
-            so: BOOL(true),
-            si: BOOL(true),
-            wv: BOOL(false),
-            g:  FLOAT_RANGE(0.5, 4.0, 1.8, 2),
+            /* Mode lottery (designer-thinking): so/si/wv combine into 5
+               distinct logo types. Set in fg.post for cross-coupling. */
+            so: { ...BOOL(true),  randomize: () => true },  // overridden in post
+            si: { ...BOOL(true),  randomize: () => true },
+            wv: { ...BOOL(false), randomize: () => false },
+            g:  WEIGHTED_FLOAT_RANGE(0.5, 4.0, 1.8, 2, { rmin: 1.2, rmax: 2.8 }),
             bg: COLOR('#cc0000'),
             fg: COLOR('#f0f0f0'),
+        };
+
+        /* fg.post does two things, in priority order:
+             (A) ~15% snap to one of 4 variant templates (anchors).
+             (B) Otherwise pick a design "mode" lottery — 5 distinct logo
+                 archetypes the rendering supports. This decouples
+                 so/si/wv from independent randomization so we get clean
+                 archetypes instead of random mixtures. */
+        pschema.fg = {
+          ...pschema.fg,
+          post(state, rng) {
+            if (rng() < 0.15) {
+              const TEMPLATES = [
+                { n: 10, r: 170, ir: 0.58, sk: 2, sw: 18, rt: 0,   g: 1.8, so: true, si: true, wv: false },
+                { n: 14, r: 170, ir: 0.10, sk: 2, sw: 18, rt: 0,   g: 1.8, so: true, si: true, wv: false },
+                { n:  3, r: 170, ir: 0.50, sk: 1, sw: 18, rt: 256, g: 2.2, so: true, si: true, wv: false },
+                { n:  4, r: 170, ir: 0.30, sk: 2, sw: 30, rt: 148, g: 1.8, so: true, si: true, wv: false },
+              ];
+              Object.assign(state, TEMPLATES[Math.floor(rng() * TEMPLATES.length)]);
+              return state.fg;
+            }
+            /* Mode lottery — five distinct logo archetypes. */
+            const m = rng();
+            if (m < 0.35) {
+              /* Mode A: classic rosette (so + si, no weave) — 35%. */
+              state.so = true; state.si = true; state.wv = false;
+            } else if (m < 0.55) {
+              /* Mode B: simple polygon (just outer) — 20%. Push ir
+                 lower so it's irrelevant; force low n for cleaner shape. */
+              state.so = true; state.si = false; state.wv = false;
+              if (state.n > 8) state.n = 3 + Math.floor(rng() * 6); // 3-8 only
+            } else if (m < 0.75) {
+              /* Mode C: woven rosette — 20%. Needs both polygons + gap. */
+              state.so = true; state.si = true; state.wv = true;
+              if (state.ir < 0.25) state.ir = 0.25 + rng() * 0.30; // weaving needs space
+            } else if (m < 0.90) {
+              /* Mode D: star (skip ≥ 2 with simple polygon look) — 15%. */
+              state.so = true; state.si = false; state.wv = false;
+              state.sk = rng() < 0.5 ? 2 : 3;
+              if (state.n < 5) state.n = 5 + Math.floor(rng() * 4); // 5-8 for clear stars
+            } else {
+              /* Mode E: counter-rotated rosette — 10%. Force a clear
+                 rotation gap between outer and inner for motion. */
+              state.so = true; state.si = true; state.wv = false;
+              state.rt = 30 + rng() * 270; // not 0
+            }
+            return state.fg;
+          },
         };
         function getPermalinkState() {
             return {
