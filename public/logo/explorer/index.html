@@ -346,8 +346,8 @@
       <div class="ctl">
         <span class="ctl__label">Color</span>
         <div class="seg" role="radiogroup" aria-label="Color palette">
-          <button type="button" class="seg__opt is-active" role="radio" aria-checked="true" data-ctl="palette" data-value="mono">B&amp;W</button>
-          <button type="button" class="seg__opt" role="radio" aria-checked="false" data-ctl="palette" data-value="full">Full color</button>
+          <button type="button" class="seg__opt" role="radio" aria-checked="false" data-ctl="palette" data-value="mono">B&amp;W</button>
+          <button type="button" class="seg__opt is-active" role="radio" aria-checked="true" data-ctl="palette" data-value="full">Full color</button>
         </div>
       </div>
 
@@ -422,7 +422,7 @@
 
   /* Toolbar state. Drives the per-iframe URL params. */
   const state = {
-    palette: 'mono',    // 'mono' | 'full'
+    palette: 'full',    // 'mono' | 'full'
     style: 'mixed',     // 'letters' | 'abstract' | 'mixed'
     monogram: '',       // '' or 1–2 chars from [A-Z0-9]
   };
