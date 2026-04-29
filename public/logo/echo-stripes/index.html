@@ -358,18 +358,31 @@ function generateSVG() {
 }
 
 // ─── Permalink ───
-const { INT_RANGE, FLOAT_RANGE, COLOR, ENUM, TEXT } = window.LogoSchema;
+const {
+  INT_RANGE, FLOAT_RANGE, COLOR, ENUM, TEXT,
+  WEIGHTED_INT_RANGE, WEIGHTED_FLOAT_RANGE, ENUM_WEIGHTED,
+} = window.LogoSchema;
+/* Variants: an='c' in 3/3 explicit (heavy), gr ≥ 1.47 (high),
+   tk ≥ 65 (always thick), display fonts dominate. Off-center anchors
+   (bl/br/tl/tr) made the echoes feel unbalanced for logos. */
 const pschema = {
   ch: TEXT({ charset: /^.{1,2}$/u, maxLen: 2, def: 'B' }),
-  f:  ENUM(['Orbitron','Audiowide','Russo One','Exo 2','Black Ops One','Rajdhani','Share Tech','Baumans','Electrolize','Michroma','Aldrich','Arial Black','Impact','Georgia','Courier New'], 'Arial Black'),
-  fw: ENUM(['400','700','900'], '900'),
-  an: ENUM(['bl','br','tl','tr','c'], 'bl'),
-  lv: INT_RANGE(1, 5, 3),
-  gr: FLOAT_RANGE(1.05, 2.0, 1.45, 2),
-  rt: FLOAT_RANGE(0.05, 0.85, 0.18, 2),
-  st: INT_RANGE(4, 30, 10),
-  tk: INT_RANGE(20, 90, 60),
-  sz: INT_RANGE(400, 2400, 800),
+  f:  ENUM_WEIGHTED([
+    ['Arial Black', 4], ['Impact', 3], ['Audiowide', 3], ['Russo One', 3],
+    ['Orbitron', 2], ['Black Ops One', 2], ['Exo 2', 1], ['Rajdhani', 1],
+    ['Michroma', 1], ['Baumans', 1], ['Georgia', 0.5],
+    ['Share Tech', 0.5], ['Aldrich', 0.3], ['Electrolize', 0.3], ['Courier New', 0.2],
+  ], 'Arial Black'),
+  fw: ENUM_WEIGHTED([['900', 5], ['700', 2], ['400', 0.5]], '900'),
+  an: ENUM_WEIGHTED([
+    ['c', 6], ['bl', 1], ['br', 1], ['tl', 0.5], ['tr', 0.5],
+  ], 'bl'),
+  lv: WEIGHTED_INT_RANGE(1, 5, 3, { rmin: 1, rmax: 4 }),
+  gr: WEIGHTED_FLOAT_RANGE(1.05, 2.0, 1.45, 2, { rmin: 1.4, rmax: 2.0 }),
+  rt: WEIGHTED_FLOAT_RANGE(0.05, 0.85, 0.18, 2, { rmin: 0.15, rmax: 0.65 }),
+  st: WEIGHTED_INT_RANGE(4, 30, 10, { rmin: 8, rmax: 22 }),
+  tk: WEIGHTED_INT_RANGE(20, 90, 60, { rmin: 60, rmax: 90, pow: 0.7 }),
+  sz: WEIGHTED_INT_RANGE(400, 2400, 800, { rmin: 500, rmax: 1100 }),
   bg: COLOR('#fdfdfc'),
   fg: COLOR('#111111'),
 };

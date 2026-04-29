@@ -595,10 +595,24 @@
         // ===== Permalink =====
         var LS = window.LogoSchema;
         var shapeIds = SHAPES.map(function(s) { return s.id; });
+        /* Shuffle constraints derived from homepage variants:
+           Render math: composition extends ±(size/2 + gap) from center, so
+           total extent = size + 2*gap. Variants land in [410, 460].
+           Independent ranges allowed extents up to 530 → shapes overflow.
+           Fix: post-couple g to sz so total = uniform[340, 410] (slightly
+           tighter than variants for embed/curator safety margin). */
         var pschema = {
             sh: LS.ENUM(shapeIds, 'circle'),
-            sz: LS.INT_RANGE(60, 360, 220),
-            g:  LS.INT_RANGE(0, 120, 24),
+            sz: LS.WEIGHTED_INT_RANGE(60, 360, 220, { rmin: 215, rmax: 260 }),
+            g:  {
+              ...LS.WEIGHTED_INT_RANGE(0, 120, 24, { rmin: 70, rmax: 120 }),
+              post(state, rng) {
+                const target = 340 + Math.floor(rng() * 71); // [340, 410]
+                const sz = (typeof state.sz === 'number') ? state.sz : 220;
+                const g = Math.round((target - sz) / 2);
+                return Math.max(0, Math.min(120, g));
+              },
+            },
             rt: LS.INT_RANGE(0, 360, 0),
             bg: LS.COLOR('#f0ece4'),
             fg: LS.COLOR('#1a1a1a'),

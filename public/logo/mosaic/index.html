@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mosaic — Logo Lab</title>
-<meta name="description" content="A randomized grid of every Logo Lab tool. Shuffle for a new wall. Click any tile to open it.">
+<title>Explorer — Logo Lab</title>
+<meta name="description" content="A curated wall of hand-picked Logo Lab outputs. Shuffle to surface new picks. Click any tile to open it.">
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
-<meta property="og:title" content="Mosaic — Logo Lab">
-<meta property="og:description" content="A randomized grid of every Logo Lab tool. Shuffle for a new wall. Click any tile to open it.">
+<meta property="og:title" content="Explorer — Logo Lab">
+<meta property="og:description" content="A curated wall of hand-picked Logo Lab outputs. Shuffle to surface new picks. Click any tile to open it.">
 <meta property="og:url" content="https://natemodi.com/logo/mosaic/">
 <meta property="og:type" content="website">
 
@@ -339,10 +339,10 @@
       </svg>
       Logo Lab
     </a>
-    <h1>Mosaic</h1>
-    <p class="lede">A live wall of every tool, randomized. Click a tile to open it. Press <kbd>S</kbd> to shuffle.</p>
+    <h1>Explorer</h1>
+    <p class="lede">A curated wall of hand-picked outputs from every tool. Click a tile to open it. Press <kbd>S</kbd> to shuffle.</p>
 
-    <div class="toolbar" role="toolbar" aria-label="Mosaic controls">
+    <div class="toolbar" role="toolbar" aria-label="Explorer controls">
       <div class="ctl">
         <span class="ctl__label">Color</span>
         <div class="seg" role="radiogroup" aria-label="Color palette">
@@ -393,7 +393,7 @@
   'use strict';
 
   if (!window.LogoTools) {
-    console.warn('[mosaic] registry missing');
+    console.warn('[explorer] registry missing');
     return;
   }
 
@@ -402,10 +402,16 @@
 
   const ORIGIN = location.origin;
   const TILE_COUNT = 9;
-  const SEED_ALPHABET = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  const SEED_LEN = 8;
   const SHUFFLE_STAGGER_MS = 60;
   const MOUNT_ROOT_MARGIN = '300px';
+
+  /* Curated preset bank — { slug: [seed, ...] }. Loaded once at boot.
+     Every tile picks a (slug, seed) pair from this bank rather than
+     generating a random seed. The seed determines structural params
+     (composition, density, ratios); palette and monogram are layered
+     on top via URL params so each preset can render in mono or full
+     color and with arbitrary monogram letters. */
+  let PRESETS = {};
 
   /* Tools whose primary visual is a glyph (have a `ch` text field).
      Used by the Style filter — Letters / Abstract / Mixed. */
@@ -423,16 +429,15 @@
 
   /* ── Helpers ── */
 
-  function randomSeed() {
-    let s = '';
-    const buf = new Uint32Array(SEED_LEN);
-    if (window.crypto && crypto.getRandomValues) {
-      crypto.getRandomValues(buf);
-      for (let i = 0; i < SEED_LEN; i++) s += SEED_ALPHABET[buf[i] % SEED_ALPHABET.length];
-    } else {
-      for (let i = 0; i < SEED_LEN; i++) s += SEED_ALPHABET[Math.floor(Math.random() * SEED_ALPHABET.length)];
+  /* Pick a curated seed for a given tool from the preset bank. Falls
+     back to a fixed default seed if the bank is missing entries (only
+     happens before presets.json finishes loading). */
+  function pickSeed(slug) {
+    const bank = PRESETS[slug];
+    if (bank && bank.length) {
+      return bank[Math.floor(Math.random() * bank.length)];
     }
-    return s;
+    return '0';
   }
 
   /* Fisher–Yates shuffle, returns a new array */
@@ -448,11 +453,13 @@
   function embedUrl(slug, seed) {
     /* r=1 tells permalink.js to randomize every schema field via the seed.
        Same URL → same render (deterministic), and the new tab matches the tile.
-       p (palette) and m (monogram) constrain the random output. */
+       p (palette) and m (monogram) constrain the random output.
+       index.html is appended explicitly so this works in dev (Astro's
+       dev server doesn't resolve trailing-slash → directory-index). */
     const parts = ['v=1', 'r=1', 'seed=' + seed];
     if (state.palette === 'mono') parts.push('p=mono');
     if (state.monogram) parts.push('m=' + encodeURIComponent(state.monogram));
-    return ORIGIN + toolPath(slug) + '#' + parts.join('&');
+    return ORIGIN + toolPath(slug) + 'index.html#' + parts.join('&');
   }
 
   function availableTools() {
@@ -524,7 +531,7 @@
     tiles.length = 0;
 
     picks.forEach((tool) => {
-      const seed = randomSeed();
+      const seed = pickSeed(tool.slug);
       const url = embedUrl(tool.slug, seed);
       const el = makeTile(tool.slug, tool.name);
       el.href = url;
@@ -617,7 +624,7 @@
     /* Reuse tile elements. Rebuild iframe entirely so fresh load listeners fire. */
     tiles.forEach((t, i) => {
       const tool = picks[i];
-      const seed = randomSeed();
+      const seed = pickSeed(tool.slug);
       const url = embedUrl(tool.slug, seed);
 
       t.token++;             // invalidates any in-flight load callbacks from the prior iframe
@@ -729,8 +736,18 @@
   });
 
   /* ── Boot ── */
-  buildTiles();
-  setupMountObserver();
+  /* Load the preset bank, then build the wall. If the fetch fails we
+     fall back to single-default-seed behavior (still renders, just
+     non-curated). The dev server serves presets.json directly; in
+     production GH Pages does the same. */
+  fetch('./presets.json', { cache: 'no-store' })
+    .then((res) => res.ok ? res.json() : {})
+    .catch(() => ({}))
+    .then((data) => {
+      PRESETS = (data && typeof data === 'object') ? data : {};
+      buildTiles();
+      setupMountObserver();
+    });
 })();
 </script>
 

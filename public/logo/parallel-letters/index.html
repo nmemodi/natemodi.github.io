@@ -301,16 +301,34 @@ function generateSVG() {
 }
 
 // ─── Permalink ───
-const { INT_RANGE, FLOAT_RANGE, COLOR, ENUM, TEXT } = window.LogoSchema;
+const {
+  INT_RANGE, FLOAT_RANGE, COLOR, ENUM, TEXT,
+  WEIGHTED_INT_RANGE, WEIGHTED_FLOAT_RANGE, ENUM_WEIGHTED,
+} = window.LogoSchema;
+/* Variants: g is strongly BIMODAL — either tight (1, 2) or wide (23, 24)
+   with no middle. Display fonts dominate. t is always near 10. */
 const pschema = {
   ch: TEXT({ charset: /^.{1,2}$/u, maxLen: 2, def: 'G' }),
-  f:  ENUM(['Orbitron','Audiowide','Russo One','Exo 2','Black Ops One','Rajdhani','Share Tech','Baumans','Electrolize','Michroma','Aldrich','Arial Black','Impact','Georgia','Courier New'], 'Orbitron'),
-  fw: ENUM(['100','300','400','700','900'], '900'),
-  jo: ENUM(['round','miter','bevel'], 'round'),
-  n:  INT_RANGE(1, 40, 5),
-  t:  FLOAT_RANGE(0.5, 10, 2, 1),
-  g:  FLOAT_RANGE(1, 40, 6, 1),
-  sz: INT_RANGE(400, 2400, 800),
+  f:  ENUM_WEIGHTED([
+    ['Arial Black', 4], ['Impact', 3], ['Audiowide', 3], ['Russo One', 3],
+    ['Orbitron', 3], ['Black Ops One', 2], ['Exo 2', 1], ['Rajdhani', 1],
+    ['Michroma', 1], ['Baumans', 1], ['Georgia', 1],
+    ['Share Tech', 0.5], ['Aldrich', 0.5], ['Electrolize', 0.5], ['Courier New', 0.2],
+  ], 'Orbitron'),
+  fw: ENUM_WEIGHTED([['900', 5], ['700', 2], ['400', 1], ['300', 0.3], ['100', 0.1]], '900'),
+  jo: ENUM_WEIGHTED([['miter', 4], ['round', 2], ['bevel', 1]], 'round'),
+  n:  WEIGHTED_INT_RANGE(1, 40, 5, { rmin: 3, rmax: 12 }),
+  t:  WEIGHTED_FLOAT_RANGE(0.5, 10, 2, 1, { rmin: 6, rmax: 10, pow: 0.6 }),
+  /* g — bimodal: tight (1-3) or loose (20-28), skipping the muddy middle. */
+  g:  {
+    ...FLOAT_RANGE(1, 40, 6, 1),
+    randomize(rng) {
+      return rng() < 0.5
+        ? Math.round((1 + rng() * 2.5) * 10) / 10
+        : Math.round((20 + rng() * 8) * 10) / 10;
+    },
+  },
+  sz: WEIGHTED_INT_RANGE(400, 2400, 800, { rmin: 400, rmax: 1200 }),
   bg: COLOR('#e63946'),
   fg: COLOR('#ffffff'),
 };

@@ -478,18 +478,46 @@
   .article-foot a { color: var(--fg-faded); text-decoration: none; border-bottom: 1px dotted var(--fg-quiet); }
   .article-foot a:hover { color: var(--fg); border-bottom-color: var(--fg); }
 
-  /* Inline Mosaic mention in the lede paragraph */
-  .mosaic-link {
-    color: var(--fg);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-    text-decoration-color: var(--fg-quiet);
-    transition: text-decoration-color 0.15s ease, text-underline-offset 0.15s ease;
+  /* Explorer CTA card — prominent entry point below the intro section. */
+  .cta-explorer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 28px 0 32px;
+    padding: 18px 22px;
+    background: var(--fg);
+    color: var(--bg);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-  .mosaic-link:hover {
-    text-decoration-color: var(--fg);
-    text-underline-offset: 4px;
+  .cta-explorer:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(17, 17, 17, 0.18);
+  }
+  .cta-explorer__body { flex: 1; }
+  .cta-explorer__label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 3px;
+  }
+  .cta-explorer__title {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+  .cta-explorer__arrow {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+  }
+  .cta-explorer:hover .cta-explorer__arrow {
+    transform: translateX(3px);
   }
 
   /* ── Debug panel (?debug=1) ── */
@@ -569,7 +597,20 @@
 
       <p>Every output has a shareable URL, a PNG/SVG export, and the ability to embed it via iframe. Every embed is a live preview — click <em>Open tool</em> for the full controls and exports.</p>
 
-      <p>Or skip the index and browse the <a class="mosaic-link" href="/logo/mosaic/">Mosaic</a> — a randomized gallery of outputs from every tool.</p>
+      <p>If you'd rather browse than read, the Explorer pulls hand-picked outputs from every tool into a single shuffled wall.</p>
+
+      <a class="cta-explorer" href="/logo/mosaic/">
+        <div class="cta-explorer__body">
+          <div class="cta-explorer__label">Start here</div>
+          <div class="cta-explorer__title">Open the Explorer →</div>
+        </div>
+        <svg class="cta-explorer__arrow" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2.5" y="2.5" width="5" height="5"/>
+          <rect x="10.5" y="2.5" width="5" height="5"/>
+          <rect x="2.5" y="10.5" width="5" height="5"/>
+          <rect x="10.5" y="10.5" width="5" height="5"/>
+        </svg>
+      </a>
 
       <p>Keyboard: press <strong>J</strong>/<strong>K</strong> to move between sections, <strong>1–9</strong> to jump, <strong>T</strong> to return to the top.</p>
 
