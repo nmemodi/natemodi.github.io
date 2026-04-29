@@ -152,17 +152,29 @@
     margin: 48px 0 28px;
   }
 
-  /* Section header — the tool title IS the link to its tool. */
+  /* Section header — title link anchors left, tagline flows inline on the
+     same row. On narrow screens flex-wrap drops the tagline beneath. */
   .section-head {
-    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin-bottom: 0;
     scroll-margin-top: 32px;
   }
 
   article .section-title {
     margin: 0;
-    /* h2 is just a semantic wrapper now — the link inside carries the styling. */
+    /* h2 is just a semantic wrapper — the link inside carries the styling. */
     font-size: inherit;
     font-weight: inherit;
+  }
+
+  article .section-tagline {
+    color: var(--fg-muted);
+    font-size: 13px;
+    line-height: 1.4;
+    margin: 0;
   }
 
   article .section-link {
@@ -684,11 +696,11 @@
     h2.appendChild(link);
     head.appendChild(h2);
 
+    /* Tagline lives inline with the title link in the section head. */
     const tag = document.createElement('p');
-    tag.style.color = 'var(--fg-muted)';
-    tag.style.fontSize = '13px';
-    tag.style.marginTop = '4px';
+    tag.className = 'section-tagline';
     tag.textContent = t.tagline;
+    head.appendChild(tag);
 
     const body = document.createElement('p');
     body.textContent = t.blurb;
@@ -771,7 +783,6 @@
     snip.appendChild(pre);
 
     sec.appendChild(head);
-    sec.appendChild(tag);
     sec.appendChild(body);
     sec.appendChild(wrap);
     sec.appendChild(actions);
