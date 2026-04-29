@@ -152,45 +152,40 @@
     margin: 48px 0 28px;
   }
 
-  /* Section header row: title on the left, prominent "Open in tool" on the right */
+  /* Section header — the tool title IS the link to its tool. */
   .section-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
     margin-bottom: 4px;
     scroll-margin-top: 32px;
   }
 
   article .section-title {
+    margin: 0;
+    /* h2 is just a semantic wrapper now — the link inside carries the styling. */
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  article .section-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     font-size: 14px;
     font-weight: 600;
     color: var(--fg);
-    letter-spacing: -0.005em;
-    margin: 0;
-  }
-
-  .section-head .open-tool {
-    color: var(--fg);
     text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 8px;
+    padding: 5px 11px;
     border: 1px solid var(--border);
     border-radius: 6px;
     background: var(--bg);
-    white-space: nowrap;
-    transition: border-color 0.15s ease, background 0.15s ease;
+    letter-spacing: -0.005em;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
   }
-  .section-head .open-tool:hover {
+  article .section-link:hover {
     border-color: var(--fg);
     background: var(--fg);
     color: var(--bg);
   }
-  .section-head .open-tool svg { width: 11px; height: 11px; }
+  article .section-link svg { width: 11px; height: 11px; flex-shrink: 0; }
 
   /* ── Embed surface ── */
   .embed-wrap {
@@ -596,7 +591,7 @@
 
       <p>Each tool is a study of a specific visual vocabulary from the modernist period (roughly 1950s–70s), borrowing its logic from a particular designer or studio, mostly from obscure and long forgotten ventures. Every tool turns the underlying concept into accessible parameters and curated presets.</p>
 
-      <p>Every output has a shareable URL, a PNG/SVG export, and the ability to embed it via iframe. Every embed is a live preview — click <em>Open tool</em> for the full controls and exports.</p>
+      <p>Every output has a shareable URL, a PNG/SVG export, and the ability to embed it via iframe. Every embed is a live preview — click any tool name to open it with full controls and exports.</p>
 
       <p>Two ways in: see them all together in the Explorer, or jump straight to a tool below to play with the controls.</p>
 
@@ -671,25 +666,24 @@
     sec.dataset.slug = t.slug;
     sec.dataset.seed = t.defaultSeed;
 
-    /* Section head: title + prominent "Open in tool" link */
+    /* Section head: the tool title IS the link to the tool. */
     const head = document.createElement('div');
     head.className = 'section-head';
 
     const h2 = document.createElement('h2');
     h2.className = 'section-title';
-    h2.textContent = t.name;
 
-    const openTop = document.createElement('a');
-    openTop.className = 'open-tool';
-    openTop.href = toolPath(t.slug) + '#v=1&seed=' + t.defaultSeed;
-    openTop.target = '_blank';
-    openTop.rel = 'noopener';
-    openTop.innerHTML =
-      'Open tool' +
+    const link = document.createElement('a');
+    link.className = 'section-link';
+    link.href = toolPath(t.slug) + '#v=1&seed=' + t.defaultSeed;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.innerHTML =
+      t.name.replace(/[<&>]/g, (c) => ({'<':'&lt;','&':'&amp;','>':'&gt;'}[c])) +
       '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h6v6"/><path d="M9 3L3 9"/></svg>';
 
+    h2.appendChild(link);
     head.appendChild(h2);
-    head.appendChild(openTop);
 
     const tag = document.createElement('p');
     tag.style.color = 'var(--fg-muted)';
