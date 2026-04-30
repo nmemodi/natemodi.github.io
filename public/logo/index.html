@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Logo Lab</title>
-<meta name="description" content="Ten generative logo tools. Tweak parameters live, share the result with a URL.">
+<title>Logo Lab | Generative tools for iconic logos</title>
+<meta name="description" content="Generative tools for iconic logos: ten parametric logo systems you can tune, share, export, and explore from a wall of launch-ready marks.">
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
 <!-- Open Graph -->
-<meta property="og:title" content="Logo Lab">
-<meta property="og:description" content="Ten generative logo tools. Tweak parameters live, share the result with a URL.">
+<meta property="og:title" content="Logo Lab — Generative tools for iconic logos">
+<meta property="og:description" content="Ten parametric logo systems you can tune, share, export, and explore from a wall of launch-ready marks.">
 <meta property="og:image" content="https://natemodi.com/logo/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -18,8 +18,8 @@
 <meta property="og:url" content="https://natemodi.com/logo/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Logo Lab">
-<meta name="twitter:description" content="Ten generative logo tools. Tweak parameters live, share the result with a URL.">
+<meta name="twitter:title" content="Logo Lab — Generative tools for iconic logos">
+<meta name="twitter:description" content="Ten parametric logo systems you can tune, share, export, and explore from a wall of launch-ready marks.">
 <meta name="twitter:image" content="https://natemodi.com/logo/og-image.png">
 <meta name="twitter:image:alt" content="A wall of selected Logo Lab marks.">
 
@@ -81,25 +81,45 @@
     font-size: 13px;
   }
 
-  .aside-back {
+  .aside-home {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     color: var(--fg-faded);
     text-decoration: none;
     font-size: 13px;
-    margin-bottom: 24px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
     transition: color 0.15s ease;
   }
-  .aside-back:hover { color: var(--fg); }
-  .aside-back svg { width: 12px; height: 12px; flex-shrink: 0; }
+  .aside-home:hover { color: var(--fg); }
+  .aside-home__arrow {
+    color: var(--fg-faded);
+    font-size: 12px;
+    line-height: 1;
+    transition: color 0.15s ease, transform 0.15s ease;
+  }
+  .aside-home:hover .aside-home__arrow {
+    color: var(--fg);
+    transform: translateX(-2px);
+  }
 
   .aside-title {
-    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    line-height: 1.15;
     font-weight: 600;
     color: var(--fg);
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     letter-spacing: -0.01em;
+  }
+  .aside-title__mark {
+    width: 26px;
+    height: auto;
+    flex-shrink: 0;
   }
 
   aside ul {
@@ -124,49 +144,15 @@
   /* ── Main article ── */
   main { flex: 1; min-width: 0; max-width: 560px; }
 
-  article h1 {
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.45;
-    letter-spacing: -0.005em;
-    color: var(--fg);
-    margin-bottom: 2px;
-  }
-
-  article time {
-    display: block;
-    color: var(--fg-faded);
-    font-size: 13px;
-    margin-bottom: 16px;
-  }
-
-  .lab-header {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin: 0;
-  }
-  .lab-header .lab-mark {
-    height: 43px;
-    width: auto;
-    flex-shrink: 0;
-  }
-  .lab-header .lab-titles h1 { margin-bottom: 2px; }
-  .lab-header .lab-titles time { margin-bottom: 0; }
-
   .hero-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 28px;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
   }
 
   .showcase-wall {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
-    margin: 0 0 22px;
+    margin: 0 0 10px;
   }
 
   .showcase-tile {
@@ -569,44 +555,53 @@
   /* Header entry points — prominent enough to act as primary product paths. */
   .entry-points {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-    width: 252px;
-    flex-shrink: 0;
-    margin: 2px 0 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    width: 100%;
+    margin: 0;
+    padding: 5px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    background: rgba(17, 17, 17, 0.018);
   }
   .entry {
     display: grid;
-    grid-template-columns: 32px minmax(0, 1fr) 20px;
+    grid-template-columns: 26px minmax(0, 1fr) 18px;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     color: var(--fg);
     text-decoration: none;
     width: 100%;
+    min-width: 0;
+    padding: 8px 10px;
+    border-radius: 6px;
   }
   .entry__icon {
-    width: 32px;
-    height: 32px;
+    width: 26px;
+    height: 26px;
     flex-shrink: 0;
     color: var(--fg);
   }
   .entry__title {
-    font-size: 22px;
+    font-size: 16px;
     line-height: 1.15;
-    font-weight: 650;
-    letter-spacing: 0;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.15s ease;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    transition: text-shadow 0.18s ease;
   }
-  .entry:hover .entry__title { border-bottom-color: var(--fg); }
+  .entry:hover .entry__title {
+    text-shadow: 0 0 10px rgba(17, 17, 17, 0.16);
+  }
   .entry__arrow {
     justify-self: end;
     color: var(--fg-faded);
-    font-size: 24px;
+    font-size: 18px;
     line-height: 1;
-    transition: color 0.15s ease, transform 0.15s ease;
+    transition: text-shadow 0.18s ease, transform 0.15s ease;
   }
-  .entry:hover .entry__arrow { color: var(--fg); }
+  .entry:hover .entry__arrow {
+    text-shadow: 0 0 10px rgba(17, 17, 17, 0.14);
+  }
   .entry[data-dir="right"]:hover .entry__arrow { transform: translateX(2px); }
   .entry[data-dir="down"]:hover  .entry__arrow { transform: translateY(2px); }
   .intro-arrow {
@@ -652,7 +647,13 @@
       padding-bottom: 16px;
       overflow: hidden;
     }
-    .aside-title { margin-bottom: 8px; }
+    .aside-title { margin-bottom: 10px; }
+    .aside-title__mark { width: 28px; }
+    .aside-home {
+      margin-top: 12px;
+      padding-top: 0;
+      border-top: 0;
+    }
     aside ul {
       flex-direction: row;
       flex-wrap: nowrap;
@@ -678,28 +679,21 @@
       max-width: 100%;
     }
     .hero-top {
-      flex-direction: column;
-      gap: 14px;
       margin-bottom: 20px;
     }
     .entry-points {
+      grid-template-columns: 1fr;
       width: 100%;
-      max-width: 326px;
-      gap: 12px;
+      max-width: none;
+      gap: 4px;
       margin-top: 0;
     }
-    .entry {
-      grid-template-columns: 30px minmax(0, 1fr) 20px;
-    }
     .entry__icon {
-      width: 30px;
-      height: 30px;
-    }
-    .entry__title {
-      font-size: 21px;
+      width: 26px;
+      height: 26px;
     }
     .entry__arrow {
-      font-size: 23px;
+      font-size: 18px;
     }
     .showcase-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
@@ -710,26 +704,40 @@
 <div class="page">
 
   <aside>
-    <a class="aside-back" href="/">
-      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M7.5 3L4.5 6L7.5 9"/>
-      </svg>
-      Home
-    </a>
-    <div class="aside-title">Logo Lab</div>
+    <h1 class="aside-title">
+      <img class="aside-title__mark" src="/logo/logo-lab-mark.svg" alt="">
+      <span>Logo Lab</span>
+    </h1>
     <ul id="toc"></ul>
+    <a class="aside-home" href="/">
+      <span class="aside-home__arrow" aria-hidden="true">←</span>
+      <span>Home</span>
+    </a>
   </aside>
 
   <main>
     <article>
       <div class="hero-top">
-        <header class="lab-header">
-          <img class="lab-mark" src="/logo/logo-lab-mark.svg" alt="">
-          <div class="lab-titles">
-            <h1>Logo Lab</h1>
-            <time datetime="2026-04-24">Generative tools for iconic logos</time>
-          </div>
-        </header>
+        <div class="showcase-wall" aria-label="Selected Logo Lab outputs">
+          <a class="showcase-tile" href="#polygon-rosette" aria-label="Jump to Polygon Rosette">
+            <img src="/logo/showcase/polygon-rosette-dark.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
+          </a>
+          <a class="showcase-tile" href="#line-warp" aria-label="Jump to Line Warp">
+            <img src="/logo/showcase/line-warp-purple.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
+          </a>
+          <a class="showcase-tile" href="#parallel-letters" aria-label="Jump to Parallel Letters">
+            <img src="/logo/showcase/parallel-letters-lime.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
+          </a>
+          <a class="showcase-tile" href="#echo-stripes" aria-label="Jump to Echo Stripes">
+            <img src="/logo/showcase/echo-stripes-magenta.png" alt="" width="1600" height="1600" loading="eager" decoding="async">
+          </a>
+          <a class="showcase-tile" href="#sliced-shapes" aria-label="Jump to Sliced Shapes">
+            <img src="/logo/showcase/sliced-shapes-orange.png" alt="" width="1600" height="1600" loading="eager" decoding="async">
+          </a>
+          <a class="showcase-tile" href="#polygon-rosette" aria-label="Jump to Polygon Rosette">
+            <img src="/logo/showcase/polygon-rosette-light.png" alt="" width="1600" height="1600" loading="eager" decoding="async">
+          </a>
+        </div>
 
         <div class="entry-points">
           <a class="entry" data-dir="right" href="/logo/explorer/">
@@ -753,27 +761,6 @@
             <span class="entry__arrow" aria-hidden="true">↓</span>
           </a>
         </div>
-      </div>
-
-      <div class="showcase-wall" aria-label="Selected Logo Lab outputs">
-        <a class="showcase-tile" href="/logo/polygon-rosette/" aria-label="Open Polygon Rosette">
-          <img src="/logo/showcase/polygon-rosette-dark.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
-        </a>
-        <a class="showcase-tile" href="/logo/line-warp/" aria-label="Open Line Warp">
-          <img src="/logo/showcase/line-warp-purple.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
-        </a>
-        <a class="showcase-tile" href="/logo/parallel-letters/" aria-label="Open Parallel Letters">
-          <img src="/logo/showcase/parallel-letters-lime.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
-        </a>
-        <a class="showcase-tile" href="/logo/echo-stripes/" aria-label="Open Echo Stripes">
-          <img src="/logo/showcase/echo-stripes-magenta.png" alt="" width="1600" height="1600" loading="eager" decoding="async">
-        </a>
-        <a class="showcase-tile" href="/logo/sliced-shapes/" aria-label="Open Sliced Shapes">
-          <img src="/logo/showcase/sliced-shapes-orange.png" alt="" width="1600" height="1600" loading="eager" decoding="async">
-        </a>
-        <a class="showcase-tile" href="/logo/polygon-rosette/" aria-label="Open Polygon Rosette">
-          <img src="/logo/showcase/polygon-rosette-light.png" alt="" width="1600" height="1600" loading="eager" decoding="async">
-        </a>
       </div>
 
       <p class="lede">I love logos. AI is bad at logos. More startups are launching than ever, mostly because of AI — but AI still can&rsquo;t make them a logo worth keeping.</p>
@@ -1168,13 +1155,13 @@
     allSections.forEach(mountSection);
   }
 
-  /* ── Anchor-click forces immediate mount of the target section ── */
+  /* ── Tool anchor clicks force immediate mount of the target section ── */
   document.addEventListener('click', (e) => {
-    const a = e.target.closest('a.toc-link');
+    const a = e.target.closest('a[href^="#"]');
     if (!a) return;
-    const slug = a.dataset.slug;
+    const slug = a.dataset.slug || decodeURIComponent(a.getAttribute('href').slice(1));
     const sec = document.getElementById(slug);
-    if (sec) mountSection(sec);
+    if (sec && sec.matches('section[data-slug]')) mountSection(sec);
   });
 
   /* ── Active-section highlighting in the sidebar ── */

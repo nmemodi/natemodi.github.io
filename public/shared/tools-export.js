@@ -9,7 +9,7 @@ class ToolExporter {
    * @param {Object} opts
    * @param {string}   opts.toolName       — kebab-case name for filenames
    * @param {Function} opts.getCanvas      — () => HTMLCanvasElement (the visible canvas)
-   * @param {Function} opts.getSVG         — () => string (SVG markup)
+   * @param {Function} opts.getSVG         — ({width, height, transparent}) => string (SVG markup)
    * @param {Function} [opts.renderToCanvas] — (ctx, width, height, {transparent}) => void
    *   If provided, enables re-rendering at arbitrary sizes & transparent bg.
    *   If omitted, PNG export simply copies the visible canvas (no transparent support).
@@ -334,7 +334,7 @@ class ToolExporter {
     }
 
     // Export SVG, draw to canvas via Image
-    const svgString = this.getSVG();
+    const svgString = this.getSVG({ width: w, height: h, transparent });
     const blob = new Blob([svgString], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);
 
@@ -356,7 +356,8 @@ class ToolExporter {
   /* ─── Export: SVG ─── */
 
   _exportSVG() {
-    const svgString = this.getSVG();
+    const { w, h } = this._getBaseSize();
+    const svgString = this.getSVG({ width: w, height: h, transparent: false });
     if (!svgString) return null;
     return new Blob([svgString], { type: 'image/svg+xml' });
   }
@@ -415,7 +416,8 @@ class ToolExporter {
 
       if (this.currentFormat === 'svg') {
         // SVG as text
-        const svgString = this.getSVG();
+        const { w, h } = this._getBaseSize();
+        const svgString = this.getSVG({ width: w, height: h, transparent: false });
         if (!svgString) throw new Error('No SVG');
         blob = new Blob([svgString], { type: 'text/plain' });
         await navigator.clipboard.writeText(svgString);

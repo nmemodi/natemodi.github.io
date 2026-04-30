@@ -3,7 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polygon Rosette</title>
+    <title>Polygon Rosette — Logo Lab</title>
+    <meta name="description" content="Concentric polygons connected by diagonals — geometric rosettes. A free browser-based Logo Lab tool for tuning, sharing, and exporting generated marks.">
+    <meta property="og:title" content="Polygon Rosette — Logo Lab">
+    <meta property="og:description" content="Concentric polygons connected by diagonals — geometric rosettes.">
+    <meta property="og:image" content="https://natemodi.com/logo/polygon-rosette/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Four Polygon Rosette logo variations from Logo Lab.">
+    <meta property="og:url" content="https://natemodi.com/logo/polygon-rosette/">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Polygon Rosette — Logo Lab">
+    <meta name="twitter:description" content="Concentric polygons connected by diagonals — geometric rosettes.">
+    <meta name="twitter:image" content="https://natemodi.com/logo/polygon-rosette/og-image.png">
+    <meta name="twitter:image:alt" content="Four Polygon Rosette logo variations from Logo Lab.">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="stylesheet" href="/shared/tools-shared.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.17/paper-full.min.js"></script>
@@ -634,19 +648,39 @@
         });
         document.getElementById('resetBtn').addEventListener('click', () => pm.update());
 
+        function exportSVGString(opts) {
+            const width = opts && opts.width ? opts.width : 800;
+            const height = opts && opts.height ? opts.height : 800;
+            const transparent = !!(opts && opts.transparent);
+            const originalSize = view.viewSize.clone();
+            const needsResize = originalSize.width !== width || originalSize.height !== height;
+
+            try {
+                if (needsResize) view.viewSize = new Size(width, height);
+                draw();
+
+                const svgEl = paper.project.exportSVG({ asString: false });
+                if (!transparent) {
+                    const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    bg.setAttribute('width', '100%');
+                    bg.setAttribute('height', '100%');
+                    bg.setAttribute('fill', config.bgColor);
+                    svgEl.insertBefore(bg, svgEl.firstChild);
+                }
+                return new XMLSerializer().serializeToString(svgEl);
+            } finally {
+                if (needsResize) {
+                    view.viewSize = originalSize;
+                    draw();
+                }
+            }
+        }
+
         // ---- Export ----
         new ToolExporter({
             toolName: 'polygon-rosette',
             getCanvas: () => document.querySelector('canvas'),
-            getSVG: () => {
-                const svgEl = paper.project.exportSVG({ asString: false });
-                const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                bg.setAttribute('width', '100%');
-                bg.setAttribute('height', '100%');
-                bg.setAttribute('fill', config.bgColor);
-                svgEl.insertBefore(bg, svgEl.firstChild);
-                return new XMLSerializer().serializeToString(svgEl);
-            },
+            getSVG: exportSVGString,
             getBackgroundColor: () => config.bgColor,
             paperProject: paper.project,
             baseWidth: 800,
