@@ -131,6 +131,20 @@
     margin-bottom: 16px;
   }
 
+  .lab-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .lab-header .lab-mark {
+    height: 40px;
+    width: auto;
+    flex-shrink: 0;
+  }
+  .lab-header .lab-titles h1 { margin-bottom: 2px; }
+  .lab-header .lab-titles time { margin-bottom: 0; }
+
   article p {
     font-size: 14px;
     line-height: 1.5;
@@ -593,8 +607,13 @@
 
   <main>
     <article>
-      <h1>Logo Lab</h1>
-      <time datetime="2026-04-24">Generative tools for iconic logos</time>
+      <header class="lab-header">
+        <img class="lab-mark" src="/logo/logo-lab-mark.svg" alt="">
+        <div class="lab-titles">
+          <h1>Logo Lab</h1>
+          <time datetime="2026-04-24">Generative tools for iconic logos</time>
+        </div>
+      </header>
 
       <p class="lede">I love logos. AI is bad at logos. Most startups either overpay an agency for something generic or settle for something haphazard. Either way, the small but important opportunity to impress a potential customer gets wasted.</p>
 
