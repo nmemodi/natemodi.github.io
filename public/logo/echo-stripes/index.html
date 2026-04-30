@@ -285,8 +285,10 @@ function render() {
   const dpr = window.devicePixelRatio || 1;
   canvas.width = size * dpr;
   canvas.height = size * dpr;
-  canvas.style.width = '100%';
-  canvas.style.aspectRatio = '1';
+  const wrap = document.querySelector('.tool-canvas');
+  const maxD = Math.min(wrap.clientWidth, wrap.clientHeight) * 0.9;
+  canvas.style.width = maxD + 'px';
+  canvas.style.height = maxD + 'px';
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   renderToCtx(ctx, size);
 }
@@ -427,6 +429,8 @@ new ToolExporter({
 allInputs.forEach(el => {
   el.addEventListener('input', () => { updateLabels(); render(); pm.update(); });
 });
+
+window.addEventListener('resize', render);
 [fontSelect, weightSelect, anchorSelect].forEach(el => {
   el.addEventListener('change', () => pm.update());
 });
