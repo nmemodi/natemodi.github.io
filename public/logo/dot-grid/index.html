@@ -142,6 +142,7 @@
 <script src="/shared/permalink.js"></script>
 <script src="/shared/tools-export.js"></script>
 <script src="/shared/tools-registry.js"></script>
+<script src="/shared/font-detect.js"></script>
 <script>
 const state = {
   letter: 'L',
@@ -760,7 +761,8 @@ window.addEventListener('resize', draw);
 // before lazy @font-face fonts actually download, which causes the canvas to
 // silently fall back to a serif when the iframe-embedded preview renders fast.
 const PRELOAD_FONTS = ['Archivo Black', 'Inter', 'Playfair Display', 'Space Mono'];
-Promise.all(PRELOAD_FONTS.map(f => document.fonts.load(`100px "${f}"`)))
+const PRELOAD_WEIGHTS = ['400', '700', '900'];
+window.FontDetect.loadFonts(PRELOAD_FONTS, PRELOAD_WEIGHTS)
   .then(() => { draw(); pm.decode(); pm.setupPresets(); });
 </script>
 <script src="/shared/tools-nav.js"></script>

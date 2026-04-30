@@ -113,10 +113,10 @@
       blurb: 'John B. Castle\'s Five G mark (1966) is the letter G drawn as a series of nested concentric outlines, each ring slightly inset from the last.\n\nThe tool generalizes to any character with knobs for count, thickness, and gap. Sharp, round, or beveled joins change the entire feel.',
       defaultSeed: '12',
       variants: [
-        'v=1&bg=673c40&f=ArialBlack&g=1&jo=miter&n=7&sz=400&t=10',
+        'v=1&bg=673c40&f=Arial%20Black&g=1&jo=miter&n=7&sz=400&t=10',
         'v=1&bg=000000&ch=Y&f=Georgia&g=23&jo=miter&n=3&sz=400&t=9',
-        'v=1&bg=ffffff&ch=N&f=&fg=000000&g=2&n=7&sz=600&t=10',
-        'v=1&bg=020066&ch=W&f=&g=24&jo=bevel&sz=900&t=10'
+        'v=1&bg=ffffff&ch=N&fg=000000&g=2&n=7&sz=600&t=10',
+        'v=1&bg=020066&ch=W&g=24&jo=bevel&sz=900&t=10'
       ],
       credit: {
         work: 'Five G Marketing',

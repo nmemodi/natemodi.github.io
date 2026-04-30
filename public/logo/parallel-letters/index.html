@@ -387,16 +387,19 @@ charInput.addEventListener('input', () => {
 });
 
 // ─── Init ───
-const FONT_CANDIDATES = ['Orbitron','Audiowide','Russo One','Exo 2','Black Ops One','Rajdhani','Share Tech','Baumans','Electrolize','Michroma','Aldrich','Arial Black','Impact','Georgia','Courier New'];
+const WEB_FONT_CANDIDATES = ['Orbitron','Audiowide','Russo One','Exo 2','Black Ops One','Rajdhani','Share Tech','Baumans','Electrolize','Michroma','Aldrich'];
+const SYSTEM_FONT_CANDIDATES = ['Arial Black','Impact','Georgia','Courier New'];
+const FONT_WEIGHTS = ['100', '300', '400', '700', '900'];
 updateLabels();
-window.FontDetect.detectAvailableFonts(FONT_CANDIDATES).then(available => {
-  // Always include the page-loaded Google Fonts that pass detection; if none
-  // do (unlikely), fall back to whichever system fonts the candidate list has.
-  const fonts = available.length ? available : ['Arial Black'];
+Promise.all([
+  window.FontDetect.loadFonts(WEB_FONT_CANDIDATES, FONT_WEIGHTS),
+  window.FontDetect.detectAvailableFonts(SYSTEM_FONT_CANDIDATES, FONT_WEIGHTS),
+]).then(([, availableSystem]) => {
+  const fonts = WEB_FONT_CANDIDATES.concat(availableSystem);
   fontSelect.innerHTML = fonts
     .map(f => `<option value="${f}">${f}</option>`)
     .join('');
-  fontSelect.value = fonts[0];
+  fontSelect.value = fonts.includes(pschema.f.default) ? pschema.f.default : fonts[0];
   render();
   pm.decode();
   pm.setupPresets();
