@@ -144,7 +144,7 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-bottom: 16px;
+    margin: 0;
   }
   .lab-header .lab-mark {
     height: 43px;
@@ -154,11 +154,19 @@
   .lab-header .lab-titles h1 { margin-bottom: 2px; }
   .lab-header .lab-titles time { margin-bottom: 0; }
 
+  .hero-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 28px;
+    margin-bottom: 18px;
+  }
+
   .showcase-wall {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
-    margin: 18px 0 22px;
+    margin: 0 0 22px;
   }
 
   .showcase-tile {
@@ -185,8 +193,6 @@
     height: 100%;
     min-width: 0;
     object-fit: cover;
-    transform: scale(var(--zoom, 1));
-    transform-origin: center;
   }
 
   article p {
@@ -560,39 +566,43 @@
   .article-foot a { color: var(--fg-faded); text-decoration: none; border-bottom: 1px dotted var(--fg-quiet); }
   .article-foot a:hover { color: var(--fg); border-bottom-color: var(--fg); }
 
-  /* Stacked entry points — icon + title + direction glyph, single row each.
-     Explorer (→ cross-link) on top, Individual tools (↓ in-page jump) below. */
+  /* Header entry points — prominent enough to act as primary product paths. */
   .entry-points {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 12px;
-    margin: 24px 0 28px;
+    gap: 16px;
+    width: 252px;
+    flex-shrink: 0;
+    margin: 2px 0 0;
   }
   .entry {
-    display: inline-flex;
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) 20px;
     align-items: center;
     gap: 12px;
     color: var(--fg);
     text-decoration: none;
-    width: fit-content;
+    width: 100%;
   }
   .entry__icon {
-    width: 22px;
-    height: 22px;
+    width: 32px;
+    height: 32px;
     flex-shrink: 0;
     color: var(--fg);
   }
   .entry__title {
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.005em;
+    font-size: 22px;
+    line-height: 1.15;
+    font-weight: 650;
+    letter-spacing: 0;
     border-bottom: 1px solid transparent;
     transition: border-color 0.15s ease;
   }
   .entry:hover .entry__title { border-bottom-color: var(--fg); }
   .entry__arrow {
+    justify-self: end;
     color: var(--fg-faded);
-    font-size: 13px;
+    font-size: 24px;
     line-height: 1;
     transition: color 0.15s ease, transform 0.15s ease;
   }
@@ -640,6 +650,7 @@
       margin-bottom: 24px;
       border-bottom: 1px solid var(--border);
       padding-bottom: 16px;
+      overflow: hidden;
     }
     .aside-title { margin-bottom: 8px; }
     aside ul {
@@ -647,17 +658,48 @@
       flex-wrap: nowrap;
       overflow-x: auto;
       gap: 12px;
-      padding-bottom: 4px;
+      margin-right: -20px;
+      padding: 0 64px 6px 0;
+      scroll-padding-inline: 0 64px;
       -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 72px), rgba(0, 0, 0, 0));
+      mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 72px), rgba(0, 0, 0, 0));
     }
+    aside ul::-webkit-scrollbar { display: none; }
     aside a.toc-link {
       white-space: nowrap;
-      padding: 2px 0;
+      padding: 4px 0;
     }
     main,
     article {
       width: 100%;
       max-width: 100%;
+    }
+    .hero-top {
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .entry-points {
+      width: 100%;
+      max-width: 326px;
+      gap: 12px;
+      margin-top: 0;
+    }
+    .entry {
+      grid-template-columns: 30px minmax(0, 1fr) 20px;
+    }
+    .entry__icon {
+      width: 30px;
+      height: 30px;
+    }
+    .entry__title {
+      font-size: 21px;
+    }
+    .entry__arrow {
+      font-size: 23px;
     }
     .showcase-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
@@ -680,31 +722,56 @@
 
   <main>
     <article>
-      <header class="lab-header">
-        <img class="lab-mark" src="/logo/logo-lab-mark.svg" alt="">
-        <div class="lab-titles">
-          <h1>Logo Lab</h1>
-          <time datetime="2026-04-24">Generative tools for iconic logos</time>
+      <div class="hero-top">
+        <header class="lab-header">
+          <img class="lab-mark" src="/logo/logo-lab-mark.svg" alt="">
+          <div class="lab-titles">
+            <h1>Logo Lab</h1>
+            <time datetime="2026-04-24">Generative tools for iconic logos</time>
+          </div>
+        </header>
+
+        <div class="entry-points">
+          <a class="entry" data-dir="right" href="/logo/explorer/">
+            <svg class="entry__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21.5 14L20 9C20 9 19.5 7 17.5 7C17.5 7 17.5 5 15.5 5C13.5 5 13.5 7 13.5 7H10.5C10.5 7 10.5 5 8.5 5C6.5 5 6.5 7 6.5 7C4.5 7 4 9 4 9L2.5 14"/>
+              <path d="M6 20C8.20914 20 10 18.2091 10 16C10 13.7909 8.20914 12 6 12C3.79086 12 2 13.7909 2 16C2 18.2091 3.79086 20 6 20Z"/>
+              <path d="M18 20C20.2091 20 22 18.2091 22 16C22 13.7909 20.2091 12 18 12C15.7909 12 14 13.7909 14 16C14 18.2091 15.7909 20 18 20Z"/>
+              <path d="M12 16C13.1046 16 14 15.1046 14 14C14 12.8954 13.1046 12 12 12C10.8954 12 10 12.8954 10 14C10 15.1046 10.8954 16 12 16Z"/>
+            </svg>
+            <span class="entry__title">Explorer</span>
+            <span class="entry__arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="entry" data-dir="down" href="#sections">
+            <svg class="entry__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M10.0503 10.6066L2.97923 17.6777C2.19818 18.4587 2.19818 19.7251 2.97923 20.5061C3.76027 21.2872 5.0266 21.2872 5.80765 20.5061L12.8787 13.4351"/>
+              <path d="M17.1927 13.7994L21.071 17.6777C21.8521 18.4587 21.8521 19.7251 21.071 20.5061C20.29 21.2872 19.0236 21.2872 18.2426 20.5061L12.0341 14.2977"/>
+              <path d="M6.73267 5.90381L4.61135 6.61092L2.49003 3.07539L3.90424 1.66117L7.43978 3.78249L6.73267 5.90381ZM6.73267 5.90381L9.5629 8.73404"/>
+              <path d="M10.0503 10.6066C9.2065 8.45359 9.37147 5.62861 11.111 3.8891C12.8505 2.14958 16.0607 1.76778 17.8285 2.82844L14.7878 5.86911L14.5052 8.98015L17.6162 8.69754L20.6569 5.65686C21.7176 7.42463 21.3358 10.6349 19.5963 12.3744C17.8567 14.1139 15.0318 14.2789 12.8788 13.435"/>
+            </svg>
+            <span class="entry__title">Individual tools</span>
+            <span class="entry__arrow" aria-hidden="true">↓</span>
+          </a>
         </div>
-      </header>
+      </div>
 
       <div class="showcase-wall" aria-label="Selected Logo Lab outputs">
-        <a class="showcase-tile" href="/logo/polygon-rosette/" aria-label="Open Polygon Rosette" style="--zoom: 2.8">
+        <a class="showcase-tile" href="/logo/polygon-rosette/" aria-label="Open Polygon Rosette">
           <img src="/logo/showcase/polygon-rosette-dark.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
         </a>
-        <a class="showcase-tile" href="/logo/line-warp/" aria-label="Open Line Warp" style="--zoom: 1">
+        <a class="showcase-tile" href="/logo/line-warp/" aria-label="Open Line Warp">
           <img src="/logo/showcase/line-warp-purple.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
         </a>
-        <a class="showcase-tile" href="/logo/parallel-letters/" aria-label="Open Parallel Letters" style="--zoom: 1">
+        <a class="showcase-tile" href="/logo/parallel-letters/" aria-label="Open Parallel Letters">
           <img src="/logo/showcase/parallel-letters-lime.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
         </a>
-        <a class="showcase-tile" href="/logo/echo-stripes/" aria-label="Open Echo Stripes" style="--zoom: 1">
+        <a class="showcase-tile" href="/logo/echo-stripes/" aria-label="Open Echo Stripes">
           <img src="/logo/showcase/echo-stripes-magenta.png" alt="" width="1600" height="1600" loading="eager" decoding="async">
         </a>
-        <a class="showcase-tile" href="/logo/sliced-shapes/" aria-label="Open Sliced Shapes" style="--zoom: 2.46">
+        <a class="showcase-tile" href="/logo/sliced-shapes/" aria-label="Open Sliced Shapes">
           <img src="/logo/showcase/sliced-shapes-orange.png" alt="" width="1600" height="1600" loading="eager" decoding="async">
         </a>
-        <a class="showcase-tile" href="/logo/polygon-rosette/" aria-label="Open Polygon Rosette" style="--zoom: 2.86">
+        <a class="showcase-tile" href="/logo/polygon-rosette/" aria-label="Open Polygon Rosette">
           <img src="/logo/showcase/polygon-rosette-light.png" alt="" width="1600" height="1600" loading="eager" decoding="async">
         </a>
       </div>
@@ -713,38 +780,15 @@
 
       <p>So most startups either overpay an agency for something generic or settle for something haphazard. Either way, the small but important opportunity to impress a potential customer gets wasted.</p>
 
-      <p>Logo Lab is an open-source collection of parametric tools for making distinctive, timeless logos. These tools can help startups quickly get to a polished first logo, or, at minimum, some opinionated starting points.</p>
+      <p>Logo Lab is an open-source collection of parametric tools for making a credible first mark from real design systems.</p>
 
-      <p>Each tool is a study of a specific visual framework from the modernist period (roughly 1950s–70s), borrowing its logic from a particular designer or studio, mostly for obscure and long-forgotten ventures.</p>
+      <p>Each tool encodes the logic of a specific modernist framework (roughly 1950s–70s), borrowed from a particular designer or studio, so the output sits inside a coherent visual language from the very first click.</p>
 
       <p><span class="intro-arrow" aria-hidden="true">↳</span>Every tool turns the underlying concept into accessible parameters and curated presets.</p>
 
       <p><span class="intro-arrow" aria-hidden="true">↳</span>Every output has a shareable URL, a PNG/SVG export, and the ability to embed it via iframe.</p>
 
       <p><span class="intro-arrow" aria-hidden="true">↳</span>Every embed is a live preview — click any tool name to open it with full controls and exports.</p>
-
-      <div class="entry-points">
-        <a class="entry" data-dir="right" href="/logo/explorer/">
-          <svg class="entry__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M21.5 14L20 9C20 9 19.5 7 17.5 7C17.5 7 17.5 5 15.5 5C13.5 5 13.5 7 13.5 7H10.5C10.5 7 10.5 5 8.5 5C6.5 5 6.5 7 6.5 7C4.5 7 4 9 4 9L2.5 14"/>
-            <path d="M6 20C8.20914 20 10 18.2091 10 16C10 13.7909 8.20914 12 6 12C3.79086 12 2 13.7909 2 16C2 18.2091 3.79086 20 6 20Z"/>
-            <path d="M18 20C20.2091 20 22 18.2091 22 16C22 13.7909 20.2091 12 18 12C15.7909 12 14 13.7909 14 16C14 18.2091 15.7909 20 18 20Z"/>
-            <path d="M12 16C13.1046 16 14 15.1046 14 14C14 12.8954 13.1046 12 12 12C10.8954 12 10 12.8954 10 14C10 15.1046 10.8954 16 12 16Z"/>
-          </svg>
-          <span class="entry__title">Explorer</span>
-          <span class="entry__arrow" aria-hidden="true">→</span>
-        </a>
-        <a class="entry" data-dir="down" href="#sections">
-          <svg class="entry__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M10.0503 10.6066L2.97923 17.6777C2.19818 18.4587 2.19818 19.7251 2.97923 20.5061C3.76027 21.2872 5.0266 21.2872 5.80765 20.5061L12.8787 13.4351"/>
-            <path d="M17.1927 13.7994L21.071 17.6777C21.8521 18.4587 21.8521 19.7251 21.071 20.5061C20.29 21.2872 19.0236 21.2872 18.2426 20.5061L12.0341 14.2977"/>
-            <path d="M6.73267 5.90381L4.61135 6.61092L2.49003 3.07539L3.90424 1.66117L7.43978 3.78249L6.73267 5.90381ZM6.73267 5.90381L9.5629 8.73404"/>
-            <path d="M10.0503 10.6066C9.2065 8.45359 9.37147 5.62861 11.111 3.8891C12.8505 2.14958 16.0607 1.76778 17.8285 2.82844L14.7878 5.86911L14.5052 8.98015L17.6162 8.69754L20.6569 5.65686C21.7176 7.42463 21.3358 10.6349 19.5963 12.3744C17.8567 14.1139 15.0318 14.2789 12.8788 13.435"/>
-          </svg>
-          <span class="entry__title">Individual tools</span>
-          <span class="entry__arrow" aria-hidden="true">↓</span>
-        </a>
-      </div>
 
       <p>Keyboard: press <strong>J</strong>/<strong>K</strong> to move between sections, <strong>1–9</strong> to jump, <strong>T</strong> to return to the top.</p>
 
