@@ -25,15 +25,15 @@
   'use strict';
 
   const ICONS = {
-    lineWarp: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14H68"/><path d="M12 23H25C34 23 34 16 40 16C46 16 46 23 55 23H68"/><path d="M12 32H23C32 32 32 20 40 20C48 20 48 32 57 32H68"/><path d="M12 41H24C31 41 32 32 39 32C47 32 48 41 56 41H68"/><path d="M12 50H24C31 50 32 43 40 43C48 43 49 50 56 50H68"/><path d="M12 59H27C33 59 34 54 40 54C46 54 47 59 53 59H68"/><path d="M12 68H68"/></svg>',
+    lineWarp: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14H68"/><path d="M12 27H25C33 27 34 21 40 21C46 21 47 27 55 27H68"/><path d="M12 40H22C32 40 32 27 40 27C48 27 48 40 58 40H68"/><path d="M12 53H24C32 53 33 44 40 44C47 44 48 53 56 53H68"/><path d="M12 66H68"/></svg>',
     brutalistLetters: '<svg viewBox="0 0 80 80" fill="currentColor"><path d="M22 14H58C62.5 14 66 17.5 66 22V31H53V26H29V54H53V47H41V35H66V58C66 62.5 62.5 66 58 66H22C17.5 66 14 62.5 14 58V22C14 17.5 17.5 14 22 14Z"/></svg>',
     interlockingCircles: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"><circle cx="40" cy="25" r="14"/><circle cx="27" cy="37" r="14"/><circle cx="53" cy="37" r="14"/><circle cx="32" cy="54" r="14"/><circle cx="48" cy="54" r="14"/></svg>',
-    parallelLetters: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-linecap="square"><path stroke-width="4" d="M18 66V14H30L50 49V14H62V66H50L30 31V66Z"/><path stroke-width="3" d="M25 59V23H32L48 51V23H55V59H48L32 31V59Z"/><path stroke-width="2.2" d="M32 52V32L47 57H62"/></svg>',
+    parallelLetters: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><path stroke-width="4.5" d="M19 69V11H45C59 11 69 21 69 35C69 49 59 58 45 58H31V69"/><path stroke-width="3.6" d="M30 65V22H44C53 22 59 28 59 36C59 44 53 49 44 49H39V65"/><path stroke-width="2.8" d="M40 60V32H44C49 32 52 35 52 39C52 43 49 46 44 46"/></svg>',
     shapeTiles: '<svg viewBox="0 0 80 80" fill="currentColor"><circle cx="40" cy="40" r="11"/><path d="M28 28a12 12 0 0 1 24 0Z"/><path d="M28 52a12 12 0 0 0 24 0Z"/><path d="M28 28a12 12 0 0 0 0 24Z"/><path d="M52 28a12 12 0 0 1 0 24Z"/><path d="M14 14H29A15 15 0 0 1 14 29Z"/><path d="M66 14V29A15 15 0 0 1 51 14Z"/><path d="M66 66H51A15 15 0 0 1 66 51Z"/><path d="M14 66V51A15 15 0 0 1 29 66Z"/></svg>',
-    slicedShapes: '<svg viewBox="0 0 80 80" fill="currentColor" fill-rule="evenodd"><path d="M20 28a12 12 0 1 1 0 24a12 12 0 1 1 0-24M8 43L10 48L32 37L30 32Z"/><path d="M40 28a12 12 0 1 1 0 24a12 12 0 1 1 0-24M28 39L28 44L52 42L52 37Z"/><path d="M60 28a12 12 0 1 1 0 24a12 12 0 1 1 0-24M48 37L50 32L72 43L70 48Z"/></svg>',
-    slashMark: '<svg viewBox="0 0 80 80" fill="currentColor" fill-rule="evenodd"><path d="M40 14a26 26 0 1 1 0 52a26 26 0 1 1 0-52M11 40L16 45L45 16L40 11ZM16 56L22 62L62 22L56 16ZM36 69L42 73L73 42L68 36Z"/></svg>',
-    polygonRosette: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="miter" stroke-linecap="square"><path d="M40 11L69 40L40 69L11 40Z"/><path d="M40 11L31 51L11 40"/><path d="M40 11L49 29L69 40"/><path d="M31 51L40 69L49 29"/><path d="M31 51L69 40"/></svg>',
-    echoStripes: '<svg viewBox="0 0 80 80" fill="currentColor"><rect x="18" y="13" width="34" height="4"/><rect x="18" y="20" width="42" height="4"/><rect x="18" y="27" width="46" height="4"/><rect x="18" y="34" width="39" height="4"/><rect x="18" y="41" width="31" height="4"/><rect x="18" y="48" width="43" height="4"/><rect x="18" y="55" width="47" height="4"/><rect x="18" y="62" width="40" height="4"/><rect x="18" y="69" width="30" height="4"/></svg>',
+    slicedShapes: '<svg viewBox="0 0 80 80" fill="currentColor" fill-rule="evenodd"><path d="M40 12A28 28 0 1 1 40 68A28 28 0 1 1 40 12ZM14 38.5C24 32.5 33 36 42 44C50 51 57 53.5 64 50L64 54.5C55 58.5 47 56 38 48C30 41 23 38.8 14 44.5Z"/></svg>',
+    slashMark: '<svg viewBox="0 0 80 80" fill="currentColor"><path d="M40 10L48 25H32Z"/><path d="M29 31H51L58 43H22Z"/><path d="M21 48H59L65 60H15Z"/><path d="M13 65H67L72 72H8Z"/></svg>',
+    polygonRosette: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linejoin="miter" stroke-linecap="square"><path d="M40 10L61 19L70 40L61 61L40 70L19 61L10 40L19 19Z"/><path d="M40 10V70"/><path d="M10 40H70"/><path d="M19 19L61 61"/><path d="M61 19L19 61"/></svg>',
+    echoStripes: '<svg viewBox="0 0 80 80" fill="currentColor"><rect x="13" y="10" width="54" height="5"/><rect x="13" y="17" width="54" height="5"/><rect x="13" y="24" width="23" height="5"/><rect x="13" y="31" width="23" height="5"/><rect x="13" y="38" width="45" height="5"/><rect x="13" y="45" width="45" height="5"/><rect x="13" y="52" width="23" height="5"/><rect x="13" y="59" width="23" height="5"/><rect x="13" y="66" width="54" height="5"/><rect x="13" y="73" width="54" height="5"/></svg>',
     dotGrid: '<svg viewBox="0 0 80 80" fill="currentColor"><circle cx="18" cy="16" r="4"/><circle cx="30" cy="16" r="4"/><circle cx="42" cy="16" r="4"/><circle cx="18" cy="28" r="4"/><circle cx="30" cy="28" r="4"/><circle cx="42" cy="28" r="4"/><circle cx="18" cy="40" r="4"/><circle cx="30" cy="40" r="4"/><circle cx="42" cy="40" r="4"/><circle cx="18" cy="52" r="4"/><circle cx="30" cy="52" r="4"/><circle cx="42" cy="52" r="4"/><circle cx="18" cy="64" r="4"/><circle cx="30" cy="64" r="4"/><circle cx="42" cy="64" r="4"/><circle cx="54" cy="64" r="4"/><circle cx="66" cy="64" r="4"/></svg>'
   };
 
@@ -157,7 +157,7 @@
       blurb: 'Ippo Miyamoto and Tadashi Ishikawa drew the Fujisankei Kokukusha mark (1978) as a row of circles cut by curves — the negative-space slice doing as much work as the solid behind it. The tool generalizes the cut: arc, sine, straight, S-curve, or zigzag, applied to any of several primitives, repeated up to twelve times across the canvas. Curvature, slice width, and spacing decide whether the row reads as one shape or many.',
       defaultSeed: '9',
       variants: [
-        'v=1',
+        'v=1&as=0&ba=6&bg=f4f3f1&c=1&cu=0.24&cv=s-curve&fc=2d04ba&gw=18.4&lc=2d04ba&sd=1kxombe&so=0.08&sp=176&sz=117',
         'v=1&as=0&ba=-7&bg=000000&c=2&cu=0&fc=ffffff&gw=28&sh=diamond&sp=122&sz=128',
         'v=1&as=0&ba=-180&bg=d6ddff&c=2&cu=0&fc=000000&gw=28&lc=ffffff&sh=cross&sp=111&sz=103',
         'v=1&as=38&ba=-180&bg=f5f5f5&cu=0&fc=1a1a1a&gw=19.5&lc=ffffff&sh=shield&so=0.11&sp=238&sz=105&tp=0.57'
@@ -182,7 +182,7 @@
       variants: [
         'v=1&a=135&bg=e3e3e3&ex=-1&lc=e3e3e3&n=9&sh=square&sp=26&tp=100',
         'v=1&a=90&bg=0d0d0d&ex=60&lc=0d0d0d&lw=26&n=5&sc=e4ff14&sh=hexagon&sp=86&tp=100',
-        'v=1&a=135&bg=ffccf4&ex=60&lc=ffccf4&lw=40&n=9&sc=930b81&sp=10&tp=100',
+        'v=1&a=91&bg=fbfaf8&ex=60&lc=fbfaf8&lw=24&n=5&sc=161812&sh=triangle&sp=78&sz=159&tp=100',
         'v=1&a=45&bg=fbf7e5&ex=60&lc=fbf7e5&lw=40&n=5&sc=454545&sp=100&tp=100'
       ],
       credit: {
