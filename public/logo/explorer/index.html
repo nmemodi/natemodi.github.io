@@ -181,12 +181,22 @@
   .btn svg { width: 12px; height: 12px; }
   .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
 
+  .btn--shuffle { perspective: 220px; }
   .btn--shuffle .ico-shuffle {
     width: 14px;
     height: 14px;
-    transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transform-style: preserve-3d;
   }
-  .btn--shuffle.is-spinning .ico-shuffle { transform: rotate(180deg); }
+  .btn--shuffle.is-spinning .ico-shuffle {
+    animation: shuffleFlipX 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes shuffleFlipX {
+    from { transform: rotateX(0deg); }
+    to   { transform: rotateX(360deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn--shuffle.is-spinning .ico-shuffle { animation: none; }
+  }
 
   /* ── Grid ── */
   .grid {
