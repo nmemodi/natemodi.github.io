@@ -174,18 +174,27 @@
         // ---- Canvas setup ----
         const canvasEl = document.getElementById('canvas');
         const wrap = document.querySelector('.tool-canvas');
+        const EXPORT_PAD = 30;
+        const PREVIEW_FILL = 1;
+
+        function exportSize() {
+            return (config.shapeSize + EXPORT_PAD) * 2;
+        }
 
         function setupCanvas() {
             const dpr = window.devicePixelRatio || 1;
-            const w = wrap.clientWidth;
-            const h = wrap.clientHeight;
+            const base = exportSize();
+            const fit = Math.max(1, Math.min(wrap.clientWidth, wrap.clientHeight) * PREVIEW_FILL);
+            const w = fit;
+            const h = fit;
             canvasEl.width = w * dpr;
             canvasEl.height = h * dpr;
             canvasEl.style.width = w + 'px';
             canvasEl.style.height = h + 'px';
+            wrap.style.backgroundColor = config.bgColor;
             const ctx = canvasEl.getContext('2d');
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            return { ctx, w, h };
+            return { ctx, w, base };
         }
 
         // ---- Geometry: shape vertices ----
@@ -327,21 +336,12 @@
 
         // ---- Main draw ----
         function draw() {
-            const { ctx, w, h } = setupCanvas();
-            const { cx, cy } = shapeCenter(config.shape, w, h, config.shapeSize);
-
-            ctx.fillStyle = config.bgColor;
-            ctx.fillRect(0, 0, w, h);
-
-            const shapePath = getShapePath(config.shape, cx, cy, config.shapeSize);
-            ctx.fillStyle = config.shapeColor;
-            ctx.fill(shapePath);
-
-            const { lines, perpX, perpY } = computeLines(cx, cy);
-            ctx.fillStyle = config.lineColor;
-            for (const line of lines) {
-                drawTaperedLine(ctx, line, config.lineWidth, config.taper, perpX, perpY);
-            }
+            const { ctx, w, base } = setupCanvas();
+            const scale = w / base;
+            ctx.save();
+            ctx.scale(scale, scale);
+            renderToExportCanvas(ctx, base, base, { transparent: false });
+            ctx.restore();
         }
 
         // ---- Render to arbitrary canvas (for export) ----
@@ -366,8 +366,7 @@
 
         // ---- SVG generation ----
         function generateSVG() {
-            const pad = 30;
-            const sz = config.shapeSize + pad;
+            const sz = config.shapeSize + EXPORT_PAD;
             const vw = sz * 2, vh = sz * 2;
             const { cx, cy } = shapeCenter(config.shape, vw, vh, config.shapeSize);
 
@@ -509,10 +508,6 @@
 
         // Resize
         window.addEventListener('resize', draw);
-
-        // ---- Export setup ----
-        const pad = 30;
-        const exportSize = () => (config.shapeSize + pad) * 2;
 
         // ---- Permalink ----
         const {
