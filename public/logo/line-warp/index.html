@@ -358,10 +358,26 @@ function distanceTransform(mask, w, h) {
   return dist;
 }
 
-function getHeight(data, x, y) {
+// Project the 2D heightmap onto a 1D per-column max. Lines and the
+// background between them get lifted together by the same value at each x,
+// so the whole stripe pattern stays bonded instead of every line warping
+// independently of its neighbors.
+function buildColumnHeights(data) {
+  const colMax = new Float32Array(SIZE);
+  for (let x = 0; x < SIZE; x++) {
+    let m = 0;
+    for (let y = 0; y < SIZE; y++) {
+      const v = (255 - data[(y * SIZE + x) * 4]) / 255;
+      if (v > m) m = v;
+    }
+    colMax[x] = m;
+  }
+  return colMax;
+}
+
+function colHeight(colMax, x) {
   const ix = Math.max(0, Math.min(SIZE - 1, Math.round(x)));
-  const iy = Math.max(0, Math.min(SIZE - 1, Math.round(y)));
-  return (255 - data[(iy * SIZE + ix) * 4]) / 255;
+  return colMax[ix];
 }
 
 // --- Rounded rect helper ---
@@ -383,6 +399,7 @@ function roundedRectPath(ctx, x, y, w, h, r) {
 function render() {
   const p = getParams();
   const dispData = createDisplacementMap(p);
+  const colMax = buildColumnHeights(dispData);
 
   const bg = p.invert ? p.fgColor : p.bgColor;
   const fg = p.invert ? p.bgColor : p.fgColor;
@@ -421,52 +438,33 @@ function render() {
     const topY = baseY - bandH / 2;
     const botY = baseY + bandH / 2;
 
-    // Displacement at the four corners
-    const dTL = getHeight(dispData, xStart, topY) * p.maxDisp;
-    const dTR = getHeight(dispData, xEnd, topY) * p.maxDisp;
-    const dBL = getHeight(dispData, xStart, botY) * p.maxDisp;
-    const dBR = getHeight(dispData, xEnd, botY) * p.maxDisp;
+    const dL = colHeight(colMax, xStart) * p.maxDisp;
+    const dR = colHeight(colMax, xEnd) * p.maxDisp;
+    const dLr = colHeight(colMax, xStart + r) * p.maxDisp;
+    const dRr = colHeight(colMax, xEnd - r) * p.maxDisp;
 
     ctx.beginPath();
-
-    // Start: left edge, just below top-left corner arc
-    ctx.moveTo(xStart, topY - dTL + r);
-
-    // Top-left corner arc
-    ctx.quadraticCurveTo(xStart, topY - dTL, xStart + r, topY - getHeight(dispData, xStart + r, topY) * p.maxDisp);
-
-    // Top edge: left to right
+    ctx.moveTo(xStart, topY - dL + r);
+    ctx.quadraticCurveTo(xStart, topY - dL, xStart + r, topY - dLr);
     for (let x = xStart + r + step; x <= xEnd - r; x += step) {
-      ctx.lineTo(x, topY - getHeight(dispData, x, topY) * p.maxDisp);
+      ctx.lineTo(x, topY - colHeight(colMax, x) * p.maxDisp);
     }
-
-    // Top-right corner arc
-    ctx.lineTo(xEnd - r, topY - getHeight(dispData, xEnd - r, topY) * p.maxDisp);
-    ctx.quadraticCurveTo(xEnd, topY - dTR, xEnd, topY - dTR + r);
-
-    // Right edge
-    ctx.lineTo(xEnd, botY - dBR - r);
-
-    // Bottom-right corner arc
-    ctx.quadraticCurveTo(xEnd, botY - dBR, xEnd - r, botY - getHeight(dispData, xEnd - r, botY) * p.maxDisp);
-
-    // Bottom edge: right to left
+    ctx.lineTo(xEnd - r, topY - dRr);
+    ctx.quadraticCurveTo(xEnd, topY - dR, xEnd, topY - dR + r);
+    ctx.lineTo(xEnd, botY - dR - r);
+    ctx.quadraticCurveTo(xEnd, botY - dR, xEnd - r, botY - dRr);
     for (let x = xEnd - r - step; x >= xStart + r; x -= step) {
-      ctx.lineTo(x, botY - getHeight(dispData, x, botY) * p.maxDisp);
+      ctx.lineTo(x, botY - colHeight(colMax, x) * p.maxDisp);
     }
-
-    // Bottom-left corner arc
-    ctx.lineTo(xStart + r, botY - getHeight(dispData, xStart + r, botY) * p.maxDisp);
-    ctx.quadraticCurveTo(xStart, botY - dBL, xStart, botY - dBL - r);
-
-    // Left edge back to start
+    ctx.lineTo(xStart + r, botY - dLr);
+    ctx.quadraticCurveTo(xStart, botY - dL, xStart, botY - dL - r);
     ctx.closePath();
     ctx.fill();
   }
 }
 
 // --- SVG export ---
-function generateSVGPaths(p, dispData) {
+function generateSVGPaths(p, colMax) {
   const paths = [];
   const totalH = SIZE - 2 * p.margin;
   const spacing = totalH / p.numLines;
@@ -483,40 +481,25 @@ function generateSVGPaths(p, dispData) {
     const topY = baseY - bandH / 2;
     const botY = baseY + bandH / 2;
 
-    const dTL = getHeight(dispData, xStart, topY) * p.maxDisp;
-    const dTR = getHeight(dispData, xEnd, topY) * p.maxDisp;
-    const dBL = getHeight(dispData, xStart, botY) * p.maxDisp;
-    const dBR = getHeight(dispData, xEnd, botY) * p.maxDisp;
+    const dL = colHeight(colMax, xStart) * p.maxDisp;
+    const dR = colHeight(colMax, xEnd) * p.maxDisp;
+    const dLr = colHeight(colMax, xStart + r) * p.maxDisp;
+    const dRr = colHeight(colMax, xEnd - r) * p.maxDisp;
 
-    let d = `M ${f(xStart)} ${f(topY - dTL + r)}`;
-
-    // Top-left corner
-    d += ` Q ${f(xStart)} ${f(topY - dTL)} ${f(xStart + r)} ${f(topY - getHeight(dispData, xStart + r, topY) * p.maxDisp)}`;
-
-    // Top edge
+    let d = `M ${f(xStart)} ${f(topY - dL + r)}`;
+    d += ` Q ${f(xStart)} ${f(topY - dL)} ${f(xStart + r)} ${f(topY - dLr)}`;
     for (let x = xStart + r + step; x <= xEnd - r; x += step) {
-      d += ` L ${x} ${f(topY - getHeight(dispData, x, topY) * p.maxDisp)}`;
+      d += ` L ${x} ${f(topY - colHeight(colMax, x) * p.maxDisp)}`;
     }
-
-    // Top-right corner
-    d += ` L ${f(xEnd - r)} ${f(topY - getHeight(dispData, xEnd - r, topY) * p.maxDisp)}`;
-    d += ` Q ${f(xEnd)} ${f(topY - dTR)} ${f(xEnd)} ${f(topY - dTR + r)}`;
-
-    // Right edge
-    d += ` L ${f(xEnd)} ${f(botY - dBR - r)}`;
-
-    // Bottom-right corner
-    d += ` Q ${f(xEnd)} ${f(botY - dBR)} ${f(xEnd - r)} ${f(botY - getHeight(dispData, xEnd - r, botY) * p.maxDisp)}`;
-
-    // Bottom edge
+    d += ` L ${f(xEnd - r)} ${f(topY - dRr)}`;
+    d += ` Q ${f(xEnd)} ${f(topY - dR)} ${f(xEnd)} ${f(topY - dR + r)}`;
+    d += ` L ${f(xEnd)} ${f(botY - dR - r)}`;
+    d += ` Q ${f(xEnd)} ${f(botY - dR)} ${f(xEnd - r)} ${f(botY - dRr)}`;
     for (let x = xEnd - r - step; x >= xStart + r; x -= step) {
-      d += ` L ${x} ${f(botY - getHeight(dispData, x, botY) * p.maxDisp)}`;
+      d += ` L ${x} ${f(botY - colHeight(colMax, x) * p.maxDisp)}`;
     }
-
-    // Bottom-left corner
-    d += ` L ${f(xStart + r)} ${f(botY - getHeight(dispData, xStart + r, botY) * p.maxDisp)}`;
-    d += ` Q ${f(xStart)} ${f(botY - dBL)} ${f(xStart)} ${f(botY - dBL - r)}`;
-
+    d += ` L ${f(xStart + r)} ${f(botY - dLr)}`;
+    d += ` Q ${f(xStart)} ${f(botY - dL)} ${f(xStart)} ${f(botY - dL - r)}`;
     d += ' Z';
     paths.push(d);
   }
@@ -527,7 +510,8 @@ function generateSVGPaths(p, dispData) {
 function generateSVG() {
   const p = getParams();
   const dispData = createDisplacementMap(p);
-  const paths = generateSVGPaths(p, dispData);
+  const colMax = buildColumnHeights(dispData);
+  const paths = generateSVGPaths(p, colMax);
   const fg = p.invert ? p.bgColor : p.fgColor;
   const bg = p.invert ? p.fgColor : p.bgColor;
 
@@ -544,6 +528,7 @@ function generateSVG() {
 function renderToCanvas(exportCtx, width, height, opts) {
   const p = getParams();
   const dispData = createDisplacementMap(p);
+  const colMax = buildColumnHeights(dispData);
   const scale = width / SIZE;
 
   const bg = opts && opts.transparent ? 'transparent' : (p.invert ? p.fgColor : p.bgColor);
@@ -579,26 +564,26 @@ function renderToCanvas(exportCtx, width, height, opts) {
     const topY = baseY - bandH / 2;
     const botY = baseY + bandH / 2;
 
-    const dTL = getHeight(dispData, xStart, topY) * p.maxDisp;
-    const dTR = getHeight(dispData, xEnd, topY) * p.maxDisp;
-    const dBL = getHeight(dispData, xStart, botY) * p.maxDisp;
-    const dBR = getHeight(dispData, xEnd, botY) * p.maxDisp;
+    const dL = colHeight(colMax, xStart) * p.maxDisp;
+    const dR = colHeight(colMax, xEnd) * p.maxDisp;
+    const dLr = colHeight(colMax, xStart + r) * p.maxDisp;
+    const dRr = colHeight(colMax, xEnd - r) * p.maxDisp;
 
     exportCtx.beginPath();
-    exportCtx.moveTo(xStart, topY - dTL + r);
-    exportCtx.quadraticCurveTo(xStart, topY - dTL, xStart + r, topY - getHeight(dispData, xStart + r, topY) * p.maxDisp);
+    exportCtx.moveTo(xStart, topY - dL + r);
+    exportCtx.quadraticCurveTo(xStart, topY - dL, xStart + r, topY - dLr);
     for (let x = xStart + r + step; x <= xEnd - r; x += step) {
-      exportCtx.lineTo(x, topY - getHeight(dispData, x, topY) * p.maxDisp);
+      exportCtx.lineTo(x, topY - colHeight(colMax, x) * p.maxDisp);
     }
-    exportCtx.lineTo(xEnd - r, topY - getHeight(dispData, xEnd - r, topY) * p.maxDisp);
-    exportCtx.quadraticCurveTo(xEnd, topY - dTR, xEnd, topY - dTR + r);
-    exportCtx.lineTo(xEnd, botY - dBR - r);
-    exportCtx.quadraticCurveTo(xEnd, botY - dBR, xEnd - r, botY - getHeight(dispData, xEnd - r, botY) * p.maxDisp);
+    exportCtx.lineTo(xEnd - r, topY - dRr);
+    exportCtx.quadraticCurveTo(xEnd, topY - dR, xEnd, topY - dR + r);
+    exportCtx.lineTo(xEnd, botY - dR - r);
+    exportCtx.quadraticCurveTo(xEnd, botY - dR, xEnd - r, botY - dRr);
     for (let x = xEnd - r - step; x >= xStart + r; x -= step) {
-      exportCtx.lineTo(x, botY - getHeight(dispData, x, botY) * p.maxDisp);
+      exportCtx.lineTo(x, botY - colHeight(colMax, x) * p.maxDisp);
     }
-    exportCtx.lineTo(xStart + r, botY - getHeight(dispData, xStart + r, botY) * p.maxDisp);
-    exportCtx.quadraticCurveTo(xStart, botY - dBL, xStart, botY - dBL - r);
+    exportCtx.lineTo(xStart + r, botY - dLr);
+    exportCtx.quadraticCurveTo(xStart, botY - dL, xStart, botY - dL - r);
     exportCtx.closePath();
     exportCtx.fill();
   }
