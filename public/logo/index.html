@@ -758,8 +758,18 @@
     tag.className = 'section-tagline';
     tag.textContent = t.tagline;
 
-    const body = document.createElement('p');
-    body.textContent = t.blurb;
+    /* Blurb may contain blank-line-separated paragraphs ("\n\n"); render each
+       as its own <p> so the gap between historical context and the "The tool…"
+       follow-up is visible. */
+    const bodyParagraphs = String(t.blurb || '')
+      .split(/\n\s*\n/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map((text) => {
+        const p = document.createElement('p');
+        p.textContent = text;
+        return p;
+      });
 
     /* Embed surface — either a single iframe wrap, or a 2×2 variant grid. */
     const variants = Array.isArray(t.variants) && t.variants.length > 0 ? t.variants : null;
@@ -840,7 +850,7 @@
 
     sec.appendChild(head);
     sec.appendChild(tag);
-    sec.appendChild(body);
+    bodyParagraphs.forEach((p) => sec.appendChild(p));
     sec.appendChild(wrap);
     sec.appendChild(actions);
     sec.appendChild(snip);
