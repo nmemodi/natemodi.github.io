@@ -11,8 +11,17 @@
 <!-- Open Graph -->
 <meta property="og:title" content="Logo Lab">
 <meta property="og:description" content="Ten generative logo tools. Tweak parameters live, share the result with a URL.">
+<meta property="og:image" content="https://natemodi.com/logo/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A wall of selected Logo Lab marks.">
 <meta property="og:url" content="https://natemodi.com/logo/">
 <meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Logo Lab">
+<meta name="twitter:description" content="Ten generative logo tools. Tweak parameters live, share the result with a URL.">
+<meta name="twitter:image" content="https://natemodi.com/logo/og-image.png">
+<meta name="twitter:image:alt" content="A wall of selected Logo Lab marks.">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/style.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
@@ -144,6 +153,41 @@
   }
   .lab-header .lab-titles h1 { margin-bottom: 2px; }
   .lab-header .lab-titles time { margin-bottom: 0; }
+
+  .showcase-wall {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin: 18px 0 22px;
+  }
+
+  .showcase-tile {
+    position: relative;
+    display: block;
+    min-width: 0;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    background: var(--code-bg);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .showcase-tile:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 2px;
+  }
+
+  .showcase-tile img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    object-fit: cover;
+    transform: scale(var(--zoom, 1));
+    transform-origin: center;
+  }
 
   article p {
     font-size: 14px;
@@ -584,8 +628,11 @@
   @media (max-width: 768px) {
     .page {
       flex-direction: column;
+      width: 100%;
+      max-width: 100%;
       gap: 0;
       padding: 32px 20px 96px;
+      overflow-x: hidden;
     }
     aside {
       position: static;
@@ -607,7 +654,12 @@
       white-space: nowrap;
       padding: 2px 0;
     }
-    main { max-width: 100%; }
+    main,
+    article {
+      width: 100%;
+      max-width: 100%;
+    }
+    .showcase-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>
 </head>
@@ -635,6 +687,27 @@
           <time datetime="2026-04-24">Generative tools for iconic logos</time>
         </div>
       </header>
+
+      <div class="showcase-wall" aria-label="Selected Logo Lab outputs">
+        <a class="showcase-tile" href="/logo/polygon-rosette/" aria-label="Open Polygon Rosette" style="--zoom: 2.8">
+          <img src="/logo/showcase/polygon-rosette-dark.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
+        </a>
+        <a class="showcase-tile" href="/logo/line-warp/" aria-label="Open Line Warp" style="--zoom: 1">
+          <img src="/logo/showcase/line-warp-purple.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
+        </a>
+        <a class="showcase-tile" href="/logo/parallel-letters/" aria-label="Open Parallel Letters" style="--zoom: 1">
+          <img src="/logo/showcase/parallel-letters-lime.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
+        </a>
+        <a class="showcase-tile" href="/logo/echo-stripes/" aria-label="Open Echo Stripes" style="--zoom: 1">
+          <img src="/logo/showcase/echo-stripes-magenta.png" alt="" width="1600" height="1600" loading="eager" decoding="async">
+        </a>
+        <a class="showcase-tile" href="/logo/sliced-shapes/" aria-label="Open Sliced Shapes" style="--zoom: 2.46">
+          <img src="/logo/showcase/sliced-shapes-orange.png" alt="" width="1600" height="1600" loading="eager" decoding="async">
+        </a>
+        <a class="showcase-tile" href="/logo/polygon-rosette/" aria-label="Open Polygon Rosette" style="--zoom: 2.86">
+          <img src="/logo/showcase/polygon-rosette-light.png" alt="" width="1600" height="1600" loading="eager" decoding="async">
+        </a>
+      </div>
 
       <p class="lede">I love logos. AI is bad at logos. More startups are launching than ever, mostly because of AI — but AI still can&rsquo;t make them a logo worth keeping.</p>
 

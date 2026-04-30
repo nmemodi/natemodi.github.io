@@ -21,6 +21,7 @@ FOR-NAT.md
 
 # Playwright / dev artifacts
 .playwright-mcp/
+.claude/
 
 # Throwaway audit pages
 public/logo/brutalist-letters/audit.html

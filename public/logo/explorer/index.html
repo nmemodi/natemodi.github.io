@@ -10,8 +10,17 @@
 
 <meta property="og:title" content="Explorer — Logo Lab">
 <meta property="og:description" content="A curated wall of hand-picked Logo Lab outputs. Shuffle to surface new picks. Click any tile to open it.">
+<meta property="og:image" content="https://natemodi.com/logo/explorer/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A curated wall of Logo Lab outputs.">
 <meta property="og:url" content="https://natemodi.com/logo/explorer/">
 <meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Explorer — Logo Lab">
+<meta name="twitter:description" content="A curated wall of hand-picked Logo Lab outputs. Shuffle to surface new picks. Click any tile to open it.">
+<meta name="twitter:image" content="https://natemodi.com/logo/explorer/og-image.png">
+<meta name="twitter:image:alt" content="A curated wall of Logo Lab outputs.">
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 
@@ -426,7 +435,9 @@
   const ORIGIN = location.origin;
   const TILE_COUNT = 18;
   const SHUFFLE_STAGGER_MS = 60;
-  const MOUNT_ROOT_MARGIN = '300px';
+  const PRIORITY_STAGGER_MS = 28;
+  const LAZY_OBSERVER_DELAY_MS = 260;
+  const MOUNT_ROOT_MARGIN = '220px';
 
   /* Curated preset bank — { slug: [seed, ...] }. Loaded once at boot.
      Every tile picks a (slug, seed) pair from this bank rather than
@@ -500,6 +511,12 @@
       picks.push(avail[Math.floor(Math.random() * avail.length)]);
     }
     return picks;
+  }
+
+  function priorityTileCount() {
+    if (window.matchMedia('(min-width: 881px)').matches) return 9;
+    if (window.matchMedia('(min-width: 541px)').matches) return 6;
+    return 4;
   }
 
   /* ── Tile construction ── */
@@ -576,18 +593,19 @@
 
   /* ── Mount / lazy-load ── */
 
-  function mountTile(t) {
+  function mountTile(t, opts) {
     if (t.mounted) return;
     t.mounted = true;
+    const priority = !!(opts && opts.priority);
     const myToken = t.token;
 
     const iframe = document.createElement('iframe');
-    iframe.src = t.url;
     iframe.setAttribute('title', t.slug + ' preview');
-    iframe.setAttribute('loading', 'lazy');
+    iframe.setAttribute('loading', priority ? 'eager' : 'lazy');
     iframe.setAttribute('scrolling', 'no');
     iframe.setAttribute('aria-hidden', 'true'); // anchor carries the link semantics
     iframe.setAttribute('tabindex', '-1');
+    iframe.src = t.url;
 
     const settle = (ok) => {
       if (myToken !== t.token) return; // stale (shuffled away)
@@ -612,23 +630,50 @@
     t.el.insertBefore(iframe, t.el.firstChild);
   }
 
-  let mountObserver = null;
-  function setupMountObserver() {
-    if (!('IntersectionObserver' in window)) {
-      tiles.forEach(mountTile);
-      return;
-    }
-    if (mountObserver) mountObserver.disconnect();
-    mountObserver = new IntersectionObserver((entries) => {
-      entries.forEach((en) => {
-        if (!en.isIntersecting) return;
-        const t = tiles.find((x) => x.el === en.target);
-        if (t) mountTile(t);
-        mountObserver.unobserve(en.target);
-      });
-    }, { rootMargin: MOUNT_ROOT_MARGIN });
+  function scheduleMount(t, delay, priority) {
+    const myToken = t.token;
+    setTimeout(() => {
+      if (myToken !== t.token) return;
+      if (!t.el.isConnected) return;
+      mountTile(t, { priority: priority });
+    }, delay);
+  }
 
-    tiles.forEach((t) => mountObserver.observe(t.el));
+  let mountObserver = null;
+  let mountCycle = 0;
+  function setupMountObserver() {
+    if (mountObserver) mountObserver.disconnect();
+    const cycle = ++mountCycle;
+
+    const priorityCount = Math.min(priorityTileCount(), tiles.length);
+    tiles.slice(0, priorityCount).forEach((t, i) => {
+      scheduleMount(t, i * PRIORITY_STAGGER_MS, true);
+    });
+
+    const lazyTiles = tiles.slice(priorityCount);
+    if (!lazyTiles.length) return;
+
+    setTimeout(() => {
+      if (cycle !== mountCycle) return;
+
+      if (!('IntersectionObserver' in window)) {
+        lazyTiles.forEach((t, i) => {
+          scheduleMount(t, i * SHUFFLE_STAGGER_MS, false);
+        });
+        return;
+      }
+
+      mountObserver = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (!en.isIntersecting) return;
+          const t = tiles.find((x) => x.el === en.target);
+          if (t) mountTile(t, { priority: false });
+          mountObserver.unobserve(en.target);
+        });
+      }, { rootMargin: MOUNT_ROOT_MARGIN });
+
+      lazyTiles.forEach((t) => mountObserver.observe(t.el));
+    }, priorityCount * PRIORITY_STAGGER_MS + LAZY_OBSERVER_DELAY_MS);
   }
 
   /* ── Shuffle ── */
@@ -643,6 +688,8 @@
     shuffleBtn.disabled = true;
 
     const picks = pickTools(TILE_COUNT);
+
+    if (mountObserver) mountObserver.disconnect();
 
     /* Reuse tile elements. Rebuild iframe entirely so fresh load listeners fire. */
     tiles.forEach((t, i) => {
@@ -673,17 +720,16 @@
         t.iframe.remove();
         t.iframe = null;
       }
-
-      /* Stagger so we don't fire 9 simultaneous loads. */
-      setTimeout(() => mountTile(t), i * SHUFFLE_STAGGER_MS);
     });
 
-    /* Release the button once the last stagger fires. */
+    setupMountObserver();
+
+    /* Release the button once the eager lane has started. */
     setTimeout(() => {
       shuffling = false;
       shuffleBtn.classList.remove('is-spinning');
       shuffleBtn.disabled = false;
-    }, tiles.length * SHUFFLE_STAGGER_MS + 200);
+    }, Math.min(priorityTileCount(), tiles.length) * PRIORITY_STAGGER_MS + 220);
   }
 
   shuffleBtn.addEventListener('click', shuffle);
@@ -713,7 +759,9 @@
 
   /* Same (slug, seed) per tile, but rerun loads with the new URL params. */
   function reloadInPlace() {
-    tiles.forEach((t, i) => {
+    if (mountObserver) mountObserver.disconnect();
+
+    tiles.forEach((t) => {
       const url = embedUrl(t.slug, t.seed);
       t.token++;
       t.url = url;
@@ -722,8 +770,9 @@
       t.el.href = url;
       t.el.classList.remove('is-ready', 'is-failed');
       if (t.iframe) { t.iframe.remove(); t.iframe = null; }
-      setTimeout(() => mountTile(t), i * 30);
     });
+
+    setupMountObserver();
   }
 
   /* Segmented controls: Color (palette) and Style. */
