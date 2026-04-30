@@ -9,7 +9,8 @@
      name     — display name
      svg      — curated inline SVG mark using currentColor (themeable)
      tagline  — one-line summary for landing section subheader
-     blurb    — paragraph of prose for landing section (plain text)
+     blurb    — prose for landing section. Plain text; blank-line ("\n\n")
+                  separators split into multiple <p> elements at render time.
      defaultSeed — seed used by the landing's embedded preview
      credit   — inspiration citation (historical logo). Fields:
                   work      — original logo title/company
@@ -42,7 +43,7 @@
       slug: 'line-warp',
       name: 'Line Warp',
       tagline: 'Horizontal lines displaced by a letter heightmap.',
-      blurb: 'Francesco Burcini\'s Solfer mark (1978) drew an "S" by stacking horizontal lines and lifting each one upward where the letter passed through, giving a flat field a sense of relief. The tool keeps that move and opens it up to any letter and font. Set the line count and how far each line displaces, and the character emerges from the field like a contour map.',
+      blurb: 'Francesco Burcini\'s Solfer mark (1978) drew an "S" by stacking horizontal lines and lifting each one upward as if the letter were a topology, giving a flat field a sense of relief.\n\nThe tool takes that idea and opens it up to any letter and font. Set the line count and how far each line displaces, and the character emerges from the field like a contour map.',
       defaultSeed: '42',
       variants: [
         'v=1',
@@ -64,7 +65,7 @@
       slug: 'brutalist-letters',
       name: 'Brutalist Letters',
       tagline: 'Cut letters out of solid blocks with right-angle paths.',
-      blurb: 'Klaus Grötzinger and Peter Riefenstahl built the Hans-Joachim Gericke architectural mark (1966) by cutting a single right-angle path through a rounded square — letter and frame as one object, no curves, no optical corrections. The tool ports that construction to any character. Corner radius, cut width, and cut depth are the only knobs that change the silhouette, and the output reads more like a pictogram than a letter.',
+      blurb: 'Klaus Grötzinger and Peter Riefenstahl built the Hans-Joachim Gericke architectural mark (1966) by cutting a single right-angle path through a rounded square — letter and frame as one solid, architectural object. The output reads more like a pictogram than a letter.\n\nThe tool uses that concept on any character with only corner radius, cut width, and cut depth as the parameters to change the silhouette.',
       defaultSeed: '7',
       variants: [
         'v=1&cr=16&dp=147&lw=18&pa=12',
@@ -87,7 +88,7 @@
       slug: 'interlocking-circles',
       name: 'Interlocking Circles',
       tagline: 'Overlapping rings with controlled break-and-weave.',
-      blurb: 'Koichi Watanabe\'s Ota Dental Clinic mark (1974) is three outlined circles in a tight triangle, woven where they cross. The tool extends that idea to anywhere from two to fifteen rings, with ring, grid, or line layouts. A weave toggle decides which ring sits on top at every intersection, and any circle can be dragged to a new position directly on the canvas.',
+      blurb: 'Koichi Watanabe\'s Ota Dental Clinic mark (1974) is two outlined rings in a tight coupling, woven where they cross.\n\nThe tool extends that idea to anything from two to fifteen rings, with ring, grid, or line layouts. A weave toggle controls which ring sits on top at every intersection.\n\nPro tip: any circle can be dragged to a new position directly on the canvas.',
       defaultSeed: '3',
       variants: [
         'v=1&bg=060d2d&br=0&fg=ebeaea&gp=0.5&ly=ring&n=7&r=75&ro=91&sp=91&sw=30',
@@ -109,7 +110,7 @@
       slug: 'parallel-letters',
       name: 'Parallel Letters',
       tagline: 'Letters drawn with vertical strip cuts through a solid fill.',
-      blurb: 'John B. Castle\'s Five G mark (1966) is the letter G stroked as a series of nested concentric outlines, each ring slightly inset from the last. The tool generalizes that to any character — the letter is built from parallel ring-strokes rather than a solid fill, with knobs for count, thickness, and gap. Sharp, round, or beveled joins change the entire feel.',
+      blurb: 'John B. Castle\'s Five G mark (1966) is the letter G drawn as a series of nested concentric outlines, each ring slightly inset from the last.\n\nThe tool generalizes to any character with knobs for count, thickness, and gap. Sharp, round, or beveled joins change the entire feel.',
       defaultSeed: '12',
       variants: [
         'v=1&bg=673c40&f=Arial%20Black&g=1&jo=miter&n=7&sz=400&t=10',
@@ -132,7 +133,7 @@
       slug: 'shape-tiles',
       name: 'Shape Tiles',
       tagline: 'A single shape tiled across a grid at deterministic rotations.',
-      blurb: 'Vance Jonson\'s Dayton Hudson mark (1970s) is a grid of circles and half-circles — a single primitive repeated and rotated to form a coherent block. The tool keeps that constraint. Pick one shape (circle, ring, petal, diamond, cross), then set size, gap, and rotation. Two or three knobs is usually all it takes to land on something distinctive.',
+      blurb: 'Vance Jonson\'s Dayton Hudson mark (1970s) is a grid of circles and half-circles — a single primitive repeated, cut, and rotated to form a coherent block.\n\nThe tool lets you pick one shape (circle, ring, petal, diamond, cross), then set size, gap, and rotation. Two or three tweaks is usually all it takes to land on something distinctive.',
       defaultSeed: '5',
       variants: [
         'v=1&g=120',
@@ -154,7 +155,7 @@
       slug: 'sliced-shapes',
       name: 'Sliced Shapes',
       tagline: 'Primitives cut by negative arcs to reveal the shape behind.',
-      blurb: 'Ippo Miyamoto and Tadashi Ishikawa drew the Fujisankei Kokukusha mark (1978) as a row of circles cut by curves — the negative-space slice doing as much work as the solid behind it. The tool generalizes the cut: arc, sine, straight, S-curve, or zigzag, applied to any of several primitives, repeated up to twelve times across the canvas. Curvature, slice width, and spacing decide whether the row reads as one shape or many.',
+      blurb: 'Ippo Miyamoto and Tadashi Ishikawa drew the Fujisankei Kokukusha mark (1978) as a row of circles cut by curves — the negative-space slice giving motion and depth to a simple pattern.\n\nThe tool expands on the cut: arc, sine, straight, S-curve, or zigzag, applied to any of several base shapes, repeated up to twelve times across the canvas. Curvature, slice width, and spacing determine whether the row reads as one shape or many.',
       defaultSeed: '9',
       variants: [
         'v=1&as=0&ba=6&bg=f4f3f1&c=1&cu=0.24&cv=s-curve&fc=2d04ba&gw=18.4&lc=2d04ba&sd=1kxombe&so=0.08&sp=176&sz=117',
@@ -177,7 +178,7 @@
       slug: 'slash-mark',
       name: 'Slash Mark',
       tagline: 'A containing shape striped with diagonals that match the ground.',
-      blurb: 'Kazumasa Nagai\'s Minami-nihon broadcasting mark (1983) is a solid circle striped with diagonal cuts that match the background, so the slashes read as part of the field rather than lines on top. The tool reproduces that and parameterizes it. Pick a containing shape (circle, square, hexagon, or triangle), then set angle, count, line width, taper, and spread. A checkbox locks the line color to the ground.',
+      blurb: 'Kazumasa Nagai\'s Minami-nihon broadcasting mark (1983) is a solid circle striped with diagonal cuts that match the background, so the slashes read as part of the field rather than lines on top.\n\nThe tool parameterizes this idea. Pick a base shape (circle, square, hexagon, or triangle), then set angle, count, line width, taper, and spread.',
       defaultSeed: '11',
       variants: [
         'v=1&a=135&bg=e3e3e3&ex=-1&lc=e3e3e3&n=9&sh=square&sp=26&tp=100',
@@ -199,7 +200,7 @@
       slug: 'polygon-rosette',
       name: 'Polygon Rosette',
       tagline: 'Concentric polygons connected by diagonals — geometric rosettes.',
-      blurb: 'The Grace jewelers mark (1982) nests an octagon inside an octagon and connects corresponding vertices, producing an internal star pattern that reads as a faceted gem. The tool generalizes that to anywhere from three to twenty-four sides. A skip parameter controls which vertices connect — every value is a different rosette, and rotation rolls through them continuously.',
+      blurb: 'The Grace jewelers mark (1982) nests an octagon inside an octagon and connects corresponding vertices, producing an internal star pattern that reads as a faceted gem.\n\nThe tool generalizes that to anything from three to twenty-four sides. A skip parameter controls which vertices connect — every value is a different rosette, and rotation rolls through them continuously.',
       defaultSeed: '6',
       variants: [
         'v=1&bg=ff4242&sw=18',
@@ -224,7 +225,7 @@
       slug: 'echo-stripes',
       name: 'Echo Stripes',
       tagline: 'Nested letters of horizontal stripes that thin out as they grow.',
-      blurb: 'Tim Larsen\'s Bather Belrose Boje mark (1981) renders a letter as a core of thick stripes ringed by larger ghost copies in progressively thinner bars. The trick is alignment: every stripe sits at the same y, just thicker where the inner letter covers it. The tool exposes growth ratio, thinning rate, and number of echoes so the cascade can hold or extend as far as you want.',
+      blurb: 'Tim Larsen\'s Bather Belrose Boje mark (1981) renders a letter as a core of thick stripes ringed by larger ghost copies in progressively thinner bars. The trick is alignment: every stripe sits at the same y, just thicker where the inner letter covers it.\n\nThe tool exposes growth ratio, thinning rate, and number of "echoes" so the cascade can hold or extend as far as you want.',
       defaultSeed: '1',
       variants: [
         'v=1&an=c&bg=1328c9&fg=ffffff&gr=1.47&rt=0.39&tk=90',
@@ -246,7 +247,7 @@
       slug: 'dot-grid',
       name: 'Dot Grid',
       tagline: 'Letters bitmap-rendered from a rounded-rectangle dot grid.',
-      blurb: 'Morton Goldsholl\'s LaSalle Steel mark (1962) renders a letter as a bitmap — a coarse grid of cells, each on or off depending on whether the letterform passes through it. The tool follows the same recipe and adds dot shape (circle, square, diamond, hexagon, triangle), grid density, and a corner radius. Pull the radius up and the cells read as dots; leave it at zero and they read as pixel blocks.',
+      blurb: 'Morton Goldsholl\'s LaSalle Steel mark (1962) renders a letter as a bitmap — a coarse grid of cells, each on or off depending on whether the letterform passes through it.\n\nThe tool follows the same approach and adds dot shape (circle, square, diamond, hexagon, triangle), grid density, and a corner radius. Pull the radius up and the cells read as dots; leave it at zero and they read as pixel blocks.',
       defaultSeed: '42',
       variants: [
         'v=1&bd=fcffe5&bg=000000&bs=circle&ch=X&dc=000000&ds=100&ff=Georgia&gc=22&ls=105&mg=7&oy=5&th=5',
