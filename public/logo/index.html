@@ -167,12 +167,27 @@
   article .section-link {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
     font-size: 13px;
     font-weight: 600;
     color: var(--fg);
     text-decoration: none;
     letter-spacing: -0.005em;
+  }
+  .section-link__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--fg);
+  }
+  .section-link__icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
   }
   /* Subtle hover: title text underlines, arrow brightens + nudges. */
   .section-link__text {
@@ -182,14 +197,14 @@
   article .section-link:hover .section-link__text {
     border-bottom-color: var(--fg);
   }
-  article .section-link svg {
+  article .section-link .section-link__arrow {
     width: 11px;
     height: 11px;
     flex-shrink: 0;
     color: var(--fg-faded);
     transition: color 0.15s ease, transform 0.15s ease;
   }
-  article .section-link:hover svg {
+  article .section-link:hover .section-link__arrow {
     color: var(--fg);
     transform: translate(1px, -1px);
   }
@@ -701,8 +716,9 @@
     link.rel = 'noopener';
     const safeName = t.name.replace(/[<&>]/g, (c) => ({'<':'&lt;','&':'&amp;','>':'&gt;'}[c]));
     link.innerHTML =
+      '<span class="section-link__icon" aria-hidden="true">' + t.svg + '</span>' +
       '<span class="section-link__text">' + safeName + '</span>' +
-      '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h6v6"/><path d="M9 3L3 9"/></svg>';
+      '<svg class="section-link__arrow" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h6v6"/><path d="M9 3L3 9"/></svg>';
 
     h2.appendChild(link);
     head.appendChild(h2);

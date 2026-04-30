@@ -1,13 +1,13 @@
 /* ═══════════════════════════════════════════════════════════════
    LOGO TOOLS — Canonical Registry
-   Single source of truth for the 9 tools. Consumed by:
+   Single source of truth for the 10 tools. Consumed by:
      - /logo/index.html         (landing doc sections)
      - /shared/tools-nav.js     (inter-tool dropdown switcher)
 
    Each entry:
      slug     — URL segment; path is /logo/<slug>/
      name     — display name
-     svg      — inline SVG mark using currentColor (themeable)
+     svg      — curated inline SVG mark using currentColor (themeable)
      tagline  — one-line summary for landing section subheader
      blurb    — paragraph of prose for landing section (plain text)
      defaultSeed — seed used by the landing's embedded preview
@@ -23,6 +23,19 @@
 
 (function () {
   'use strict';
+
+  const ICONS = {
+    lineWarp: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14H68"/><path d="M12 23H25C34 23 34 16 40 16C46 16 46 23 55 23H68"/><path d="M12 32H23C32 32 32 20 40 20C48 20 48 32 57 32H68"/><path d="M12 41H24C31 41 32 32 39 32C47 32 48 41 56 41H68"/><path d="M12 50H24C31 50 32 43 40 43C48 43 49 50 56 50H68"/><path d="M12 59H27C33 59 34 54 40 54C46 54 47 59 53 59H68"/><path d="M12 68H68"/></svg>',
+    brutalistLetters: '<svg viewBox="0 0 80 80" fill="currentColor"><path d="M22 14H58C62.5 14 66 17.5 66 22V31H53V26H29V54H53V47H41V35H66V58C66 62.5 62.5 66 58 66H22C17.5 66 14 62.5 14 58V22C14 17.5 17.5 14 22 14Z"/></svg>',
+    interlockingCircles: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"><circle cx="40" cy="25" r="14"/><circle cx="27" cy="37" r="14"/><circle cx="53" cy="37" r="14"/><circle cx="32" cy="54" r="14"/><circle cx="48" cy="54" r="14"/></svg>',
+    parallelLetters: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-linecap="square"><path stroke-width="4" d="M18 66V14H30L50 49V14H62V66H50L30 31V66Z"/><path stroke-width="3" d="M25 59V23H32L48 51V23H55V59H48L32 31V59Z"/><path stroke-width="2.2" d="M32 52V32L47 57H62"/></svg>',
+    shapeTiles: '<svg viewBox="0 0 80 80" fill="currentColor"><circle cx="40" cy="40" r="11"/><path d="M28 28a12 12 0 0 1 24 0Z"/><path d="M28 52a12 12 0 0 0 24 0Z"/><path d="M28 28a12 12 0 0 0 0 24Z"/><path d="M52 28a12 12 0 0 1 0 24Z"/><path d="M14 14H29A15 15 0 0 1 14 29Z"/><path d="M66 14V29A15 15 0 0 1 51 14Z"/><path d="M66 66H51A15 15 0 0 1 66 51Z"/><path d="M14 66V51A15 15 0 0 1 29 66Z"/></svg>',
+    slicedShapes: '<svg viewBox="0 0 80 80" fill="currentColor" fill-rule="evenodd"><path d="M20 28a12 12 0 1 1 0 24a12 12 0 1 1 0-24M8 43L10 48L32 37L30 32Z"/><path d="M40 28a12 12 0 1 1 0 24a12 12 0 1 1 0-24M28 39L28 44L52 42L52 37Z"/><path d="M60 28a12 12 0 1 1 0 24a12 12 0 1 1 0-24M48 37L50 32L72 43L70 48Z"/></svg>',
+    slashMark: '<svg viewBox="0 0 80 80" fill="currentColor" fill-rule="evenodd"><path d="M40 14a26 26 0 1 1 0 52a26 26 0 1 1 0-52M11 40L16 45L45 16L40 11ZM16 56L22 62L62 22L56 16ZM36 69L42 73L73 42L68 36Z"/></svg>',
+    polygonRosette: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="miter" stroke-linecap="square"><path d="M40 11L69 40L40 69L11 40Z"/><path d="M40 11L31 51L11 40"/><path d="M40 11L49 29L69 40"/><path d="M31 51L40 69L49 29"/><path d="M31 51L69 40"/></svg>',
+    echoStripes: '<svg viewBox="0 0 80 80" fill="currentColor"><rect x="18" y="13" width="34" height="4"/><rect x="18" y="20" width="42" height="4"/><rect x="18" y="27" width="46" height="4"/><rect x="18" y="34" width="39" height="4"/><rect x="18" y="41" width="31" height="4"/><rect x="18" y="48" width="43" height="4"/><rect x="18" y="55" width="47" height="4"/><rect x="18" y="62" width="40" height="4"/><rect x="18" y="69" width="30" height="4"/></svg>',
+    dotGrid: '<svg viewBox="0 0 80 80" fill="currentColor"><circle cx="18" cy="16" r="4"/><circle cx="30" cy="16" r="4"/><circle cx="42" cy="16" r="4"/><circle cx="18" cy="28" r="4"/><circle cx="30" cy="28" r="4"/><circle cx="42" cy="28" r="4"/><circle cx="18" cy="40" r="4"/><circle cx="30" cy="40" r="4"/><circle cx="42" cy="40" r="4"/><circle cx="18" cy="52" r="4"/><circle cx="30" cy="52" r="4"/><circle cx="42" cy="52" r="4"/><circle cx="18" cy="64" r="4"/><circle cx="30" cy="64" r="4"/><circle cx="42" cy="64" r="4"/><circle cx="54" cy="64" r="4"/><circle cx="66" cy="64" r="4"/></svg>'
+  };
 
   const TOOLS = [
     {
@@ -45,7 +58,7 @@
         year: 1978,
         url: 'https://logobook.com/logo/solfer/'
       },
-      svg: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="0.8"><line x1="0" y1="8" x2="80" y2="8"/><line x1="0" y1="16" x2="30" y2="16"/><path d="M30 16 Q40 6 50 16"/><line x1="50" y1="16" x2="80" y2="16"/><line x1="0" y1="24" x2="25" y2="24"/><path d="M25 24 Q40 8 55 24"/><line x1="55" y1="24" x2="80" y2="24"/><line x1="0" y1="32" x2="22" y2="32"/><path d="M22 32 Q40 10 58 32"/><line x1="58" y1="32" x2="80" y2="32"/><line x1="0" y1="40" x2="20" y2="40"/><path d="M20 40 Q40 12 60 40"/><line x1="60" y1="40" x2="80" y2="40"/><line x1="0" y1="48" x2="22" y2="48"/><path d="M22 48 Q40 14 58 48"/><line x1="58" y1="48" x2="80" y2="48"/><line x1="0" y1="56" x2="25" y2="56"/><path d="M25 56 Q40 20 55 56"/><line x1="55" y1="56" x2="80" y2="56"/><line x1="0" y1="64" x2="30" y2="64"/><path d="M30 64 Q40 40 50 64"/><line x1="50" y1="64" x2="80" y2="64"/><line x1="0" y1="72" x2="80" y2="72"/></svg>'
+      svg: ICONS.lineWarp
     },
     {
       slug: 'brutalist-letters',
@@ -68,7 +81,7 @@
         year: 1966,
         url: 'https://logobook.com/logo/hans-joachim-gericke/'
       },
-      svg: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="0.8"><line x1="20" y1="64" x2="40" y2="16"/><line x1="40" y1="16" x2="60" y2="64"/><line x1="28" y1="46" x2="52" y2="46"/><rect x="12" y="12" width="56" height="56" rx="2" stroke-dasharray="2 3" opacity="0.3"/></svg>'
+      svg: ICONS.brutalistLetters
     },
     {
       slug: 'interlocking-circles',
@@ -90,7 +103,7 @@
         year: 1974,
         url: 'https://logobook.com/logo/ota-dental-clinic/'
       },
-      svg: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="32" cy="32" r="18"/><circle cx="48" cy="32" r="18"/><circle cx="40" cy="46" r="18"/></svg>'
+      svg: ICONS.interlockingCircles
     },
     {
       slug: 'parallel-letters',
@@ -113,7 +126,7 @@
         year: 1966,
         url: 'https://logobook.com/logo/five-g/'
       },
-      svg: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="0.8"><line x1="16" y1="20" x2="16" y2="60"/><line x1="24" y1="20" x2="24" y2="60"/><line x1="32" y1="20" x2="32" y2="60"/><line x1="40" y1="20" x2="40" y2="60"/><line x1="48" y1="20" x2="48" y2="60"/><line x1="56" y1="20" x2="56" y2="60"/><line x1="64" y1="20" x2="64" y2="60"/><path d="M20 24 L40 24 L40 40 L24 40 L24 56 L44 56" stroke-width="3" opacity="0.4"/></svg>'
+      svg: ICONS.parallelLetters
     },
     {
       slug: 'shape-tiles',
@@ -135,7 +148,7 @@
         year: '1970s',
         url: 'https://logobook.com/logo/dayton-hudson-corporation/'
       },
-      svg: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="40" cy="40" r="13"/><path d="M53 8 A13 13 0 0 1 27 8"/><path d="M27 72 A13 13 0 0 1 53 72"/><path d="M8 27 A13 13 0 0 1 8 53"/><path d="M72 53 A13 13 0 0 1 72 27"/><path d="M8 21 A13 13 0 0 1 21 8"/><path d="M59 8 A13 13 0 0 1 72 21"/><path d="M72 59 A13 13 0 0 1 59 72"/><path d="M21 72 A13 13 0 0 1 8 59"/></svg>'
+      svg: ICONS.shapeTiles
     },
     {
       slug: 'sliced-shapes',
@@ -158,7 +171,7 @@
         year: 1978,
         url: 'https://logobook.com/logo/fujisankei-kokukusha/'
       },
-      svg: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M10,32 A12,12,0,1,1,34,32"/><path d="M10,32 A12,12,0,1,0,34,32"/><path d="M30,34 A12,12,0,1,1,54,28"/><path d="M30,28 A12,12,0,1,0,54,34"/><path d="M48,36 A12,12,0,1,1,72,26"/><path d="M48,26 A12,12,0,1,0,72,36"/></svg>'
+      svg: ICONS.slicedShapes
     },
     {
       slug: 'slash-mark',
@@ -180,7 +193,7 @@
         year: 1983,
         url: 'https://logobook.com/logo/minami-nihon/'
       },
-      svg: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="40" cy="40" r="26"/><line x1="30" y1="58" x2="38" y2="22"/><line x1="34" y1="58" x2="42" y2="22"/><line x1="38" y1="58" x2="46" y2="22"/><line x1="42" y1="58" x2="50" y2="22"/><line x1="46" y1="56" x2="52" y2="26"/></svg>'
+      svg: ICONS.slashMark
     },
     {
       slug: 'polygon-rosette',
@@ -205,7 +218,7 @@
         year: 1982,
         url: 'https://logobook.com/logo/grace/'
       },
-      svg: '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="0.7"><polygon points="40,12 55.6,17 64.7,30 64.7,50 55.6,63 40,68 24.4,63 15.3,50 15.3,30 24.4,17"/><polygon points="40,24 49.4,27.6 53.8,36 53.8,44 49.4,52.4 40,56 30.6,52.4 26.2,44 26.2,36 30.6,27.6"/><line x1="40" y1="12" x2="53.8" y2="36"/><line x1="55.6" y1="17" x2="53.8" y2="44"/><line x1="64.7" y1="30" x2="49.4" y2="52.4"/><line x1="64.7" y1="50" x2="40" y2="56"/><line x1="55.6" y1="63" x2="30.6" y2="52.4"/><line x1="40" y1="68" x2="26.2" y2="44"/><line x1="24.4" y1="63" x2="26.2" y2="36"/><line x1="15.3" y1="50" x2="30.6" y2="27.6"/><line x1="15.3" y1="30" x2="40" y2="24"/><line x1="24.4" y1="17" x2="49.4" y2="27.6"/></svg>'
+      svg: ICONS.polygonRosette
     },
     {
       slug: 'echo-stripes',
@@ -227,7 +240,7 @@
         year: 1981,
         url: null
       },
-      svg: '<svg viewBox="0 0 80 80" fill="currentColor" stroke="none"><rect x="22" y="16" width="36" height="6"/><rect x="22" y="28" width="36" height="6"/><rect x="22" y="40" width="36" height="6"/><rect x="22" y="52" width="36" height="6"/><rect x="22" y="64" width="36" height="6"/><rect x="10" y="18" width="60" height="2"/><rect x="10" y="30" width="60" height="2"/><rect x="10" y="42" width="60" height="2"/><rect x="10" y="54" width="60" height="2"/><rect x="10" y="66" width="60" height="2"/></svg>'
+      svg: ICONS.echoStripes
     },
     {
       slug: 'dot-grid',
@@ -249,7 +262,7 @@
         year: 1962,
         url: null
       },
-      svg: '<svg viewBox="0 0 80 80" fill="currentColor" stroke="none"><circle cx="20" cy="20" r="5"/><circle cx="20" cy="34" r="5"/><circle cx="20" cy="48" r="5"/><circle cx="20" cy="62" r="5"/><circle cx="34" cy="62" r="5"/><circle cx="48" cy="62" r="5"/><circle cx="62" cy="62" r="5"/></svg>'
+      svg: ICONS.dotGrid
     }
   ];
 

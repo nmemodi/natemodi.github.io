@@ -712,6 +712,7 @@ input[type="number"]:focus {
 
 .tool-switcher {
   position: relative;
+  z-index: 100;
 }
 
 .tool-switcher__button {
