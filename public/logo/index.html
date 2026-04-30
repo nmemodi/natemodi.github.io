@@ -540,6 +540,12 @@
   .entry:hover .entry__arrow { color: var(--fg); }
   .entry[data-dir="right"]:hover .entry__arrow { transform: translateX(2px); }
   .entry[data-dir="down"]:hover  .entry__arrow { transform: translateY(2px); }
+  .intro-arrow {
+    color: var(--fg-faded);
+    font-size: 13px;
+    line-height: 1;
+    margin-right: 0.4em;
+  }
 
   /* ── Debug panel (?debug=1) ── */
   .debug-panel {
@@ -615,13 +621,19 @@
         </div>
       </header>
 
-      <p class="lede">I love logos. AI is bad at logos. Most startups either overpay an agency for something generic or settle for something haphazard. Either way, the small but important opportunity to impress a potential customer gets wasted.</p>
+      <p class="lede">I love logos. AI is bad at logos.</p>
 
-      <p>Logo Lab is an open source collection of parametric tools for making something more distinctive. These tools can help more established startups come up with opinionated starting points, and more nascent ventures quickly get to a polished finished output.</p>
+      <p>So most startups either overpay an agency for something generic or settle for something haphazard. Either way, the small but important opportunity to impress a potential customer gets wasted.</p>
 
-      <p>Each tool is a study of a specific visual vocabulary from the modernist period (roughly 1950s–70s), borrowing its logic from a particular designer or studio, mostly from obscure and long forgotten ventures. Every tool turns the underlying concept into accessible parameters and curated presets.</p>
+      <p>Logo Lab is an open-source collection of parametric tools for making distinctive, timeless logos. These tools can help startups quickly get to a polished first logo, or, at minimum, some opinionated starting points.</p>
 
-      <p>Every output has a shareable URL, a PNG/SVG export, and the ability to embed it via iframe. Every embed is a live preview — click any tool name to open it with full controls and exports.</p>
+      <p>Each tool is a study of a specific visual framework from the modernist period (roughly 1950s–70s), borrowing its logic from a particular designer or studio, mostly for obscure and long-forgotten ventures.</p>
+
+      <p><span class="intro-arrow" aria-hidden="true">↳</span>Every tool turns the underlying concept into accessible parameters and curated presets.</p>
+
+      <p><span class="intro-arrow" aria-hidden="true">↳</span>Every output has a shareable URL, a PNG/SVG export, and the ability to embed it via iframe.</p>
+
+      <p><span class="intro-arrow" aria-hidden="true">↳</span>Every embed is a live preview — click any tool name to open it with full controls and exports.</p>
 
       <div class="entry-points">
         <a class="entry" data-dir="right" href="/logo/explorer/">
