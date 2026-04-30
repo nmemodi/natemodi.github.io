@@ -487,34 +487,27 @@
   .article-foot a { color: var(--fg-faded); text-decoration: none; border-bottom: 1px dotted var(--fg-quiet); }
   .article-foot a:hover { color: var(--fg); border-bottom-color: var(--fg); }
 
-  /* Stacked entry points — Explorer first, then Individual tools.
-     Iconoir binoculars + tools lead each row. A small direction glyph
-     follows the title (→ for Explorer, ↓ for Individual tools) so the
-     destination is unambiguous: cross-link vs in-page jump. */
+  /* Stacked entry points — icon + title + direction glyph, single row each.
+     Explorer (→ cross-link) on top, Individual tools (↓ in-page jump) below. */
   .entry-points {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 18px;
-    margin: 28px 0 32px;
+    gap: 12px;
+    margin: 24px 0 28px;
   }
   .entry {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 14px;
+    display: inline-flex;
     align-items: center;
+    gap: 12px;
     color: var(--fg);
     text-decoration: none;
+    width: fit-content;
   }
   .entry__icon {
     width: 22px;
     height: 22px;
     flex-shrink: 0;
     color: var(--fg);
-  }
-  .entry__title-row {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
   }
   .entry__title {
     font-size: 14px;
@@ -533,12 +526,6 @@
   .entry:hover .entry__arrow { color: var(--fg); }
   .entry[data-dir="right"]:hover .entry__arrow { transform: translateX(2px); }
   .entry[data-dir="down"]:hover  .entry__arrow { transform: translateY(2px); }
-  .entry__sub {
-    font-size: 13px;
-    color: var(--fg-muted);
-    line-height: 1.45;
-    margin-top: 4px;
-  }
 
   /* ── Debug panel (?debug=1) ── */
   .debug-panel {
@@ -627,13 +614,8 @@
             <path d="M18 20C20.2091 20 22 18.2091 22 16C22 13.7909 20.2091 12 18 12C15.7909 12 14 13.7909 14 16C14 18.2091 15.7909 20 18 20Z"/>
             <path d="M12 16C13.1046 16 14 15.1046 14 14C14 12.8954 13.1046 12 12 12C10.8954 12 10 12.8954 10 14C10 15.1046 10.8954 16 12 16Z"/>
           </svg>
-          <div>
-            <div class="entry__title-row">
-              <span class="entry__title">Explorer</span>
-              <span class="entry__arrow" aria-hidden="true">→</span>
-            </div>
-            <div class="entry__sub">A shuffled gallery of hand-picked outputs from every tool.</div>
-          </div>
+          <span class="entry__title">Explorer</span>
+          <span class="entry__arrow" aria-hidden="true">→</span>
         </a>
         <a class="entry" data-dir="down" href="#sections">
           <svg class="entry__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -642,13 +624,8 @@
             <path d="M6.73267 5.90381L4.61135 6.61092L2.49003 3.07539L3.90424 1.66117L7.43978 3.78249L6.73267 5.90381ZM6.73267 5.90381L9.5629 8.73404"/>
             <path d="M10.0503 10.6066C9.2065 8.45359 9.37147 5.62861 11.111 3.8891C12.8505 2.14958 16.0607 1.76778 17.8285 2.82844L14.7878 5.86911L14.5052 8.98015L17.6162 8.69754L20.6569 5.65686C21.7176 7.42463 21.3358 10.6349 19.5963 12.3744C17.8567 14.1139 15.0318 14.2789 12.8788 13.435"/>
           </svg>
-          <div>
-            <div class="entry__title-row">
-              <span class="entry__title">Individual tools</span>
-              <span class="entry__arrow" aria-hidden="true">↓</span>
-            </div>
-            <div class="entry__sub">One section per tool with controls, presets, and exports.</div>
-          </div>
+          <span class="entry__title">Individual tools</span>
+          <span class="entry__arrow" aria-hidden="true">↓</span>
         </a>
       </div>
 
