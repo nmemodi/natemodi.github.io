@@ -358,26 +358,14 @@ function distanceTransform(mask, w, h) {
   return dist;
 }
 
-// Project the 2D heightmap onto a 1D per-column max. Lines and the
-// background between them get lifted together by the same value at each x,
-// so the whole stripe pattern stays bonded instead of every line warping
-// independently of its neighbors.
-function buildColumnHeights(data) {
-  const colMax = new Float32Array(SIZE);
-  for (let x = 0; x < SIZE; x++) {
-    let m = 0;
-    for (let y = 0; y < SIZE; y++) {
-      const v = (255 - data[(y * SIZE + x) * 4]) / 255;
-      if (v > m) m = v;
-    }
-    colMax[x] = m;
-  }
-  return colMax;
-}
-
-function colHeight(colMax, x) {
+// Sample the 2D heightmap. Each line samples at its centerline (baseY)
+// rather than separate top/bottom edges, so the line shifts as a rigid
+// band instead of distorting in thickness — keeping the letter shape
+// visible in the stripe pattern while bonding each band's edges together.
+function getHeight(data, x, y) {
   const ix = Math.max(0, Math.min(SIZE - 1, Math.round(x)));
-  return colMax[ix];
+  const iy = Math.max(0, Math.min(SIZE - 1, Math.round(y)));
+  return (255 - data[(iy * SIZE + ix) * 4]) / 255;
 }
 
 // --- Rounded rect helper ---
@@ -399,7 +387,6 @@ function roundedRectPath(ctx, x, y, w, h, r) {
 function render() {
   const p = getParams();
   const dispData = createDisplacementMap(p);
-  const colMax = buildColumnHeights(dispData);
 
   const bg = p.invert ? p.fgColor : p.bgColor;
   const fg = p.invert ? p.bgColor : p.fgColor;
@@ -438,23 +425,23 @@ function render() {
     const topY = baseY - bandH / 2;
     const botY = baseY + bandH / 2;
 
-    const dL = colHeight(colMax, xStart) * p.maxDisp;
-    const dR = colHeight(colMax, xEnd) * p.maxDisp;
-    const dLr = colHeight(colMax, xStart + r) * p.maxDisp;
-    const dRr = colHeight(colMax, xEnd - r) * p.maxDisp;
+    const dL = getHeight(dispData, xStart, baseY) * p.maxDisp;
+    const dR = getHeight(dispData, xEnd, baseY) * p.maxDisp;
+    const dLr = getHeight(dispData, xStart + r, baseY) * p.maxDisp;
+    const dRr = getHeight(dispData, xEnd - r, baseY) * p.maxDisp;
 
     ctx.beginPath();
     ctx.moveTo(xStart, topY - dL + r);
     ctx.quadraticCurveTo(xStart, topY - dL, xStart + r, topY - dLr);
     for (let x = xStart + r + step; x <= xEnd - r; x += step) {
-      ctx.lineTo(x, topY - colHeight(colMax, x) * p.maxDisp);
+      ctx.lineTo(x, topY - getHeight(dispData, x, baseY) * p.maxDisp);
     }
     ctx.lineTo(xEnd - r, topY - dRr);
     ctx.quadraticCurveTo(xEnd, topY - dR, xEnd, topY - dR + r);
     ctx.lineTo(xEnd, botY - dR - r);
     ctx.quadraticCurveTo(xEnd, botY - dR, xEnd - r, botY - dRr);
     for (let x = xEnd - r - step; x >= xStart + r; x -= step) {
-      ctx.lineTo(x, botY - colHeight(colMax, x) * p.maxDisp);
+      ctx.lineTo(x, botY - getHeight(dispData, x, baseY) * p.maxDisp);
     }
     ctx.lineTo(xStart + r, botY - dLr);
     ctx.quadraticCurveTo(xStart, botY - dL, xStart, botY - dL - r);
@@ -464,7 +451,7 @@ function render() {
 }
 
 // --- SVG export ---
-function generateSVGPaths(p, colMax) {
+function generateSVGPaths(p, dispData) {
   const paths = [];
   const totalH = SIZE - 2 * p.margin;
   const spacing = totalH / p.numLines;
@@ -481,22 +468,22 @@ function generateSVGPaths(p, colMax) {
     const topY = baseY - bandH / 2;
     const botY = baseY + bandH / 2;
 
-    const dL = colHeight(colMax, xStart) * p.maxDisp;
-    const dR = colHeight(colMax, xEnd) * p.maxDisp;
-    const dLr = colHeight(colMax, xStart + r) * p.maxDisp;
-    const dRr = colHeight(colMax, xEnd - r) * p.maxDisp;
+    const dL = getHeight(dispData, xStart, baseY) * p.maxDisp;
+    const dR = getHeight(dispData, xEnd, baseY) * p.maxDisp;
+    const dLr = getHeight(dispData, xStart + r, baseY) * p.maxDisp;
+    const dRr = getHeight(dispData, xEnd - r, baseY) * p.maxDisp;
 
     let d = `M ${f(xStart)} ${f(topY - dL + r)}`;
     d += ` Q ${f(xStart)} ${f(topY - dL)} ${f(xStart + r)} ${f(topY - dLr)}`;
     for (let x = xStart + r + step; x <= xEnd - r; x += step) {
-      d += ` L ${x} ${f(topY - colHeight(colMax, x) * p.maxDisp)}`;
+      d += ` L ${x} ${f(topY - getHeight(dispData, x, baseY) * p.maxDisp)}`;
     }
     d += ` L ${f(xEnd - r)} ${f(topY - dRr)}`;
     d += ` Q ${f(xEnd)} ${f(topY - dR)} ${f(xEnd)} ${f(topY - dR + r)}`;
     d += ` L ${f(xEnd)} ${f(botY - dR - r)}`;
     d += ` Q ${f(xEnd)} ${f(botY - dR)} ${f(xEnd - r)} ${f(botY - dRr)}`;
     for (let x = xEnd - r - step; x >= xStart + r; x -= step) {
-      d += ` L ${x} ${f(botY - colHeight(colMax, x) * p.maxDisp)}`;
+      d += ` L ${x} ${f(botY - getHeight(dispData, x, baseY) * p.maxDisp)}`;
     }
     d += ` L ${f(xStart + r)} ${f(botY - dLr)}`;
     d += ` Q ${f(xStart)} ${f(botY - dL)} ${f(xStart)} ${f(botY - dL - r)}`;
@@ -510,8 +497,7 @@ function generateSVGPaths(p, colMax) {
 function generateSVG() {
   const p = getParams();
   const dispData = createDisplacementMap(p);
-  const colMax = buildColumnHeights(dispData);
-  const paths = generateSVGPaths(p, colMax);
+  const paths = generateSVGPaths(p, dispData);
   const fg = p.invert ? p.bgColor : p.fgColor;
   const bg = p.invert ? p.fgColor : p.bgColor;
 
@@ -528,7 +514,6 @@ function generateSVG() {
 function renderToCanvas(exportCtx, width, height, opts) {
   const p = getParams();
   const dispData = createDisplacementMap(p);
-  const colMax = buildColumnHeights(dispData);
   const scale = width / SIZE;
 
   const bg = opts && opts.transparent ? 'transparent' : (p.invert ? p.fgColor : p.bgColor);
@@ -564,23 +549,23 @@ function renderToCanvas(exportCtx, width, height, opts) {
     const topY = baseY - bandH / 2;
     const botY = baseY + bandH / 2;
 
-    const dL = colHeight(colMax, xStart) * p.maxDisp;
-    const dR = colHeight(colMax, xEnd) * p.maxDisp;
-    const dLr = colHeight(colMax, xStart + r) * p.maxDisp;
-    const dRr = colHeight(colMax, xEnd - r) * p.maxDisp;
+    const dL = getHeight(dispData, xStart, baseY) * p.maxDisp;
+    const dR = getHeight(dispData, xEnd, baseY) * p.maxDisp;
+    const dLr = getHeight(dispData, xStart + r, baseY) * p.maxDisp;
+    const dRr = getHeight(dispData, xEnd - r, baseY) * p.maxDisp;
 
     exportCtx.beginPath();
     exportCtx.moveTo(xStart, topY - dL + r);
     exportCtx.quadraticCurveTo(xStart, topY - dL, xStart + r, topY - dLr);
     for (let x = xStart + r + step; x <= xEnd - r; x += step) {
-      exportCtx.lineTo(x, topY - colHeight(colMax, x) * p.maxDisp);
+      exportCtx.lineTo(x, topY - getHeight(dispData, x, baseY) * p.maxDisp);
     }
     exportCtx.lineTo(xEnd - r, topY - dRr);
     exportCtx.quadraticCurveTo(xEnd, topY - dR, xEnd, topY - dR + r);
     exportCtx.lineTo(xEnd, botY - dR - r);
     exportCtx.quadraticCurveTo(xEnd, botY - dR, xEnd - r, botY - dRr);
     for (let x = xEnd - r - step; x >= xStart + r; x -= step) {
-      exportCtx.lineTo(x, botY - colHeight(colMax, x) * p.maxDisp);
+      exportCtx.lineTo(x, botY - getHeight(dispData, x, baseY) * p.maxDisp);
     }
     exportCtx.lineTo(xStart + r, botY - dLr);
     exportCtx.quadraticCurveTo(xStart, botY - dL, xStart, botY - dL - r);
