@@ -16,6 +16,7 @@ interface Props {
 
 const { frontmatter, rawContent } = Astro.props;
 const formattedDate = new Date(frontmatter.date).toLocaleDateString('en-US', {
+  timeZone: 'UTC',
   year: 'numeric',
   month: 'long',
   day: 'numeric',
