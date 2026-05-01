@@ -6,6 +6,10 @@ interface Props {
     title: string;
     date: string;
     description?: string;
+    heroImage?: string;
+    heroAlt?: string;
+    heroCredit?: string;
+    heroCreditUrl?: string;
   };
   rawContent?: () => string;
 }
@@ -27,10 +31,26 @@ if (rawContent) {
 }
 ---
 
-<BaseLayout title={frontmatter.title} description={frontmatter.description}>
+<BaseLayout title={frontmatter.title} description={frontmatter.description} image={frontmatter.heroImage}>
   <article>
     <h1>{frontmatter.title}</h1>
     <p class="meta">{formattedDate}{readingTime && ` · ${readingTime}`}</p>
+    {frontmatter.heroImage && (
+      <figure class="post-hero">
+        <img src={frontmatter.heroImage} alt={frontmatter.heroAlt || ''} />
+        {frontmatter.heroCredit && (
+          <figcaption>
+            {frontmatter.heroCreditUrl ? (
+              <a href={frontmatter.heroCreditUrl} target="_blank" rel="noopener noreferrer">
+                {frontmatter.heroCredit}
+              </a>
+            ) : (
+              frontmatter.heroCredit
+            )}
+          </figcaption>
+        )}
+      </figure>
+    )}
     <slot />
   </article>
 </BaseLayout>
