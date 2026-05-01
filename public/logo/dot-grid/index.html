@@ -602,7 +602,7 @@ const schema = {
 schema.dc = {
   ...schema.dc,
   post(state, rng, opts) {
-    /* Mode lottery + template injection */
+    /* Mode selection with occasional curated compositions. */
     if (rng() < 0.25) {
       const TEMPLATES = [
         /* Variant-2-style with gc bumped to 11 so dots stay distinguishable. */

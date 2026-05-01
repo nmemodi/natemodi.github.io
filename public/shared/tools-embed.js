@@ -7,8 +7,7 @@
         the permalink pill, remix chip, and switcher dropdown.
      2. Blocks the global keyboard hotkeys from tools-nav.js
         that would otherwise cycle tools / jump via 1-9, so
-        keypresses inside the iframe don't hijack the parent
-        page's scroll or navigate the iframe away.
+        keypresses inside the iframe stay scoped to the embed.
      3. Reports its scrollHeight to the parent via postMessage
         and keeps the parent in sync when the canvas or controls
         resize (ResizeObserver).

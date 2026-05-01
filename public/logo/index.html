@@ -556,8 +556,8 @@
   /* Header entry points — prominent enough to act as primary product paths. */
   .entry-points {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
+    grid-template-columns: 1fr;
+    gap: 4px;
     width: 100%;
     margin: 0;
     padding: 5px;
@@ -567,19 +567,20 @@
   }
   .entry {
     display: grid;
-    grid-template-columns: 26px minmax(0, 1fr) 18px;
+    grid-template-columns: 24px minmax(0, 1fr) 18px;
     align-items: center;
-    gap: 10px;
+    gap: 9px;
     color: var(--fg);
     text-decoration: none;
     width: 100%;
     min-width: 0;
-    padding: 8px 10px;
+    min-height: 40px;
+    padding: 8px 9px;
     border-radius: 6px;
   }
   .entry__icon {
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
     flex-shrink: 0;
     color: var(--fg);
   }
@@ -683,18 +684,9 @@
       margin-bottom: 20px;
     }
     .entry-points {
-      grid-template-columns: 1fr;
       width: 100%;
       max-width: none;
-      gap: 4px;
       margin-top: 0;
-    }
-    .entry__icon {
-      width: 26px;
-      height: 26px;
-    }
-    .entry__arrow {
-      font-size: 18px;
     }
     .showcase-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }

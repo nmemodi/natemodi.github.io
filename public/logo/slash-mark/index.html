@@ -545,7 +545,7 @@
                 return Math.max(0, Math.min(180, base + jitter));
               },
             },
-            /* lw randomize is throwaway — coupled to sz in post (lw = sz * 0.10-0.22). */
+            /* Line width is finalized after size so the mark keeps a stable rhythm. */
             lw: WEIGHTED_INT_RANGE(1, 40, 5, { rmin: 8, rmax: 40 }),
             /* tp forced to 100 (every variant uses max taper). */
             tp: { ...INT_RANGE(0, 100, 95), randomize: () => 100 },
@@ -583,13 +583,11 @@
             mb: { ...BOOL(true), randomize: (rng) => rng() < 0.9 },
         };
 
-        /* Coupling lw to sz must happen in post AFTER sz is finalized, then
-           ~30% of shuffles get snapped to one of the 4 homepage-variant
-           templates. We hijack lw.post for both. */
+        /* Finalize line width after size, with occasional curated compositions. */
         pschema.lw = {
           ...pschema.lw,
           post(state, rng) {
-            // Template injection
+            // Curated compositions
             if (rng() < 0.30) {
               const TEMPLATES = [
                 /* Diagonal \ slash through a square */
