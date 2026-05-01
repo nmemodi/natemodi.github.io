@@ -208,6 +208,116 @@
     margin-top: 10px;
   }
 
+  .intro {
+    margin-top: 18px;
+  }
+  .intro .lede {
+    margin-top: 0;
+    font-weight: 500;
+  }
+  .context-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 12px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--fg-muted);
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.3;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+  .context-toggle:hover,
+  .context-toggle:focus-visible {
+    color: var(--fg);
+  }
+  .context-toggle:focus-visible {
+    outline: none;
+  }
+  .context-toggle__glyph {
+    position: relative;
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    color: currentColor;
+  }
+  .context-toggle__glyph::before,
+  .context-toggle__glyph::after {
+    content: '';
+    position: absolute;
+    background: currentColor;
+    border-radius: 999px;
+    transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease;
+  }
+  .context-toggle__glyph::before {
+    top: 7px;
+    left: 2px;
+    width: 11px;
+    height: 1px;
+    transform-origin: left center;
+  }
+  .context-toggle__glyph::after {
+    top: 2px;
+    left: 7px;
+    width: 1px;
+    height: 11px;
+    transform-origin: center;
+  }
+  .context-toggle:hover .context-toggle__glyph::before {
+    transform: scaleX(1.25);
+  }
+  .context-toggle__label {
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s ease;
+  }
+  .context-toggle:hover .context-toggle__label {
+    border-bottom-color: currentColor;
+  }
+  .intro-more {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      grid-template-rows 0.42s cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 0.2s ease,
+      transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .intro-more__inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+  .intro-more__copy {
+    margin-top: 14px;
+  }
+  .intro-more__copy p:first-child {
+    margin-top: 0;
+  }
+  .intro.is-open .intro-more {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .intro.is-open .context-toggle__glyph {
+    animation: context-unfurl 0.34s ease;
+  }
+  .intro.is-open .context-toggle__glyph::before {
+    transform: scaleX(1.35);
+  }
+  .intro.is-open .context-toggle__glyph::after {
+    opacity: 0;
+    transform: rotate(90deg) scaleY(0.2);
+  }
+
+  @keyframes context-unfurl {
+    0% { transform: translateY(0); }
+    48% { transform: translateY(2px); }
+    100% { transform: translateY(0); }
+  }
+
   .sep {
     height: 1px;
     background: var(--border);
@@ -378,6 +488,15 @@
 
   @media (prefers-reduced-motion: reduce) {
     .embed-skeleton { animation: none; background: var(--code-bg); }
+    .context-toggle,
+    .context-toggle__glyph,
+    .context-toggle__glyph::before,
+    .context-toggle__glyph::after,
+    .context-toggle__label,
+    .intro-more {
+      animation: none;
+      transition: none;
+    }
   }
 
   /* Fallback (iframe failed or timed out) */
@@ -751,21 +870,36 @@
         </div>
       </div>
 
-      <p class="lede">I love logos. More startups are launching than ever, but too many still start with a mark that feels generic or disposable.</p>
+      <div class="intro" id="logo-lab-intro">
+        <p class="lede">Logo Lab is an open-source collection of parametric tools for making strong minimalist logos from real design systems.</p>
 
-      <p>So most startups either overpay an agency for something generic or settle for something haphazard. Either way, the small but important opportunity to impress a potential customer gets wasted.</p>
+        <button class="context-toggle" type="button" aria-expanded="false" aria-controls="logo-lab-intro-more" data-intro-toggle>
+          <span class="context-toggle__glyph" aria-hidden="true"></span>
+          <span class="context-toggle__label">More context</span>
+        </button>
 
-      <p>Logo Lab is an open-source collection of parametric tools for making a credible first mark from real design systems.</p>
+        <div class="intro-more" id="logo-lab-intro-more" aria-hidden="true">
+          <div class="intro-more__inner">
+            <div class="intro-more__copy">
+              <p>I love logos. More startups are launching than ever, but too many still start with marks that feel generic or disposable.</p>
 
-      <p>Each tool encodes the logic of a specific modernist framework (roughly 1950s–70s), borrowed from a particular designer or studio, so the output sits inside a coherent visual language from the very first click.</p>
+              <p>The result is familiar: teams either overpay an agency for something generic or settle for something haphazard. Either way, the small but important opportunity to impress a potential customer gets wasted.</p>
 
-      <p><span class="intro-arrow" aria-hidden="true">↳</span>Every tool turns the underlying concept into accessible parameters and curated presets.</p>
+              <p>That is the gap this project is aimed at: making early marks feel considered, quick enough for exploration, but grounded in systems that already know how to hold together.</p>
 
-      <p><span class="intro-arrow" aria-hidden="true">↳</span>Every output has a shareable URL, a PNG/SVG export, and the ability to embed it via iframe.</p>
+              <p>The tools start from specific modernist frameworks (roughly 1950s–70s), borrowed from particular designers or studios, so each output begins inside a coherent visual language instead of a blank canvas.</p>
 
-      <p><span class="intro-arrow" aria-hidden="true">↳</span>Every embed is a live preview — click any tool name to open it with full controls and exports.</p>
+              <p><span class="intro-arrow" aria-hidden="true">↳</span>Every tool turns the underlying concept into accessible parameters and curated presets.</p>
 
-      <p>Keyboard: press <strong>J</strong>/<strong>K</strong> to move between sections, <strong>1–9</strong> to jump, <strong>T</strong> to return to the top.</p>
+              <p><span class="intro-arrow" aria-hidden="true">↳</span>Every output has a shareable URL, a PNG/SVG export, and the ability to embed it via iframe.</p>
+
+              <p><span class="intro-arrow" aria-hidden="true">↳</span>Every embed is a live preview — click any tool name to open it with full controls and exports.</p>
+
+              <p>Keyboard: press <strong>J</strong>/<strong>K</strong> to move between sections, <strong>1–9</strong> to jump, <strong>T</strong> to return to the top.</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div id="sections"></div>
 
@@ -783,6 +917,19 @@
 <script>
 (function () {
   'use strict';
+
+  const intro = document.getElementById('logo-lab-intro');
+  const introToggle = intro ? intro.querySelector('[data-intro-toggle]') : null;
+  const introMore = document.getElementById('logo-lab-intro-more');
+  if (intro && introToggle && introMore) {
+    const introToggleLabel = introToggle.querySelector('.context-toggle__label');
+    introToggle.addEventListener('click', () => {
+      const isOpen = intro.classList.toggle('is-open');
+      introToggle.setAttribute('aria-expanded', String(isOpen));
+      introMore.setAttribute('aria-hidden', String(!isOpen));
+      if (introToggleLabel) introToggleLabel.textContent = isOpen ? 'Less context' : 'More context';
+    });
+  }
 
   if (!window.LogoTools) {
     console.warn('[logo-lab] landing: registry missing');
