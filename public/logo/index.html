@@ -108,7 +108,6 @@
   .aside-title {
     display: flex;
     align-items: center;
-    gap: 5px;
     font-size: 16px;
     line-height: 1.15;
     font-weight: 600;
@@ -116,6 +115,18 @@
     margin-bottom: 14px;
     letter-spacing: -0.01em;
     transform: translateX(-4px);
+  }
+  .aside-title__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .aside-title__link:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 3px;
+    border-radius: 4px;
   }
   .aside-title__mark {
     width: 26px;
@@ -694,12 +705,14 @@
 </head>
 <body>
 
-<div class="page">
+<div class="page" id="top">
 
   <aside>
     <h1 class="aside-title">
-      <img class="aside-title__mark" src="/logo/logo-lab-mark.svg" alt="">
-      <span>Logo Lab</span>
+      <a class="aside-title__link" href="#top" aria-label="Logo Lab top">
+        <img class="aside-title__mark" src="/logo/logo-lab-mark.svg" alt="">
+        <span>Logo Lab</span>
+      </a>
     </h1>
     <ul id="toc"></ul>
     <a class="aside-home" href="/">
