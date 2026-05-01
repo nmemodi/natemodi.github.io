@@ -216,10 +216,11 @@
     font-weight: 500;
   }
   .context-toggle {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    margin-top: 15px;
+    gap: 0;
+    margin-top: 18px;
     padding: 0;
     border: 0;
     background: none;
@@ -241,9 +242,12 @@
     outline: none;
   }
   .context-toggle__glyph {
-    position: relative;
+    position: absolute;
+    top: 50%;
+    left: -20px;
     width: 15px;
     height: 15px;
+    margin-top: -7.5px;
     flex-shrink: 0;
     color: currentColor;
   }
@@ -268,9 +272,6 @@
     width: 1px;
     height: 11px;
     transform-origin: center;
-  }
-  .context-toggle:hover .context-toggle__glyph::before {
-    transform: scaleX(1.25);
   }
   .context-toggle__label {
     border-bottom: 1px solid transparent;
@@ -304,21 +305,9 @@
     opacity: 1;
     transform: translateY(0);
   }
-  .intro.is-open .context-toggle__glyph {
-    animation: context-unfurl 0.34s ease;
-  }
-  .intro.is-open .context-toggle__glyph::before {
-    transform: scaleX(1.35);
-  }
   .intro.is-open .context-toggle__glyph::after {
     opacity: 0;
     transform: rotate(90deg) scaleY(0.2);
-  }
-
-  @keyframes context-unfurl {
-    0% { transform: translateY(0); }
-    48% { transform: translateY(2px); }
-    100% { transform: translateY(0); }
   }
 
   .sep {
@@ -327,7 +316,7 @@
     margin: 48px 0 28px;
   }
   .intro:not(.is-open) + #sections > .sep:first-child {
-    margin-top: 30px;
+    margin-top: 28px;
   }
 
   /* Section header — title link sits as a heading; tagline below. */
