@@ -624,24 +624,6 @@
     margin-right: 0.4em;
   }
 
-  /* ── Debug panel (?debug=1) ── */
-  .debug-panel {
-    position: fixed;
-    bottom: 16px;
-    right: 16px;
-    background: #111;
-    color: #eee;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    padding: 10px 14px;
-    border-radius: 6px;
-    line-height: 1.5;
-    opacity: 0.92;
-    z-index: 99;
-    max-width: 260px;
-  }
-  .debug-panel strong { color: #fff; }
-
   /* ── Mobile ── */
   @media (max-width: 768px) {
     .page {
@@ -731,8 +713,8 @@
           <a class="showcase-tile" href="#line-warp" aria-label="Jump to Line Warp">
             <img src="/logo/showcase/line-warp-purple.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
           </a>
-          <a class="showcase-tile" href="#parallel-letters" aria-label="Jump to Parallel Letters">
-            <img src="/logo/showcase/parallel-letters-lime.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
+          <a class="showcase-tile" href="#shape-tiles" aria-label="Jump to Shape Tiles">
+            <img src="/logo/showcase/shape-tiles-green.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
           </a>
           <a class="showcase-tile" href="#echo-stripes" aria-label="Jump to Echo Stripes">
             <img src="/logo/showcase/echo-stripes-magenta.png" alt="" width="1600" height="1600" loading="eager" decoding="async">
@@ -769,7 +751,7 @@
         </div>
       </div>
 
-      <p class="lede">I love logos. AI is bad at logos. More startups are launching than ever, mostly because of AI — but AI still can&rsquo;t make them a logo worth keeping.</p>
+      <p class="lede">I love logos. More startups are launching than ever, but too many still start with a mark that feels generic or disposable.</p>
 
       <p>So most startups either overpay an agency for something generic or settle for something haphazard. Either way, the small but important opportunity to impress a potential customer gets wasted.</p>
 
@@ -1257,28 +1239,6 @@
     }
   });
 
-  /* ── Debug panel (?debug=1) ── */
-  if (location.search.includes('debug=1')) {
-    const panel = document.createElement('div');
-    panel.className = 'debug-panel';
-    document.body.appendChild(panel);
-
-    function renderPanel() {
-      const cur = currentSlugInView();
-      const mounted = mountedSlugs.size;
-      const ready = document.querySelectorAll('.embed-wrap.is-ready').length;
-      const failed = document.querySelectorAll('.embed-wrap.is-failed').length;
-      panel.innerHTML =
-        '<strong>logo-lab</strong><br>' +
-        'active: ' + cur + '<br>' +
-        'mounted: ' + mounted + ' / ' + TOOLS.length + '<br>' +
-        'ready: ' + ready + ' · failed: ' + failed;
-    }
-    renderPanel();
-    window.addEventListener('scroll', renderPanel, { passive: true });
-    window.addEventListener('message', renderPanel);
-    setInterval(renderPanel, 500);
-  }
 })();
 </script>
 
