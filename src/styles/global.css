@@ -77,6 +77,7 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1.5rem;
 }
 
 /* Logo */
@@ -103,6 +104,7 @@ nav {
   display: flex;
   gap: 1.5rem;
   align-items: center;
+  min-width: 0;
 }
 
 nav a {
@@ -188,9 +190,12 @@ nav a.active {
 
 /* Status */
 .status {
+  flex: 0 0 auto;
   font-size: 0.8rem;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .status-char,
@@ -447,6 +452,43 @@ article blockquote {
   .post-toc a.toc-link {
     padding: 4px 0;
     white-space: nowrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .top-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 1.25rem 1rem;
+  }
+
+  nav {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  nav a,
+  .nav-dropdown > span {
+    font-size: 0.875rem;
+  }
+
+  .nav-logo {
+    width: 44px;
+    height: 44px;
+    top: 0;
+  }
+
+  .nav-dropdown-menu {
+    left: auto;
+    right: 0;
+  }
+
+  .status {
+    align-self: flex-end;
+    font-size: 0.75rem;
+    text-align: right;
   }
 }
 
