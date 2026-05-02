@@ -10,6 +10,9 @@ interface Props {
     heroAlt?: string;
     heroCredit?: string;
     heroCreditUrl?: string;
+    heroTitle?: string;
+    heroArtist?: string;
+    heroYear?: string;
     heroAspectRatio?: string;
     toc?: Array<{
       label: string;
@@ -38,6 +41,10 @@ if (rawContent) {
 
 const tocItems = Array.isArray(frontmatter.toc) ? frontmatter.toc : [];
 const heroStyle = frontmatter.heroAspectRatio ? `--post-hero-aspect: ${frontmatter.heroAspectRatio};` : undefined;
+const hasHeroCredit = Boolean(frontmatter.heroTitle || frontmatter.heroCredit);
+const heroCreditSuffix = frontmatter.heroTitle
+  ? `${frontmatter.heroArtist ? `, ${frontmatter.heroArtist}` : ''}${frontmatter.heroYear ? ` (${frontmatter.heroYear})` : ''}`
+  : '';
 ---
 
 <BaseLayout
@@ -64,12 +71,14 @@ const heroStyle = frontmatter.heroAspectRatio ? `--post-hero-aspect: ${frontmatt
       {frontmatter.heroImage && (
         <figure class="post-hero" style={heroStyle}>
           <img src={frontmatter.heroImage} alt={frontmatter.heroAlt || ''} />
-          {frontmatter.heroCredit && (
+          {hasHeroCredit && (
             <figcaption>
               {frontmatter.heroCreditUrl ? (
                 <a href={frontmatter.heroCreditUrl} target="_blank" rel="noopener noreferrer">
-                  {frontmatter.heroCredit}
+                  {frontmatter.heroTitle ? <><cite>{frontmatter.heroTitle}</cite>{heroCreditSuffix}</> : frontmatter.heroCredit}
                 </a>
+              ) : frontmatter.heroTitle ? (
+                <><cite>{frontmatter.heroTitle}</cite>{heroCreditSuffix}</>
               ) : (
                 frontmatter.heroCredit
               )}
