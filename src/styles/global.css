@@ -274,6 +274,62 @@ footer .footer-name {
 }
 
 /* Blog post */
+main.post-main--with-toc {
+  max-width: 960px;
+}
+
+.post-shell {
+  display: block;
+}
+
+.post-shell--with-toc {
+  display: flex;
+  gap: 64px;
+  align-items: flex-start;
+}
+
+.post-shell--with-toc article {
+  flex: 1;
+  min-width: 0;
+  max-width: var(--max-width);
+}
+
+.post-toc {
+  position: sticky;
+  top: 64px;
+  width: 150px;
+  flex: 0 0 150px;
+  margin-top: 1rem;
+  font-size: 13px;
+}
+
+.post-toc ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.post-toc a.toc-link {
+  display: block;
+  padding: 2px 0;
+  color: rgba(17, 17, 17, 0.4);
+  font-size: 13px;
+  line-height: 1.4;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.post-toc a.toc-link:hover,
+.post-toc a.toc-link.is-active {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.post-toc a.toc-link.is-active {
+  font-weight: 500;
+}
+
 article {
   margin-top: 1rem;
 }
@@ -295,7 +351,7 @@ article .post-hero {
 article .post-hero img {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: var(--post-hero-aspect, 16 / 9);
   object-fit: cover;
   border-radius: 6px;
   border: 1px solid var(--color-border);
@@ -347,9 +403,56 @@ article blockquote {
 }
 
 /* Responsive */
+@media (max-width: 840px) {
+  main.post-main--with-toc {
+    max-width: var(--max-width);
+  }
+
+  .post-shell--with-toc {
+    display: block;
+  }
+
+  .post-toc {
+    position: static;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+    overflow: hidden;
+  }
+
+  .post-toc ul {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 12px;
+    margin-right: -1.5rem;
+    padding: 0 4rem 0.25rem 0;
+    overflow-x: auto;
+    scroll-padding-inline: 0 4rem;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 72px), rgba(0, 0, 0, 0));
+    mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 72px), rgba(0, 0, 0, 0));
+  }
+
+  .post-toc ul::-webkit-scrollbar {
+    display: none;
+  }
+
+  .post-toc a.toc-link {
+    padding: 4px 0;
+    white-space: nowrap;
+  }
+}
+
 @media (max-width: 480px) {
   main {
     padding: 2rem 1rem;
+  }
+
+  .post-toc ul {
+    margin-right: -1rem;
   }
 
   h1 {

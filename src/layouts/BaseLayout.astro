@@ -5,12 +5,14 @@ interface Props {
   title: string;
   description?: string;
   image?: string;
+  mainClass?: string;
 }
 
 const {
   title,
   description = 'Nate Modi — Building at the frontier of consumer behavior and emerging technology.',
   image,
+  mainClass,
 } = Astro.props;
 const currentPath = Astro.url.pathname;
 const canonicalURL = new URL(currentPath, 'https://natemodi.com');
@@ -148,7 +150,7 @@ const imageURL = image ? new URL(image, canonicalURL).href : undefined;
       setInterval(updateStatus, 60000);
       getLocation();
     </script>
-    <main>
+    <main class={mainClass}>
       <slot />
     </main>
     <footer>

@@ -10,6 +10,11 @@ interface Props {
     heroAlt?: string;
     heroCredit?: string;
     heroCreditUrl?: string;
+    heroAspectRatio?: string;
+    toc?: Array<{
+      label: string;
+      href: string;
+    }>;
   };
   rawContent?: () => string;
 }
@@ -30,28 +35,73 @@ if (rawContent) {
   const minutes = Math.ceil(words / 200);
   readingTime = `${minutes} min read`;
 }
+
+const tocItems = Array.isArray(frontmatter.toc) ? frontmatter.toc : [];
+const heroStyle = frontmatter.heroAspectRatio ? `--post-hero-aspect: ${frontmatter.heroAspectRatio};` : undefined;
 ---
 
-<BaseLayout title={frontmatter.title} description={frontmatter.description} image={frontmatter.heroImage}>
-  <article>
-    <h1>{frontmatter.title}</h1>
-    <p class="meta">{formattedDate}{readingTime && ` · ${readingTime}`}</p>
-    {frontmatter.heroImage && (
-      <figure class="post-hero">
-        <img src={frontmatter.heroImage} alt={frontmatter.heroAlt || ''} />
-        {frontmatter.heroCredit && (
-          <figcaption>
-            {frontmatter.heroCreditUrl ? (
-              <a href={frontmatter.heroCreditUrl} target="_blank" rel="noopener noreferrer">
-                {frontmatter.heroCredit}
-              </a>
-            ) : (
-              frontmatter.heroCredit
-            )}
-          </figcaption>
-        )}
-      </figure>
+<BaseLayout
+  title={frontmatter.title}
+  description={frontmatter.description}
+  image={frontmatter.heroImage}
+  mainClass={tocItems.length ? 'post-main post-main--with-toc' : 'post-main'}
+>
+  <div class={tocItems.length ? 'post-shell post-shell--with-toc' : 'post-shell'}>
+    {tocItems.length > 0 && (
+      <aside class="post-toc" aria-label="Sections">
+        <nav>
+          <ul>
+            {tocItems.map((item) => (
+              <li><a class="toc-link" href={item.href}>{item.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
     )}
-    <slot />
-  </article>
+    <article>
+      <h1>{frontmatter.title}</h1>
+      <p class="meta">{formattedDate}{readingTime && ` · ${readingTime}`}</p>
+      {frontmatter.heroImage && (
+        <figure class="post-hero" style={heroStyle}>
+          <img src={frontmatter.heroImage} alt={frontmatter.heroAlt || ''} />
+          {frontmatter.heroCredit && (
+            <figcaption>
+              {frontmatter.heroCreditUrl ? (
+                <a href={frontmatter.heroCreditUrl} target="_blank" rel="noopener noreferrer">
+                  {frontmatter.heroCredit}
+                </a>
+              ) : (
+                frontmatter.heroCredit
+              )}
+            </figcaption>
+          )}
+        </figure>
+      )}
+      <slot />
+    </article>
+  </div>
+  {tocItems.length > 0 && (
+    <script is:inline>
+      const tocLinks = Array.from(document.querySelectorAll('.post-toc .toc-link'));
+      const sections = tocLinks
+        .map((link) => document.getElementById(decodeURIComponent(link.getAttribute('href').slice(1))))
+        .filter(Boolean);
+
+      if ('IntersectionObserver' in window && sections.length) {
+        const visible = new Set();
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) visible.add(entry.target.id);
+            else visible.delete(entry.target.id);
+          });
+          const active = sections.find((section) => visible.has(section.id)) || sections[0];
+          tocLinks.forEach((link) => {
+            link.classList.toggle('is-active', link.hash === `#${active.id}`);
+          });
+        }, { rootMargin: '-35% 0px -55% 0px' });
+
+        sections.forEach((section) => observer.observe(section));
+      }
+    </script>
+  )}
 </BaseLayout>
