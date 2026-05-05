@@ -195,7 +195,7 @@ body {
   color: var(--color-text-primary);
 }
 
-/* ── Index link (mirrors the "Home" treatment on /logo/) ── */
+/* ── Logo Lab link (mirrors the "Home" treatment on /logo/) ── */
 .tool-index-link {
   display: inline-flex;
   align-items: center;

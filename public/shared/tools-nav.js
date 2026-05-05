@@ -45,7 +45,7 @@
       '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" ' +
         'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ' +
         'aria-hidden="true"><path d="M7.5 3L4.5 6L7.5 9"/></svg>' +
-      'Index';
+      'Logo Lab';
     sidebar.insertBefore(link, sidebar.firstChild);
   }
 
