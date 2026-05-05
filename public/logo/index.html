@@ -220,6 +220,12 @@
     margin-bottom: 16px;
   }
 
+  .hero-lede {
+    max-width: 520px;
+    margin: 3px 0 18px;
+    font-weight: 500;
+  }
+
   .showcase-wall {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -271,10 +277,6 @@
   .intro {
     margin-top: 18px;
   }
-  .intro .lede {
-    margin-top: 0;
-    font-weight: 500;
-  }
   .context-toggle {
     position: relative;
     display: inline-flex;
@@ -292,7 +294,7 @@
     transition: color 0.15s ease;
   }
   .intro.is-open .context-toggle {
-    margin-top: 19px;
+    margin-top: 0;
   }
   .context-toggle:hover,
   .context-toggle:focus-visible {
@@ -739,6 +741,10 @@
   .article-foot a { color: var(--fg-faded); text-decoration: none; border-bottom: 1px dotted var(--fg-quiet); }
   .article-foot a:hover { color: var(--fg); border-bottom-color: var(--fg); }
 
+  .mobile-home {
+    display: none;
+  }
+
   /* Header entry points — prominent enough to act as primary product paths. */
   .entry-points {
     display: grid;
@@ -817,9 +823,7 @@
     .aside-title { margin-bottom: 10px; }
     .aside-title__mark { width: 28px; }
     .aside-home {
-      margin-top: 12px;
-      padding-top: 0;
-      border-top: 0;
+      display: none;
     }
     aside ul {
       flex-direction: row;
@@ -849,12 +853,43 @@
     .hero-top {
       margin-bottom: 20px;
     }
+    .hero-lede {
+      max-width: none;
+      margin: 0 0 16px;
+    }
     .entry-points {
       width: 100%;
       max-width: none;
       margin-top: 0;
     }
     .showcase-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .mobile-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--fg-faded);
+      text-decoration: none;
+      font-size: 13px;
+      line-height: 1.4;
+      margin-top: 28px;
+      transition: color 0.15s ease;
+    }
+    .mobile-home:hover { color: var(--fg); }
+    .mobile-home:focus-visible {
+      outline: 2px solid var(--fg);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+    .mobile-home__arrow {
+      color: var(--fg-faded);
+      font-size: 12px;
+      line-height: 1;
+      transition: color 0.15s ease, transform 0.15s ease;
+    }
+    .mobile-home:hover .mobile-home__arrow {
+      color: var(--fg);
+      transform: translateX(-2px);
+    }
   }
 </style>
 </head>
@@ -883,6 +918,8 @@
   <main>
     <article>
       <div class="hero-top">
+        <p class="lede hero-lede">Logo Lab is an open-source collection of parametric tools for making strong minimalist logos from real design systems.</p>
+
         <div class="showcase-wall" aria-label="Selected Logo Lab outputs">
           <a class="showcase-tile" href="#polygon-rosette" aria-label="Jump to Polygon Rosette">
             <img src="/logo/showcase/polygon-rosette-dark.png" alt="" width="1600" height="1600" loading="eager" decoding="async" fetchpriority="high">
@@ -929,8 +966,6 @@
       </div>
 
       <div class="intro" id="logo-lab-intro">
-        <p class="lede">Logo Lab is an open-source collection of parametric tools for making strong minimalist logos from real design systems.</p>
-
         <button class="context-toggle" type="button" aria-expanded="false" aria-controls="logo-lab-intro-more" data-intro-toggle>
           <span class="context-toggle__glyph" aria-hidden="true"></span>
           <span class="context-toggle__label">More context</span>
@@ -972,6 +1007,11 @@
       <div class="article-foot">
         <p>Embed URLs follow <code>/logo/&lt;slug&gt;/#v=1&amp;seed=&lt;value&gt;</code> and stay stable across redesigns. Source on <a href="https://github.com/nmemodi/logo-lab" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
       </div>
+
+      <a class="mobile-home" href="/">
+        <span class="mobile-home__arrow" aria-hidden="true">←</span>
+        <span>Home</span>
+      </a>
     </article>
   </main>
 
