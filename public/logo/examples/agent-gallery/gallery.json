@@ -1,0 +1,1551 @@
+{
+  "version": 1,
+  "brand": {
+    "name": "VectorKit",
+    "category": "AI developer platform",
+    "audience": "Engineering teams building reliable agent workflows",
+    "attributes": [
+      "precise",
+      "technical",
+      "calm",
+      "modular",
+      "trustworthy"
+    ],
+    "colors": {
+      "background": "#ffffff",
+      "foreground": "#111111",
+      "accent": "#2563eb",
+      "preferred": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "forbidden": [
+        "generic AI sparkle gradients"
+      ]
+    },
+    "constraints": [
+      "must work in black and white",
+      "must read at favicon size",
+      "avoid mascots"
+    ]
+  },
+  "summary": "A sample Logo Lab gallery for VectorKit, an AI developer platform that needs a precise, modular, high-contrast identity system.",
+  "directions": [
+    {
+      "id": "signal-systems",
+      "name": "Signal Systems",
+      "description": "Linear and striped marks that suggest reliable signal, routing, and agent coordination.",
+      "conceptIds": [
+        "vectorkit-001",
+        "vectorkit-002",
+        "vectorkit-003",
+        "vectorkit-004",
+        "vectorkit-005",
+        "vectorkit-041",
+        "vectorkit-042",
+        "vectorkit-043",
+        "vectorkit-044",
+        "vectorkit-045"
+      ]
+    },
+    {
+      "id": "precise-geometry",
+      "name": "Precise Geometry",
+      "description": "Radial and interlocking systems with a technical, engineered character.",
+      "conceptIds": [
+        "vectorkit-011",
+        "vectorkit-012",
+        "vectorkit-013",
+        "vectorkit-014",
+        "vectorkit-015",
+        "vectorkit-036",
+        "vectorkit-037",
+        "vectorkit-038",
+        "vectorkit-039",
+        "vectorkit-040"
+      ]
+    },
+    {
+      "id": "platform-grid",
+      "name": "Platform Grid",
+      "description": "Modular grid marks that feel extensible, systematic, and product-native.",
+      "conceptIds": [
+        "vectorkit-021",
+        "vectorkit-022",
+        "vectorkit-023",
+        "vectorkit-024",
+        "vectorkit-025",
+        "vectorkit-046",
+        "vectorkit-047",
+        "vectorkit-048",
+        "vectorkit-049",
+        "vectorkit-050"
+      ]
+    },
+    {
+      "id": "bold-containers",
+      "name": "Bold Containers",
+      "description": "Contained abstract marks with high recognition and strong app-icon potential.",
+      "conceptIds": [
+        "vectorkit-026",
+        "vectorkit-027",
+        "vectorkit-028",
+        "vectorkit-029",
+        "vectorkit-030",
+        "vectorkit-031",
+        "vectorkit-032",
+        "vectorkit-033",
+        "vectorkit-034",
+        "vectorkit-035"
+      ]
+    },
+    {
+      "id": "letter-marks",
+      "name": "Letter Marks",
+      "description": "Initial-driven marks using V and K as compact product signatures.",
+      "conceptIds": [
+        "vectorkit-006",
+        "vectorkit-007",
+        "vectorkit-008",
+        "vectorkit-009",
+        "vectorkit-010",
+        "vectorkit-016",
+        "vectorkit-017",
+        "vectorkit-018",
+        "vectorkit-019",
+        "vectorkit-020"
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "id": "vectorkit-001",
+      "rank": 1,
+      "directionId": "signal-systems",
+      "sourceConceptId": "line-warp-0001",
+      "sourceUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ivros3y7",
+      "toolSlug": "line-warp",
+      "toolName": "Line Warp",
+      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ivros3y7&bg=111111&fg=ffffff",
+      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ivros3y7&bg=111111&fg=ffffff",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Line Warp creates a controlled signal motif that fits reliable agent infrastructure without falling into generic AI symbols.",
+      "bestFor": "agent orchestration, routing, and observability surfaces",
+      "tags": [
+        "signal-systems",
+        "letter",
+        "monogram",
+        "linear",
+        "topographic",
+        "systematic"
+      ],
+      "isRecommended": true,
+      "recommendationReason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+    },
+    {
+      "id": "vectorkit-002",
+      "rank": 2,
+      "directionId": "signal-systems",
+      "sourceConceptId": "line-warp-0002",
+      "sourceUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=crbebkmw",
+      "toolSlug": "line-warp",
+      "toolName": "Line Warp",
+      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=crbebkmw&bg=ffffff&fg=111111",
+      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=crbebkmw&bg=ffffff&fg=111111",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Line Warp creates a controlled signal motif that fits reliable agent infrastructure without falling into generic AI symbols.",
+      "bestFor": "agent orchestration, routing, and observability surfaces",
+      "tags": [
+        "signal-systems",
+        "letter",
+        "monogram",
+        "linear",
+        "topographic",
+        "systematic"
+      ],
+      "isRecommended": true,
+      "recommendationReason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+    },
+    {
+      "id": "vectorkit-003",
+      "rank": 3,
+      "directionId": "signal-systems",
+      "sourceConceptId": "line-warp-0003",
+      "sourceUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ipr1po3r",
+      "toolSlug": "line-warp",
+      "toolName": "Line Warp",
+      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ipr1po3r&bg=111111&fg=ffffff",
+      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ipr1po3r&bg=111111&fg=ffffff",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Line Warp creates a controlled signal motif that fits reliable agent infrastructure without falling into generic AI symbols.",
+      "bestFor": "agent orchestration, routing, and observability surfaces",
+      "tags": [
+        "signal-systems",
+        "letter",
+        "monogram",
+        "linear",
+        "topographic",
+        "systematic"
+      ],
+      "isRecommended": true,
+      "recommendationReason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+    },
+    {
+      "id": "vectorkit-004",
+      "rank": 4,
+      "directionId": "signal-systems",
+      "sourceConceptId": "line-warp-0004",
+      "sourceUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=wkhph6ea",
+      "toolSlug": "line-warp",
+      "toolName": "Line Warp",
+      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=wkhph6ea&bg=ffffff&fg=111111&lt=VK",
+      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=wkhph6ea&bg=ffffff&fg=111111&lt=VK",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "initial-customized",
+      "rationale": "Line Warp turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "bestFor": "agent orchestration, routing, and observability surfaces",
+      "tags": [
+        "signal-systems",
+        "letter",
+        "monogram",
+        "linear",
+        "topographic",
+        "systematic"
+      ],
+      "isRecommended": true,
+      "recommendationReason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+    },
+    {
+      "id": "vectorkit-005",
+      "rank": 5,
+      "directionId": "signal-systems",
+      "sourceConceptId": "line-warp-0005",
+      "sourceUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=9yl5uton",
+      "toolSlug": "line-warp",
+      "toolName": "Line Warp",
+      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=9yl5uton&bg=111111&fg=ffffff&lt=VK",
+      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=9yl5uton&bg=111111&fg=ffffff&lt=VK",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "initial-customized",
+      "rationale": "Line Warp turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "bestFor": "agent orchestration, routing, and observability surfaces",
+      "tags": [
+        "signal-systems",
+        "letter",
+        "monogram",
+        "linear",
+        "topographic",
+        "systematic"
+      ],
+      "isRecommended": true,
+      "recommendationReason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+    },
+    {
+      "id": "vectorkit-006",
+      "rank": 6,
+      "directionId": "letter-marks",
+      "sourceConceptId": "brutalist-letters-0001",
+      "sourceUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=mn88l8m3",
+      "toolSlug": "brutalist-letters",
+      "toolName": "Brutalist Letters",
+      "url": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=mn88l8m3&bg=ffffff&fg=111111",
+      "embedUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=mn88l8m3&bg=ffffff&fg=111111",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Brutalist Letters offers a bold high-contrast container that can read clearly as an app icon or favicon.",
+      "bestFor": "initial-led identities and social avatars",
+      "tags": [
+        "letter-marks",
+        "letter",
+        "monogram",
+        "solid",
+        "architectural",
+        "pictogram"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-007",
+      "rank": 7,
+      "directionId": "letter-marks",
+      "sourceConceptId": "brutalist-letters-0002",
+      "sourceUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=bax8un5k",
+      "toolSlug": "brutalist-letters",
+      "toolName": "Brutalist Letters",
+      "url": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=bax8un5k&bg=111111&fg=ffffff",
+      "embedUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=bax8un5k&bg=111111&fg=ffffff",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Brutalist Letters offers a bold high-contrast container that can read clearly as an app icon or favicon.",
+      "bestFor": "initial-led identities and social avatars",
+      "tags": [
+        "letter-marks",
+        "letter",
+        "monogram",
+        "solid",
+        "architectural",
+        "pictogram"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-008",
+      "rank": 8,
+      "directionId": "letter-marks",
+      "sourceConceptId": "brutalist-letters-0003",
+      "sourceUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=zogdz5g0",
+      "toolSlug": "brutalist-letters",
+      "toolName": "Brutalist Letters",
+      "url": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=zogdz5g0&bg=ffffff&fg=111111",
+      "embedUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=zogdz5g0&bg=ffffff&fg=111111",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Brutalist Letters offers a bold high-contrast container that can read clearly as an app icon or favicon.",
+      "bestFor": "initial-led identities and social avatars",
+      "tags": [
+        "letter-marks",
+        "letter",
+        "monogram",
+        "solid",
+        "architectural",
+        "pictogram"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-009",
+      "rank": 9,
+      "directionId": "letter-marks",
+      "sourceConceptId": "brutalist-letters-0004",
+      "sourceUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=qcl37gsd",
+      "toolSlug": "brutalist-letters",
+      "toolName": "Brutalist Letters",
+      "url": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=qcl37gsd&bg=111111&fg=ffffff&ch=V",
+      "embedUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=qcl37gsd&bg=111111&fg=ffffff&ch=V",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "initial-customized",
+      "rationale": "Brutalist Letters turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "bestFor": "initial-led identities and social avatars",
+      "tags": [
+        "letter-marks",
+        "letter",
+        "monogram",
+        "solid",
+        "architectural",
+        "pictogram"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-010",
+      "rank": 10,
+      "directionId": "letter-marks",
+      "sourceConceptId": "brutalist-letters-0005",
+      "sourceUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=aii6uji2",
+      "toolSlug": "brutalist-letters",
+      "toolName": "Brutalist Letters",
+      "url": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=aii6uji2&bg=ffffff&fg=111111&ch=V",
+      "embedUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=aii6uji2&bg=ffffff&fg=111111&ch=V",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "initial-customized",
+      "rationale": "Brutalist Letters turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "bestFor": "initial-led identities and social avatars",
+      "tags": [
+        "letter-marks",
+        "letter",
+        "monogram",
+        "solid",
+        "architectural",
+        "pictogram"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-011",
+      "rank": 11,
+      "directionId": "precise-geometry",
+      "sourceConceptId": "interlocking-circles-0001",
+      "sourceUrl": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=897jvg3d",
+      "toolSlug": "interlocking-circles",
+      "toolName": "Interlocking Circles",
+      "url": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=897jvg3d&bg=111111&fg=ffffff",
+      "embedUrl": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=897jvg3d&bg=111111&fg=ffffff",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Interlocking Circles gives the system a precise geometric presence with enough structure to hold up across product surfaces.",
+      "bestFor": "premium product marks and technical identity systems",
+      "tags": [
+        "precise-geometry",
+        "abstract",
+        "geometric",
+        "network",
+        "modular",
+        "woven"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-012",
+      "rank": 12,
+      "directionId": "precise-geometry",
+      "sourceConceptId": "interlocking-circles-0002",
+      "sourceUrl": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=n25bkba5",
+      "toolSlug": "interlocking-circles",
+      "toolName": "Interlocking Circles",
+      "url": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=n25bkba5&bg=ffffff&fg=111111",
+      "embedUrl": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=n25bkba5&bg=ffffff&fg=111111",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Interlocking Circles gives the system a precise geometric presence with enough structure to hold up across product surfaces.",
+      "bestFor": "premium product marks and technical identity systems",
+      "tags": [
+        "precise-geometry",
+        "abstract",
+        "geometric",
+        "network",
+        "modular",
+        "woven"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-013",
+      "rank": 13,
+      "directionId": "precise-geometry",
+      "sourceConceptId": "interlocking-circles-0003",
+      "sourceUrl": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=6lxfaeqb",
+      "toolSlug": "interlocking-circles",
+      "toolName": "Interlocking Circles",
+      "url": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=6lxfaeqb&bg=111111&fg=ffffff",
+      "embedUrl": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=6lxfaeqb&bg=111111&fg=ffffff",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Interlocking Circles gives the system a precise geometric presence with enough structure to hold up across product surfaces.",
+      "bestFor": "premium product marks and technical identity systems",
+      "tags": [
+        "precise-geometry",
+        "abstract",
+        "geometric",
+        "network",
+        "modular",
+        "woven"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-014",
+      "rank": 14,
+      "directionId": "precise-geometry",
+      "sourceConceptId": "interlocking-circles-0004",
+      "sourceUrl": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=4hszlgry",
+      "toolSlug": "interlocking-circles",
+      "toolName": "Interlocking Circles",
+      "url": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=4hszlgry&bg=ffffff&fg=111111",
+      "embedUrl": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=4hszlgry&bg=ffffff&fg=111111",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Interlocking Circles gives the system a precise geometric presence with enough structure to hold up across product surfaces.",
+      "bestFor": "premium product marks and technical identity systems",
+      "tags": [
+        "precise-geometry",
+        "abstract",
+        "geometric",
+        "network",
+        "modular",
+        "woven"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-015",
+      "rank": 15,
+      "directionId": "precise-geometry",
+      "sourceConceptId": "interlocking-circles-0005",
+      "sourceUrl": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=c1s5asl7",
+      "toolSlug": "interlocking-circles",
+      "toolName": "Interlocking Circles",
+      "url": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=c1s5asl7&bg=111111&fg=ffffff",
+      "embedUrl": "https://natemodi.com/logo/interlocking-circles/#v=1&r=1&seed=c1s5asl7&bg=111111&fg=ffffff",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "wildcard",
+      "rationale": "Interlocking Circles adds one controlled wildcard option while staying inside Logo Lab's high-contrast geometric vocabulary.",
+      "bestFor": "premium product marks and technical identity systems",
+      "tags": [
+        "precise-geometry",
+        "abstract",
+        "geometric",
+        "network",
+        "modular",
+        "woven"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-016",
+      "rank": 16,
+      "directionId": "letter-marks",
+      "sourceConceptId": "parallel-letters-0001",
+      "sourceUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=grhh375s",
+      "toolSlug": "parallel-letters",
+      "toolName": "Parallel Letters",
+      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=grhh375s&bg=ffffff&fg=111111",
+      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=grhh375s&bg=ffffff&fg=111111",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Parallel Letters offers a bold high-contrast container that can read clearly as an app icon or favicon.",
+      "bestFor": "initial-led identities and social avatars",
+      "tags": [
+        "letter-marks",
+        "letter",
+        "monogram",
+        "nested",
+        "linear",
+        "bold"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-017",
+      "rank": 17,
+      "directionId": "letter-marks",
+      "sourceConceptId": "parallel-letters-0002",
+      "sourceUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=2b9tkirr",
+      "toolSlug": "parallel-letters",
+      "toolName": "Parallel Letters",
+      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=2b9tkirr&bg=111111&fg=ffffff",
+      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=2b9tkirr&bg=111111&fg=ffffff",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Parallel Letters offers a bold high-contrast container that can read clearly as an app icon or favicon.",
+      "bestFor": "initial-led identities and social avatars",
+      "tags": [
+        "letter-marks",
+        "letter",
+        "monogram",
+        "nested",
+        "linear",
+        "bold"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-018",
+      "rank": 18,
+      "directionId": "letter-marks",
+      "sourceConceptId": "parallel-letters-0003",
+      "sourceUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=4q75y1wk",
+      "toolSlug": "parallel-letters",
+      "toolName": "Parallel Letters",
+      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=4q75y1wk&bg=ffffff&fg=111111",
+      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=4q75y1wk&bg=ffffff&fg=111111",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Parallel Letters offers a bold high-contrast container that can read clearly as an app icon or favicon.",
+      "bestFor": "initial-led identities and social avatars",
+      "tags": [
+        "letter-marks",
+        "letter",
+        "monogram",
+        "nested",
+        "linear",
+        "bold"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-019",
+      "rank": 19,
+      "directionId": "letter-marks",
+      "sourceConceptId": "parallel-letters-0004",
+      "sourceUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=f0q0fpvg",
+      "toolSlug": "parallel-letters",
+      "toolName": "Parallel Letters",
+      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=f0q0fpvg&bg=111111&fg=ffffff&ch=VK",
+      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=f0q0fpvg&bg=111111&fg=ffffff&ch=VK",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "initial-customized",
+      "rationale": "Parallel Letters turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "bestFor": "initial-led identities and social avatars",
+      "tags": [
+        "letter-marks",
+        "letter",
+        "monogram",
+        "nested",
+        "linear",
+        "bold"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-020",
+      "rank": 20,
+      "directionId": "letter-marks",
+      "sourceConceptId": "parallel-letters-0005",
+      "sourceUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=8kaz8y8k",
+      "toolSlug": "parallel-letters",
+      "toolName": "Parallel Letters",
+      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=8kaz8y8k&bg=ffffff&fg=111111&ch=VK",
+      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=8kaz8y8k&bg=ffffff&fg=111111&ch=VK",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "initial-customized",
+      "rationale": "Parallel Letters turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "bestFor": "initial-led identities and social avatars",
+      "tags": [
+        "letter-marks",
+        "letter",
+        "monogram",
+        "nested",
+        "linear",
+        "bold"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-021",
+      "rank": 21,
+      "directionId": "platform-grid",
+      "sourceConceptId": "shape-tiles-0001",
+      "sourceUrl": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=81e0mgqr",
+      "toolSlug": "shape-tiles",
+      "toolName": "Shape Tiles",
+      "url": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=81e0mgqr&bg=111111&fg=ffffff",
+      "embedUrl": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=81e0mgqr&bg=111111&fg=ffffff",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Shape Tiles emphasizes modularity and repeatability, useful for an extensible developer platform.",
+      "bestFor": "developer platforms, SDKs, and modular product suites",
+      "tags": [
+        "platform-grid",
+        "abstract",
+        "geometric",
+        "modular",
+        "grid",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-022",
+      "rank": 22,
+      "directionId": "platform-grid",
+      "sourceConceptId": "shape-tiles-0002",
+      "sourceUrl": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=hlmabdt5",
+      "toolSlug": "shape-tiles",
+      "toolName": "Shape Tiles",
+      "url": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=hlmabdt5&bg=ffffff&fg=111111",
+      "embedUrl": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=hlmabdt5&bg=ffffff&fg=111111",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Shape Tiles emphasizes modularity and repeatability, useful for an extensible developer platform.",
+      "bestFor": "developer platforms, SDKs, and modular product suites",
+      "tags": [
+        "platform-grid",
+        "abstract",
+        "geometric",
+        "modular",
+        "grid",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-023",
+      "rank": 23,
+      "directionId": "platform-grid",
+      "sourceConceptId": "shape-tiles-0003",
+      "sourceUrl": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=q8bgj7e4",
+      "toolSlug": "shape-tiles",
+      "toolName": "Shape Tiles",
+      "url": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=q8bgj7e4&bg=111111&fg=ffffff",
+      "embedUrl": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=q8bgj7e4&bg=111111&fg=ffffff",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Shape Tiles emphasizes modularity and repeatability, useful for an extensible developer platform.",
+      "bestFor": "developer platforms, SDKs, and modular product suites",
+      "tags": [
+        "platform-grid",
+        "abstract",
+        "geometric",
+        "modular",
+        "grid",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-024",
+      "rank": 24,
+      "directionId": "platform-grid",
+      "sourceConceptId": "shape-tiles-0004",
+      "sourceUrl": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=sou5cie3",
+      "toolSlug": "shape-tiles",
+      "toolName": "Shape Tiles",
+      "url": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=sou5cie3&bg=ffffff&fg=111111",
+      "embedUrl": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=sou5cie3&bg=ffffff&fg=111111",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Shape Tiles emphasizes modularity and repeatability, useful for an extensible developer platform.",
+      "bestFor": "developer platforms, SDKs, and modular product suites",
+      "tags": [
+        "platform-grid",
+        "abstract",
+        "geometric",
+        "modular",
+        "grid",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-025",
+      "rank": 25,
+      "directionId": "platform-grid",
+      "sourceConceptId": "shape-tiles-0005",
+      "sourceUrl": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=icvn3zj8",
+      "toolSlug": "shape-tiles",
+      "toolName": "Shape Tiles",
+      "url": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=icvn3zj8&bg=111111&fg=ffffff",
+      "embedUrl": "https://natemodi.com/logo/shape-tiles/#v=1&r=1&seed=icvn3zj8&bg=111111&fg=ffffff",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "wildcard",
+      "rationale": "Shape Tiles adds one controlled wildcard option while staying inside Logo Lab's high-contrast geometric vocabulary.",
+      "bestFor": "developer platforms, SDKs, and modular product suites",
+      "tags": [
+        "platform-grid",
+        "abstract",
+        "geometric",
+        "modular",
+        "grid",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-026",
+      "rank": 26,
+      "directionId": "bold-containers",
+      "sourceConceptId": "sliced-shapes-0001",
+      "sourceUrl": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=vkvcnvgu",
+      "toolSlug": "sliced-shapes",
+      "toolName": "Sliced Shapes",
+      "url": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=vkvcnvgu&bg=ffffff&fc=111111&lc=2563eb",
+      "embedUrl": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=vkvcnvgu&bg=ffffff&fc=111111&lc=2563eb",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Sliced Shapes offers a bold high-contrast container that can read clearly as an app icon or favicon.",
+      "bestFor": "app icons, launch pages, and compact brand stamps",
+      "tags": [
+        "bold-containers",
+        "abstract",
+        "geometric",
+        "motion",
+        "negative-space",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-027",
+      "rank": 27,
+      "directionId": "bold-containers",
+      "sourceConceptId": "sliced-shapes-0002",
+      "sourceUrl": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=0nufv39p",
+      "toolSlug": "sliced-shapes",
+      "toolName": "Sliced Shapes",
+      "url": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=0nufv39p&bg=111111&fc=ffffff&lc=2563eb",
+      "embedUrl": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=0nufv39p&bg=111111&fc=ffffff&lc=2563eb",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Sliced Shapes offers a bold high-contrast container that can read clearly as an app icon or favicon.",
+      "bestFor": "app icons, launch pages, and compact brand stamps",
+      "tags": [
+        "bold-containers",
+        "abstract",
+        "geometric",
+        "motion",
+        "negative-space",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-028",
+      "rank": 28,
+      "directionId": "bold-containers",
+      "sourceConceptId": "sliced-shapes-0003",
+      "sourceUrl": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=uc2eab6d",
+      "toolSlug": "sliced-shapes",
+      "toolName": "Sliced Shapes",
+      "url": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=uc2eab6d&bg=ffffff&fc=111111&lc=2563eb",
+      "embedUrl": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=uc2eab6d&bg=ffffff&fc=111111&lc=2563eb",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Sliced Shapes offers a bold high-contrast container that can read clearly as an app icon or favicon.",
+      "bestFor": "app icons, launch pages, and compact brand stamps",
+      "tags": [
+        "bold-containers",
+        "abstract",
+        "geometric",
+        "motion",
+        "negative-space",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-029",
+      "rank": 29,
+      "directionId": "bold-containers",
+      "sourceConceptId": "sliced-shapes-0004",
+      "sourceUrl": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=pgj8pv3u",
+      "toolSlug": "sliced-shapes",
+      "toolName": "Sliced Shapes",
+      "url": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=pgj8pv3u&bg=111111&fc=ffffff&lc=2563eb",
+      "embedUrl": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=pgj8pv3u&bg=111111&fc=ffffff&lc=2563eb",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Sliced Shapes offers a bold high-contrast container that can read clearly as an app icon or favicon.",
+      "bestFor": "app icons, launch pages, and compact brand stamps",
+      "tags": [
+        "bold-containers",
+        "abstract",
+        "geometric",
+        "motion",
+        "negative-space",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-030",
+      "rank": 30,
+      "directionId": "bold-containers",
+      "sourceConceptId": "sliced-shapes-0005",
+      "sourceUrl": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=8bd08r3b",
+      "toolSlug": "sliced-shapes",
+      "toolName": "Sliced Shapes",
+      "url": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=8bd08r3b&bg=ffffff&fc=111111&lc=2563eb",
+      "embedUrl": "https://natemodi.com/logo/sliced-shapes/#v=1&r=1&seed=8bd08r3b&bg=ffffff&fc=111111&lc=2563eb",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "wildcard",
+      "rationale": "Sliced Shapes adds one controlled wildcard option while staying inside Logo Lab's high-contrast geometric vocabulary.",
+      "bestFor": "app icons, launch pages, and compact brand stamps",
+      "tags": [
+        "bold-containers",
+        "abstract",
+        "geometric",
+        "motion",
+        "negative-space",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-031",
+      "rank": 31,
+      "directionId": "bold-containers",
+      "sourceConceptId": "slash-mark-0001",
+      "sourceUrl": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=gxpg9xth",
+      "toolSlug": "slash-mark",
+      "toolName": "Slash Mark",
+      "url": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=gxpg9xth&bg=111111&sc=ffffff&lc=2563eb",
+      "embedUrl": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=gxpg9xth&bg=111111&sc=ffffff&lc=2563eb",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Slash Mark offers a bold high-contrast container that can read clearly as an app icon or favicon.",
+      "bestFor": "app icons, launch pages, and compact brand stamps",
+      "tags": [
+        "bold-containers",
+        "abstract",
+        "geometric",
+        "striped",
+        "contained",
+        "bold"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-032",
+      "rank": 32,
+      "directionId": "bold-containers",
+      "sourceConceptId": "slash-mark-0002",
+      "sourceUrl": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=zm8sx5ml",
+      "toolSlug": "slash-mark",
+      "toolName": "Slash Mark",
+      "url": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=zm8sx5ml&bg=ffffff&sc=111111&lc=2563eb",
+      "embedUrl": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=zm8sx5ml&bg=ffffff&sc=111111&lc=2563eb",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Slash Mark offers a bold high-contrast container that can read clearly as an app icon or favicon.",
+      "bestFor": "app icons, launch pages, and compact brand stamps",
+      "tags": [
+        "bold-containers",
+        "abstract",
+        "geometric",
+        "striped",
+        "contained",
+        "bold"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-033",
+      "rank": 33,
+      "directionId": "bold-containers",
+      "sourceConceptId": "slash-mark-0003",
+      "sourceUrl": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=lzgdzl1d",
+      "toolSlug": "slash-mark",
+      "toolName": "Slash Mark",
+      "url": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=lzgdzl1d&bg=111111&sc=ffffff&lc=2563eb",
+      "embedUrl": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=lzgdzl1d&bg=111111&sc=ffffff&lc=2563eb",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Slash Mark offers a bold high-contrast container that can read clearly as an app icon or favicon.",
+      "bestFor": "app icons, launch pages, and compact brand stamps",
+      "tags": [
+        "bold-containers",
+        "abstract",
+        "geometric",
+        "striped",
+        "contained",
+        "bold"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-034",
+      "rank": 34,
+      "directionId": "bold-containers",
+      "sourceConceptId": "slash-mark-0004",
+      "sourceUrl": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=v2jpkco7",
+      "toolSlug": "slash-mark",
+      "toolName": "Slash Mark",
+      "url": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=v2jpkco7&bg=ffffff&sc=111111&lc=2563eb",
+      "embedUrl": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=v2jpkco7&bg=ffffff&sc=111111&lc=2563eb",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Slash Mark offers a bold high-contrast container that can read clearly as an app icon or favicon.",
+      "bestFor": "app icons, launch pages, and compact brand stamps",
+      "tags": [
+        "bold-containers",
+        "abstract",
+        "geometric",
+        "striped",
+        "contained",
+        "bold"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-035",
+      "rank": 35,
+      "directionId": "bold-containers",
+      "sourceConceptId": "slash-mark-0005",
+      "sourceUrl": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=0an6j8d6",
+      "toolSlug": "slash-mark",
+      "toolName": "Slash Mark",
+      "url": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=0an6j8d6&bg=111111&sc=ffffff&lc=2563eb",
+      "embedUrl": "https://natemodi.com/logo/slash-mark/#v=1&r=1&seed=0an6j8d6&bg=111111&sc=ffffff&lc=2563eb",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "wildcard",
+      "rationale": "Slash Mark adds one controlled wildcard option while staying inside Logo Lab's high-contrast geometric vocabulary.",
+      "bestFor": "app icons, launch pages, and compact brand stamps",
+      "tags": [
+        "bold-containers",
+        "abstract",
+        "geometric",
+        "striped",
+        "contained",
+        "bold"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-036",
+      "rank": 36,
+      "directionId": "precise-geometry",
+      "sourceConceptId": "polygon-rosette-0001",
+      "sourceUrl": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=uwovib7b",
+      "toolSlug": "polygon-rosette",
+      "toolName": "Polygon Rosette",
+      "url": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=uwovib7b&bg=ffffff&fg=111111",
+      "embedUrl": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=uwovib7b&bg=ffffff&fg=111111",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Polygon Rosette gives the system a precise geometric presence with enough structure to hold up across product surfaces.",
+      "bestFor": "premium product marks and technical identity systems",
+      "tags": [
+        "precise-geometry",
+        "abstract",
+        "geometric",
+        "radial",
+        "precise",
+        "faceted"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-037",
+      "rank": 37,
+      "directionId": "precise-geometry",
+      "sourceConceptId": "polygon-rosette-0002",
+      "sourceUrl": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=kw2tf8dt",
+      "toolSlug": "polygon-rosette",
+      "toolName": "Polygon Rosette",
+      "url": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=kw2tf8dt&bg=111111&fg=ffffff",
+      "embedUrl": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=kw2tf8dt&bg=111111&fg=ffffff",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Polygon Rosette gives the system a precise geometric presence with enough structure to hold up across product surfaces.",
+      "bestFor": "premium product marks and technical identity systems",
+      "tags": [
+        "precise-geometry",
+        "abstract",
+        "geometric",
+        "radial",
+        "precise",
+        "faceted"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-038",
+      "rank": 38,
+      "directionId": "precise-geometry",
+      "sourceConceptId": "polygon-rosette-0003",
+      "sourceUrl": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=rwci1ogd",
+      "toolSlug": "polygon-rosette",
+      "toolName": "Polygon Rosette",
+      "url": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=rwci1ogd&bg=ffffff&fg=111111",
+      "embedUrl": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=rwci1ogd&bg=ffffff&fg=111111",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Polygon Rosette gives the system a precise geometric presence with enough structure to hold up across product surfaces.",
+      "bestFor": "premium product marks and technical identity systems",
+      "tags": [
+        "precise-geometry",
+        "abstract",
+        "geometric",
+        "radial",
+        "precise",
+        "faceted"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-039",
+      "rank": 39,
+      "directionId": "precise-geometry",
+      "sourceConceptId": "polygon-rosette-0004",
+      "sourceUrl": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=z2qsus72",
+      "toolSlug": "polygon-rosette",
+      "toolName": "Polygon Rosette",
+      "url": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=z2qsus72&bg=111111&fg=ffffff",
+      "embedUrl": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=z2qsus72&bg=111111&fg=ffffff",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Polygon Rosette gives the system a precise geometric presence with enough structure to hold up across product surfaces.",
+      "bestFor": "premium product marks and technical identity systems",
+      "tags": [
+        "precise-geometry",
+        "abstract",
+        "geometric",
+        "radial",
+        "precise",
+        "faceted"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-040",
+      "rank": 40,
+      "directionId": "precise-geometry",
+      "sourceConceptId": "polygon-rosette-0005",
+      "sourceUrl": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=jcmtuifp",
+      "toolSlug": "polygon-rosette",
+      "toolName": "Polygon Rosette",
+      "url": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=jcmtuifp&bg=ffffff&fg=111111",
+      "embedUrl": "https://natemodi.com/logo/polygon-rosette/#v=1&r=1&seed=jcmtuifp&bg=ffffff&fg=111111",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "wildcard",
+      "rationale": "Polygon Rosette adds one controlled wildcard option while staying inside Logo Lab's high-contrast geometric vocabulary.",
+      "bestFor": "premium product marks and technical identity systems",
+      "tags": [
+        "precise-geometry",
+        "abstract",
+        "geometric",
+        "radial",
+        "precise",
+        "faceted"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-041",
+      "rank": 41,
+      "directionId": "signal-systems",
+      "sourceConceptId": "echo-stripes-0001",
+      "sourceUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=q1w6p9n7",
+      "toolSlug": "echo-stripes",
+      "toolName": "Echo Stripes",
+      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=q1w6p9n7&bg=111111&fg=ffffff",
+      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=q1w6p9n7&bg=111111&fg=ffffff",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Echo Stripes creates a controlled signal motif that fits reliable agent infrastructure without falling into generic AI symbols.",
+      "bestFor": "agent orchestration, routing, and observability surfaces",
+      "tags": [
+        "signal-systems",
+        "letter",
+        "monogram",
+        "striped",
+        "echo",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-042",
+      "rank": 42,
+      "directionId": "signal-systems",
+      "sourceConceptId": "echo-stripes-0002",
+      "sourceUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=hhpoxpvg",
+      "toolSlug": "echo-stripes",
+      "toolName": "Echo Stripes",
+      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=hhpoxpvg&bg=ffffff&fg=111111",
+      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=hhpoxpvg&bg=ffffff&fg=111111",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Echo Stripes creates a controlled signal motif that fits reliable agent infrastructure without falling into generic AI symbols.",
+      "bestFor": "agent orchestration, routing, and observability surfaces",
+      "tags": [
+        "signal-systems",
+        "letter",
+        "monogram",
+        "striped",
+        "echo",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-043",
+      "rank": 43,
+      "directionId": "signal-systems",
+      "sourceConceptId": "echo-stripes-0003",
+      "sourceUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=9ba2p4x2",
+      "toolSlug": "echo-stripes",
+      "toolName": "Echo Stripes",
+      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=9ba2p4x2&bg=111111&fg=ffffff",
+      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=9ba2p4x2&bg=111111&fg=ffffff",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Echo Stripes creates a controlled signal motif that fits reliable agent infrastructure without falling into generic AI symbols.",
+      "bestFor": "agent orchestration, routing, and observability surfaces",
+      "tags": [
+        "signal-systems",
+        "letter",
+        "monogram",
+        "striped",
+        "echo",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-044",
+      "rank": 44,
+      "directionId": "signal-systems",
+      "sourceConceptId": "echo-stripes-0004",
+      "sourceUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=fz54j50g",
+      "toolSlug": "echo-stripes",
+      "toolName": "Echo Stripes",
+      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=fz54j50g&bg=ffffff&fg=111111&ch=VK",
+      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=fz54j50g&bg=ffffff&fg=111111&ch=VK",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "initial-customized",
+      "rationale": "Echo Stripes turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "bestFor": "agent orchestration, routing, and observability surfaces",
+      "tags": [
+        "signal-systems",
+        "letter",
+        "monogram",
+        "striped",
+        "echo",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-045",
+      "rank": 45,
+      "directionId": "signal-systems",
+      "sourceConceptId": "echo-stripes-0005",
+      "sourceUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=eq6p2hu7",
+      "toolSlug": "echo-stripes",
+      "toolName": "Echo Stripes",
+      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=eq6p2hu7&bg=111111&fg=ffffff&ch=VK",
+      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=eq6p2hu7&bg=111111&fg=ffffff&ch=VK",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "initial-customized",
+      "rationale": "Echo Stripes turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "bestFor": "agent orchestration, routing, and observability surfaces",
+      "tags": [
+        "signal-systems",
+        "letter",
+        "monogram",
+        "striped",
+        "echo",
+        "systematic"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-046",
+      "rank": 46,
+      "directionId": "platform-grid",
+      "sourceConceptId": "dot-grid-0001",
+      "sourceUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=48amem5v",
+      "toolSlug": "dot-grid",
+      "toolName": "Dot Grid",
+      "url": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=48amem5v&bg=ffffff&dc=111111&bd=2563eb",
+      "embedUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=48amem5v&bg=ffffff&dc=111111&bd=2563eb",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Dot Grid emphasizes modularity and repeatability, useful for an extensible developer platform.",
+      "bestFor": "developer platforms, SDKs, and modular product suites",
+      "tags": [
+        "platform-grid",
+        "letter",
+        "monogram",
+        "bitmap",
+        "grid",
+        "modular"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-047",
+      "rank": 47,
+      "directionId": "platform-grid",
+      "sourceConceptId": "dot-grid-0002",
+      "sourceUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=26hu62ag",
+      "toolSlug": "dot-grid",
+      "toolName": "Dot Grid",
+      "url": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=26hu62ag&bg=111111&dc=ffffff&bd=2563eb",
+      "embedUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=26hu62ag&bg=111111&dc=ffffff&bd=2563eb",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "recolored-curated",
+      "rationale": "Dot Grid emphasizes modularity and repeatability, useful for an extensible developer platform.",
+      "bestFor": "developer platforms, SDKs, and modular product suites",
+      "tags": [
+        "platform-grid",
+        "letter",
+        "monogram",
+        "bitmap",
+        "grid",
+        "modular"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-048",
+      "rank": 48,
+      "directionId": "platform-grid",
+      "sourceConceptId": "dot-grid-0003",
+      "sourceUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=c4omg9tb",
+      "toolSlug": "dot-grid",
+      "toolName": "Dot Grid",
+      "url": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=c4omg9tb&bg=ffffff&dc=111111&bd=2563eb",
+      "embedUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=c4omg9tb&bg=ffffff&dc=111111&bd=2563eb",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "lightly-varied-curated",
+      "rationale": "Dot Grid emphasizes modularity and repeatability, useful for an extensible developer platform.",
+      "bestFor": "developer platforms, SDKs, and modular product suites",
+      "tags": [
+        "platform-grid",
+        "letter",
+        "monogram",
+        "bitmap",
+        "grid",
+        "modular"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-049",
+      "rank": 49,
+      "directionId": "platform-grid",
+      "sourceConceptId": "dot-grid-0004",
+      "sourceUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=o9my8mk7",
+      "toolSlug": "dot-grid",
+      "toolName": "Dot Grid",
+      "url": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=o9my8mk7&bg=111111&dc=ffffff&bd=2563eb&ch=V",
+      "embedUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=o9my8mk7&bg=111111&dc=ffffff&bd=2563eb&ch=V",
+      "colorsUsed": [
+        "#111111",
+        "#ffffff",
+        "#2563eb"
+      ],
+      "variationType": "initial-customized",
+      "rationale": "Dot Grid turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "bestFor": "developer platforms, SDKs, and modular product suites",
+      "tags": [
+        "platform-grid",
+        "letter",
+        "monogram",
+        "bitmap",
+        "grid",
+        "modular"
+      ],
+      "isRecommended": false
+    },
+    {
+      "id": "vectorkit-050",
+      "rank": 50,
+      "directionId": "platform-grid",
+      "sourceConceptId": "dot-grid-0005",
+      "sourceUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=skt05qe1",
+      "toolSlug": "dot-grid",
+      "toolName": "Dot Grid",
+      "url": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=skt05qe1&bg=ffffff&dc=111111&bd=2563eb&ch=V",
+      "embedUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=skt05qe1&bg=ffffff&dc=111111&bd=2563eb&ch=V",
+      "colorsUsed": [
+        "#ffffff",
+        "#111111",
+        "#2563eb"
+      ],
+      "variationType": "initial-customized",
+      "rationale": "Dot Grid turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "bestFor": "developer platforms, SDKs, and modular product suites",
+      "tags": [
+        "platform-grid",
+        "letter",
+        "monogram",
+        "bitmap",
+        "grid",
+        "modular"
+      ],
+      "isRecommended": false
+    }
+  ],
+  "recommendations": [
+    {
+      "conceptId": "vectorkit-001",
+      "reason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+    },
+    {
+      "conceptId": "vectorkit-002",
+      "reason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+    },
+    {
+      "conceptId": "vectorkit-003",
+      "reason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+    },
+    {
+      "conceptId": "vectorkit-004",
+      "reason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+    },
+    {
+      "conceptId": "vectorkit-005",
+      "reason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+    }
+  ],
+  "disclaimer": "Concepts are starting points. Check distinctiveness, conflicts, and trademark availability before commercial use."
+}

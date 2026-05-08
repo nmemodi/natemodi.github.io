@@ -1,0 +1,42 @@
+{
+  "brandName": "VectorKit",
+  "conceptCount": 50,
+  "toolCount": 10,
+  "directionCount": 5,
+  "recommendedCount": 5,
+  "curatedSourceCount": 45,
+  "initialConceptCount": 10,
+  "wildcardCount": 5,
+  "toolSlugs": [
+    "brutalist-letters",
+    "dot-grid",
+    "echo-stripes",
+    "interlocking-circles",
+    "line-warp",
+    "parallel-letters",
+    "polygon-rosette",
+    "shape-tiles",
+    "slash-mark",
+    "sliced-shapes"
+  ],
+  "directionIds": [
+    "bold-containers",
+    "letter-marks",
+    "platform-grid",
+    "precise-geometry",
+    "signal-systems"
+  ],
+  "recommendationIds": [
+    "vectorkit-001",
+    "vectorkit-002",
+    "vectorkit-003",
+    "vectorkit-004",
+    "vectorkit-005"
+  ],
+  "variationCounts": {
+    "recolored-curated": 20,
+    "lightly-varied-curated": 15,
+    "initial-customized": 10,
+    "wildcard": 5
+  }
+}

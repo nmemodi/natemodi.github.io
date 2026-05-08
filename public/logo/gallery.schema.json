@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://natemodi.com/logo/gallery.schema.json",
+  "title": "Logo Lab Gallery Manifest",
+  "description": "Structured manifest for a custom Explorer-style Logo Lab gallery.",
+  "type": "object",
+  "required": ["brand", "concepts"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "brand": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "category": { "type": "string", "maxLength": 160 },
+        "audience": { "type": "string", "maxLength": 240 },
+        "attributes": {
+          "type": "array",
+          "maxItems": 16,
+          "items": { "type": "string", "minLength": 1, "maxLength": 48 }
+        },
+        "colors": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "background": { "$ref": "#/$defs/hexColor" },
+            "foreground": { "$ref": "#/$defs/hexColor" },
+            "accent": { "$ref": "#/$defs/hexColor" },
+            "preferred": {
+              "type": "array",
+              "maxItems": 12,
+              "items": { "$ref": "#/$defs/hexColor" }
+            },
+            "forbidden": {
+              "type": "array",
+              "maxItems": 12,
+              "items": { "type": "string", "minLength": 1, "maxLength": 48 }
+            }
+          }
+        },
+        "constraints": {
+          "type": "array",
+          "maxItems": 20,
+          "items": { "type": "string", "minLength": 1, "maxLength": 160 }
+        }
+      }
+    },
+    "summary": { "type": "string", "maxLength": 800 },
+    "directions": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "description": { "type": "string", "maxLength": 360 },
+          "conceptIds": {
+            "type": "array",
+            "maxItems": 80,
+            "items": { "type": "string", "minLength": 1, "maxLength": 80 }
+          }
+        }
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 80,
+      "items": { "$ref": "#/$defs/concept" }
+    },
+    "recommendations": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["conceptId", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "conceptId": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "reason": { "type": "string", "minLength": 1, "maxLength": 360 }
+        }
+      }
+    },
+    "disclaimer": {
+      "type": "string",
+      "maxLength": 500,
+      "default": "Concepts are starting points. Check distinctiveness, conflicts, and trademark availability before commercial use."
+    }
+  },
+  "$defs": {
+    "hexColor": {
+      "type": "string",
+      "pattern": "^#?[0-9a-fA-F]{6}$"
+    },
+    "concept": {
+      "type": "object",
+      "required": ["id", "toolSlug", "toolName", "url", "embedUrl", "rationale"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "rank": { "type": "integer", "minimum": 1, "maximum": 80 },
+        "directionId": { "type": "string", "maxLength": 80 },
+        "sourceConceptId": { "type": "string", "maxLength": 80 },
+        "sourceUrl": { "type": "string", "maxLength": 500 },
+        "toolSlug": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "toolName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "url": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "embedUrl": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "iframe": { "type": "string", "maxLength": 800 },
+        "colorsUsed": {
+          "type": "array",
+          "maxItems": 8,
+          "items": { "type": "string", "minLength": 1, "maxLength": 48 }
+        },
+        "variationType": {
+          "type": "string",
+          "enum": ["recolored-curated", "lightly-varied-curated", "initial-customized", "wildcard"]
+        },
+        "rationale": { "type": "string", "minLength": 1, "maxLength": 360 },
+        "bestFor": { "type": "string", "maxLength": 160 },
+        "tags": {
+          "type": "array",
+          "maxItems": 16,
+          "items": { "type": "string", "minLength": 1, "maxLength": 32 }
+        },
+        "isRecommended": { "type": "boolean" },
+        "recommendationReason": { "type": "string", "maxLength": 360 }
+      }
+    }
+  }
+}

@@ -47,6 +47,39 @@ describe('tools-registry', () => {
     });
   });
 
+  it('every tool has concise agent metadata', () => {
+    window.LogoTools.TOOLS.forEach(t => {
+      expect(t.agentMetadata).toBeDefined();
+      expect(['abstract', 'letter']).toContain(t.agentMetadata.mode);
+      expect(typeof t.agentMetadata.supportsInitials).toBe('boolean');
+      expect(typeof t.agentMetadata.supportsRecoloring).toBe('boolean');
+      expect(Array.isArray(t.agentMetadata.styleTags)).toBe(true);
+      expect(t.agentMetadata.styleTags.length).toBeGreaterThan(0);
+      expect(Array.isArray(t.agentMetadata.safeMutationParams)).toBe(true);
+      expect(t.agentMetadata.safeMutationParams.length).toBeGreaterThan(0);
+      expect(new Set(t.agentMetadata.safeMutationParams).size).toBe(t.agentMetadata.safeMutationParams.length);
+      expect(Array.isArray(t.agentMetadata.bestFor)).toBe(true);
+      expect(Array.isArray(t.agentMetadata.agentGuidance)).toBe(true);
+      expect(typeof t.agentMetadata.colorParams).toBe('object');
+      if (t.agentMetadata.supportsInitials) {
+        expect(typeof t.agentMetadata.letterParam).toBe('string');
+      }
+    });
+  });
+
+  it('marks the known letter-capable tools as supporting initials', () => {
+    const letterSlugs = new Set([
+      'line-warp',
+      'brutalist-letters',
+      'parallel-letters',
+      'echo-stripes',
+      'dot-grid',
+    ]);
+    window.LogoTools.TOOLS.forEach(t => {
+      expect(t.agentMetadata.supportsInitials).toBe(letterSlugs.has(t.slug));
+    });
+  });
+
   it('every tool has a well-formed credit block', () => {
     window.LogoTools.TOOLS.forEach(t => {
       expect(t.credit).toBeDefined();

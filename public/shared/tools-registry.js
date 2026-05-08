@@ -269,6 +269,118 @@
 
   const INDEX_PATH = '/logo/';
 
+  const AGENT_METADATA = {
+    'line-warp': {
+      mode: 'letter',
+      styleTags: ['letter', 'monogram', 'linear', 'topographic', 'systematic'],
+      supportsInitials: true,
+      supportsRecoloring: true,
+      colorParams: { background: 'bg', foreground: 'fg' },
+      letterParam: 'lt',
+      safeMutationParams: ['seed', 'r', 'p', 'm', 'bg', 'fg', 'lt', 'n', 'g', 'oy'],
+      bestFor: ['technical products', 'mapping tools', 'developer platforms'],
+      agentGuidance: ['Use initials when the brand has one or two strong letters.', 'Keep line counts legible at favicon size.', 'Prefer high-contrast one-color treatments.']
+    },
+    'brutalist-letters': {
+      mode: 'letter',
+      styleTags: ['letter', 'monogram', 'solid', 'architectural', 'pictogram'],
+      supportsInitials: true,
+      supportsRecoloring: true,
+      colorParams: { background: 'bg', foreground: 'fg' },
+      letterParam: 'ch',
+      safeMutationParams: ['seed', 'r', 'p', 'm', 'bg', 'fg', 'ch', 'cr', 'dp', 'lw', 'pa'],
+      bestFor: ['architecture studios', 'infrastructure products', 'bold startup marks'],
+      agentGuidance: ['Use for strong single-letter marks.', 'Avoid tiny cut widths that weaken the silhouette.', 'Recolor before changing the cut geometry.']
+    },
+    'interlocking-circles': {
+      mode: 'abstract',
+      styleTags: ['abstract', 'geometric', 'network', 'modular', 'woven'],
+      supportsInitials: false,
+      supportsRecoloring: true,
+      colorParams: { background: 'bg', foreground: 'fg' },
+      safeMutationParams: ['seed', 'r', 'p', 'bg', 'fg', 'n', 'ly', 'gp', 'sw', 'br'],
+      bestFor: ['networks', 'communities', 'coordination tools'],
+      agentGuidance: ['Use for connection, collaboration, and systems metaphors.', 'Keep ring counts moderate for small-size legibility.', 'Prefer simple two-color versions.']
+    },
+    'parallel-letters': {
+      mode: 'letter',
+      styleTags: ['letter', 'monogram', 'nested', 'linear', 'bold'],
+      supportsInitials: true,
+      supportsRecoloring: true,
+      colorParams: { background: 'bg', foreground: 'fg' },
+      letterParam: 'ch',
+      safeMutationParams: ['seed', 'r', 'p', 'm', 'bg', 'fg', 'ch', 'n', 'g', 't', 'jo'],
+      bestFor: ['developer tools', 'AI products', 'compact product marks'],
+      agentGuidance: ['Use for crisp initials and compact wordmark-adjacent marks.', 'Check two-letter initials for crowding.', 'Prefer miter or bevel joins for sharper brands.']
+    },
+    'shape-tiles': {
+      mode: 'abstract',
+      styleTags: ['abstract', 'geometric', 'modular', 'grid', 'systematic'],
+      supportsInitials: false,
+      supportsRecoloring: true,
+      colorParams: { background: 'bg', foreground: 'fg' },
+      safeMutationParams: ['seed', 'r', 'p', 'bg', 'fg', 'sh', 'g', 'rt', 'sz'],
+      bestFor: ['platform companies', 'infrastructure products', 'design systems'],
+      agentGuidance: ['Use as a reliable abstract seed for technical brands.', 'Recolor first, then vary shape or rotation lightly.', 'Avoid over-dense grids for favicon use.']
+    },
+    'sliced-shapes': {
+      mode: 'abstract',
+      styleTags: ['abstract', 'geometric', 'motion', 'negative-space', 'systematic'],
+      supportsInitials: false,
+      supportsRecoloring: true,
+      colorParams: { background: 'bg', foreground: 'fc', secondary: 'lc' },
+      safeMutationParams: ['seed', 'r', 'p', 'bg', 'fc', 'lc', 'sh', 'c', 'cv', 'sp', 'sz'],
+      bestFor: ['creative tools', 'media products', 'motion-forward brands'],
+      agentGuidance: ['Use when the brief asks for motion or transformation.', 'Keep slice contrast clear.', 'Avoid too many shapes when the mark must read small.']
+    },
+    'slash-mark': {
+      mode: 'abstract',
+      styleTags: ['abstract', 'geometric', 'striped', 'contained', 'bold'],
+      supportsInitials: false,
+      supportsRecoloring: true,
+      colorParams: { background: 'bg', foreground: 'sc', secondary: 'lc' },
+      safeMutationParams: ['seed', 'r', 'p', 'bg', 'sc', 'lc', 'sh', 'a', 'n', 'lw', 'sp'],
+      bestFor: ['security products', 'finance tools', 'bold consumer apps'],
+      agentGuidance: ['Use for decisive, high-impact abstract marks.', 'Keep line cuts aligned to the background.', 'Prefer simple shapes and high contrast.']
+    },
+    'polygon-rosette': {
+      mode: 'abstract',
+      styleTags: ['abstract', 'geometric', 'radial', 'precise', 'faceted'],
+      supportsInitials: false,
+      supportsRecoloring: true,
+      colorParams: { background: 'bg', foreground: 'fg' },
+      safeMutationParams: ['seed', 'r', 'p', 'bg', 'fg', 'n', 'sk', 'rt', 'sw', 'ir'],
+      bestFor: ['premium tools', 'data products', 'research labs'],
+      agentGuidance: ['Use for precision, facets, and systems intelligence.', 'Keep stroke width strong enough for small sizes.', 'Vary sides and skip lightly.']
+    },
+    'echo-stripes': {
+      mode: 'letter',
+      styleTags: ['letter', 'monogram', 'striped', 'echo', 'systematic'],
+      supportsInitials: true,
+      supportsRecoloring: true,
+      colorParams: { background: 'bg', foreground: 'fg' },
+      letterParam: 'ch',
+      safeMutationParams: ['seed', 'r', 'p', 'm', 'bg', 'fg', 'ch', 'gr', 'rt', 'tk', 'st'],
+      bestFor: ['AI tools', 'audio products', 'signal-processing brands'],
+      agentGuidance: ['Use for brands that need repetition, signal, or resonance.', 'Check stripe density at favicon size.', 'Use initials sparingly when two letters become busy.']
+    },
+    'dot-grid': {
+      mode: 'letter',
+      styleTags: ['letter', 'monogram', 'bitmap', 'grid', 'modular'],
+      supportsInitials: true,
+      supportsRecoloring: true,
+      colorParams: { background: 'bg', foreground: 'dc', secondary: 'bd' },
+      letterParam: 'ch',
+      safeMutationParams: ['seed', 'r', 'p', 'm', 'bg', 'dc', 'bd', 'ch', 'gc', 'sh', 'th', 'mg'],
+      bestFor: ['developer tools', 'data products', 'retro-technical brands'],
+      agentGuidance: ['Use for bitmap, grid, and system motifs.', 'Prefer one-letter initials for legibility.', 'Keep dot density readable at small sizes.']
+    }
+  };
+
+  TOOLS.forEach((tool) => {
+    tool.agentMetadata = AGENT_METADATA[tool.slug];
+  });
+
   function toolPath(slug) { return INDEX_PATH + slug + '/'; }
 
   function findBySlug(slug) {

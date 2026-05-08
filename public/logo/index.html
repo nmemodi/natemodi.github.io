@@ -795,6 +795,20 @@
     font-size: 18px;
     line-height: 1;
   }
+  .agent-note {
+    color: var(--fg-muted);
+    font-size: 13px;
+    line-height: 1.45;
+    margin-top: 12px;
+  }
+  .agent-note a {
+    color: var(--fg);
+    text-decoration: none;
+    border-bottom: 1px solid var(--fg-quiet);
+  }
+  .agent-note a:hover {
+    border-bottom-color: var(--fg);
+  }
   .intro-arrow {
     color: var(--fg-faded);
     font-size: 13px;
@@ -963,6 +977,7 @@
             <span class="entry__arrow" aria-hidden="true">↓</span>
           </a>
         </div>
+        <p class="agent-note">Building with an AI agent? Generate a custom logo gallery from your design system. <a href="/logo/agent/">Use Logo Lab with an agent&nbsp;→</a></p>
       </div>
 
       <div class="intro" id="logo-lab-intro">

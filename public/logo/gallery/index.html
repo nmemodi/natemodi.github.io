@@ -1,0 +1,1158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logo Lab Gallery Renderer</title>
+<meta name="description" content="Render a static Logo Lab gallery manifest as a custom Explorer-style concept review page.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:title" content="Logo Lab Gallery Renderer">
+<meta property="og:description" content="Render a static Logo Lab gallery manifest as a custom Explorer-style concept review page.">
+<meta property="og:url" content="https://natemodi.com/logo/gallery/">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --bg: #fdfdfc;
+    --fg: #111;
+    --fg-muted: rgba(17, 17, 17, 0.58);
+    --fg-faded: rgba(17, 17, 17, 0.4);
+    --fg-quiet: rgba(17, 17, 17, 0.32);
+    --border: rgba(17, 17, 17, 0.1);
+    --border-subtle: rgba(17, 17, 17, 0.06);
+    --tile-bg: #f4f3f1;
+    --danger: #9b2d26;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    color-scheme: light;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.005em;
+  }
+
+  .page {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 48px 32px 96px;
+  }
+
+  .crumb {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--fg-faded);
+    text-decoration: none;
+    font-size: 13px;
+    margin-bottom: 12px;
+    transition: color 0.15s ease;
+  }
+  .crumb:hover { color: var(--fg); }
+  .crumb svg { width: 12px; height: 12px; }
+
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 440px);
+    gap: 28px;
+    align-items: start;
+    margin-bottom: 24px;
+  }
+
+  .eyebrow {
+    color: var(--fg-faded);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .summary {
+    max-width: 620px;
+    color: var(--fg-muted);
+    font-size: 14px;
+    margin-bottom: 18px;
+  }
+
+  .loader {
+    display: grid;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .source-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .source-row input,
+  textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--bg);
+    color: var(--fg);
+    font: inherit;
+  }
+
+  .source-row input {
+    min-width: 0;
+    padding: 6px 9px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  textarea {
+    min-height: 138px;
+    resize: vertical;
+    padding: 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .btn {
+    appearance: none;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--bg);
+    color: var(--fg);
+    cursor: pointer;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 6px 12px;
+    white-space: nowrap;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    user-select: none;
+  }
+  .btn:hover { border-color: var(--fg); }
+  .btn--dark { background: transparent; border-color: var(--border); color: var(--fg); }
+
+  .quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .status {
+    margin-top: 18px;
+    display: grid;
+    gap: 8px;
+    color: var(--fg-muted);
+    font-size: 13px;
+  }
+  .status-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 4px 8px;
+    background: transparent;
+  }
+  .pill--bad { color: var(--danger); border-color: rgba(155, 45, 38, 0.28); }
+  .pill--ok { color: var(--fg); background: rgba(17, 17, 17, 0.07); }
+
+  .section {
+    margin-top: 32px;
+  }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: end;
+    margin-bottom: 14px;
+  }
+  h2 {
+    margin: 0;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+  }
+  .section-note {
+    color: var(--fg-faded);
+    font-size: 13px;
+  }
+
+  .palette,
+  .directions,
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .swatch,
+  .direction,
+  .filter {
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--bg);
+    color: var(--fg);
+    font: inherit;
+    padding: 6px 10px;
+  }
+  .swatch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--fg-muted);
+  }
+  .swatch i {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+  }
+  .direction {
+    max-width: 340px;
+    color: var(--fg-muted);
+  }
+  .direction strong {
+    display: block;
+    color: var(--fg);
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .filter {
+    cursor: pointer;
+    color: var(--fg-muted);
+  }
+  .filter:hover { border-color: var(--fg); color: var(--fg); }
+  .filter[aria-pressed="true"] {
+    color: var(--fg);
+    background: rgba(17, 17, 17, 0.07);
+    border-color: var(--border);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--bg);
+    min-width: 0;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card[hidden] { display: none; }
+  .card:hover {
+    border-color: var(--fg);
+    box-shadow: 0 2px 12px rgba(17, 17, 17, 0.06);
+  }
+  .preview {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: var(--tile-bg);
+  }
+  .preview iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    pointer-events: none;
+  }
+  .skeleton,
+  .fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    text-align: center;
+    color: var(--fg-quiet);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .fallback { display: none; font-family: var(--font); font-size: 13px; color: var(--fg-muted); }
+  .card.is-ready .skeleton { display: none; }
+  .card.is-failed .skeleton,
+  .card.is-failed iframe { display: none; }
+  .card.is-failed .fallback { display: flex; }
+  .card-body {
+    display: grid;
+    gap: 9px;
+    padding: 14px;
+  }
+  .meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--fg-faded);
+    font-size: 12px;
+  }
+  .concept-title {
+    margin: 0;
+    font-weight: 600;
+  }
+  .rationale {
+    margin: 0;
+    color: var(--fg-muted);
+    min-height: 42px;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tag {
+    color: var(--fg-faded);
+    font-size: 11px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 999px;
+    padding: 2px 7px;
+  }
+  .card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 3px;
+  }
+  .linkish {
+    appearance: none;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: var(--fg);
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  a.linkish { display: inline-flex; }
+
+  .blocked {
+    display: none;
+    border: 1px solid rgba(155, 45, 38, 0.22);
+    border-radius: 7px;
+    color: var(--danger);
+    padding: 12px;
+    margin-top: 18px;
+    background: rgba(155, 45, 38, 0.04);
+  }
+  .blocked.is-visible { display: block; }
+  .blocked ul { margin: 8px 0 0; padding-left: 18px; }
+
+  .empty {
+    display: none;
+    padding: 28px 0;
+    color: var(--fg-faded);
+  }
+
+  .foot {
+    margin-top: 42px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-subtle);
+    color: var(--fg-faded);
+    font-size: 13px;
+  }
+  .foot a { color: var(--fg-muted); text-decoration: none; }
+  .foot a:hover { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
+
+  @media (max-width: 960px) {
+    .hero { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  }
+  @media (max-width: 560px) {
+    .page { padding: 32px 20px 80px; }
+    .source-row { flex-direction: column; }
+    .grid { grid-template-columns: 1fr; }
+    .section-head { align-items: start; flex-direction: column; }
+    h1 { font-size: 19px; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <a class="crumb" href="/logo/agent/">
+    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M7.5 3L4.5 6L7.5 9"/>
+    </svg>
+    Agent guide
+  </a>
+
+  <div class="hero">
+    <div>
+      <p class="eyebrow">Logo Lab gallery</p>
+      <h1 data-brand-name>Gallery Renderer</h1>
+      <p class="summary" data-summary>Paste a Logo Lab gallery manifest or load one from an HTTPS JSON URL.</p>
+      <div class="status" data-status aria-live="polite"></div>
+    </div>
+
+    <form class="loader" data-loader>
+      <div class="source-row">
+        <input data-src-input type="url" inputmode="url" placeholder="https://example.com/logo-gallery.json" aria-label="Gallery JSON URL">
+        <button class="btn" type="submit">Load</button>
+      </div>
+      <textarea data-paste-input spellcheck="false" aria-label="Gallery manifest JSON" placeholder="{ ... }"></textarea>
+      <div class="quick-actions">
+        <button class="btn btn--dark" type="button" data-render-paste>Render JSON</button>
+        <button class="btn" type="button" data-load-sample>Sample</button>
+        <button class="btn" type="button" data-clear>Clear</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="blocked" data-blocked></div>
+
+  <section class="section" aria-label="Palette">
+    <div class="palette" data-palette></div>
+  </section>
+
+  <section class="section" aria-labelledby="recommendations-title">
+    <div class="section-head">
+      <h2 id="recommendations-title">Recommended</h2>
+      <p class="section-note" data-rec-count></p>
+    </div>
+    <div class="grid" data-recommendations></div>
+  </section>
+
+  <section class="section" aria-labelledby="directions-title">
+    <div class="section-head">
+      <h2 id="directions-title">Directions</h2>
+    </div>
+    <div class="directions" data-directions></div>
+  </section>
+
+  <section class="section" aria-labelledby="filters-title">
+    <div class="section-head">
+      <h2 id="filters-title">Concepts</h2>
+      <p class="section-note" data-visible-count></p>
+    </div>
+    <div class="filters" data-filters></div>
+    <div class="empty" data-empty>No concepts match these filters.</div>
+    <div class="grid" data-concept-grid></div>
+  </section>
+
+  <p class="foot" data-disclaimer>Concepts are starting points. Check distinctiveness, conflicts, and trademark availability before commercial use.</p>
+  <p class="foot">Logo Lab is static: no AI chat, hosted saving, accounts, server-side generation, or trademark review. <a href="/logo/llms.txt">Agent instructions</a> · <a href="/logo/gallery.schema.json">Gallery schema</a></p>
+</main>
+
+<script src="/shared/tools-registry.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  class GalleryValidationError extends Error {
+    constructor(message, context) {
+      super(message);
+      this.name = 'GalleryValidationError';
+      this.context = context || {};
+    }
+  }
+
+  class UnsafeEmbedUrlError extends Error {
+    constructor(message, context) {
+      super(message);
+      this.name = 'UnsafeEmbedUrlError';
+      this.context = context || {};
+    }
+  }
+
+  class GalleryFetchError extends Error {
+    constructor(message, context) {
+      super(message);
+      this.name = 'GalleryFetchError';
+      this.context = context || {};
+    }
+  }
+
+  const LIMITS = {
+    bytes: 512 * 1024,
+    concepts: 80,
+    name: 120,
+    summary: 800,
+    rationale: 360,
+    tag: 32,
+    tags: 16,
+    sourceTimeoutMs: 8000,
+    iframeTimeoutMs: 12000,
+  };
+
+  const SAMPLE_SRC = '/logo/examples/agent-gallery/gallery.json';
+  const state = {
+    filter: 'all',
+    manifest: null,
+    validConcepts: [],
+    blockedConcepts: [],
+    source: '',
+    loadToken: 0,
+    observer: null,
+  };
+
+  const dom = {
+    brand: document.querySelector('[data-brand-name]'),
+    summary: document.querySelector('[data-summary]'),
+    status: document.querySelector('[data-status]'),
+    loader: document.querySelector('[data-loader]'),
+    srcInput: document.querySelector('[data-src-input]'),
+    pasteInput: document.querySelector('[data-paste-input]'),
+    renderPaste: document.querySelector('[data-render-paste]'),
+    sample: document.querySelector('[data-load-sample]'),
+    clear: document.querySelector('[data-clear]'),
+    blocked: document.querySelector('[data-blocked]'),
+    palette: document.querySelector('[data-palette]'),
+    recommendations: document.querySelector('[data-recommendations]'),
+    recCount: document.querySelector('[data-rec-count]'),
+    directions: document.querySelector('[data-directions]'),
+    filters: document.querySelector('[data-filters]'),
+    empty: document.querySelector('[data-empty]'),
+    grid: document.querySelector('[data-concept-grid]'),
+    visibleCount: document.querySelector('[data-visible-count]'),
+    disclaimer: document.querySelector('[data-disclaimer]'),
+  };
+
+  function knownSlugs() {
+    const tools = window.LogoTools && Array.isArray(window.LogoTools.TOOLS)
+      ? window.LogoTools.TOOLS
+      : [];
+    return new Set(tools.map((tool) => tool.slug));
+  }
+
+  function truncate(value, max) {
+    const text = typeof value === 'string' ? value.trim() : '';
+    return text.length > max ? text.slice(0, max) : text;
+  }
+
+  function requiredText(value, max, field) {
+    const text = truncate(value, max);
+    if (!text) throw new GalleryValidationError('Required text field is missing', { field });
+    return text;
+  }
+
+  function optionalText(value, max) {
+    return truncate(value, max);
+  }
+
+  function normalizeHex(value) {
+    if (typeof value !== 'string' || !/^#?[0-9a-fA-F]{6}$/.test(value)) return '';
+    return value.startsWith('#') ? value.toLowerCase() : '#' + value.toLowerCase();
+  }
+
+  function safeSourceUrl(value) {
+    const raw = String(value || '').trim();
+    if (!raw) throw new GalleryFetchError('Manifest source is empty');
+    let url;
+    try {
+      url = new URL(raw, location.href);
+    } catch (error) {
+      throw new GalleryFetchError('Manifest source URL is invalid', { source: raw });
+    }
+    const sameOrigin = url.origin === location.origin;
+    if (!sameOrigin && url.protocol !== 'https:') {
+      throw new GalleryFetchError('Manifest source must be HTTPS or same-origin relative', {
+        source: raw,
+        protocol: url.protocol,
+      });
+    }
+    return url.href;
+  }
+
+  function validateLogoUrl(value, toolSlug, known) {
+    let url;
+    try {
+      url = new URL(String(value || ''), location.href);
+    } catch (error) {
+      throw new UnsafeEmbedUrlError('Concept URL is invalid', { toolSlug, url: value });
+    }
+
+    const parts = url.pathname.split('/').filter(Boolean);
+    const slug = parts[0] === 'logo' ? parts[1] : '';
+    const allowedHost = url.host === location.host || url.host === 'natemodi.com';
+    if (!allowedHost) throw new UnsafeEmbedUrlError('Concept URL host is not allowed', { toolSlug, url: url.href });
+    if (!known.has(slug)) throw new UnsafeEmbedUrlError('Concept URL slug is not a known Logo Lab tool', { toolSlug, slug });
+    if (toolSlug && slug !== toolSlug) throw new UnsafeEmbedUrlError('Concept URL slug does not match toolSlug', { toolSlug, slug });
+    if (!url.hash || !url.hash.includes('v=1')) throw new UnsafeEmbedUrlError('Concept URL must include a v=1 hash', { toolSlug, url: url.href });
+    return url.href;
+  }
+
+  function localIframeUrl(urlValue) {
+    const url = new URL(urlValue, location.href);
+    const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    if (isLocal && url.host === 'natemodi.com') {
+      url.protocol = location.protocol;
+      url.host = location.host;
+    }
+    if (isLocal && url.pathname.endsWith('/')) {
+      url.pathname += 'index.html';
+    }
+    return url.href;
+  }
+
+  function validateManifest(input) {
+    if (!input || typeof input !== 'object' || Array.isArray(input)) {
+      throw new GalleryValidationError('Manifest must be an object');
+    }
+    if (!input.brand || typeof input.brand !== 'object') {
+      throw new GalleryValidationError('Manifest brand is missing');
+    }
+    if (!Array.isArray(input.concepts)) {
+      throw new GalleryValidationError('Manifest concepts must be an array');
+    }
+    if (input.concepts.length === 0) {
+      throw new GalleryValidationError('Manifest has no concepts');
+    }
+    if (input.concepts.length > LIMITS.concepts) {
+      throw new GalleryValidationError('Manifest has too many concepts', {
+        count: input.concepts.length,
+        max: LIMITS.concepts,
+      });
+    }
+
+    const known = knownSlugs();
+    const brandColors = input.brand.colors && typeof input.brand.colors === 'object' ? input.brand.colors : {};
+    const directions = Array.isArray(input.directions) ? input.directions.slice(0, 8).map((direction) => ({
+      id: requiredText(direction.id, 80, 'directions.id'),
+      name: requiredText(direction.name, LIMITS.name, 'directions.name'),
+      description: optionalText(direction.description, LIMITS.rationale),
+    })) : [];
+    const directionIds = new Set(directions.map((direction) => direction.id));
+
+    const blocked = [];
+    const concepts = [];
+    input.concepts.forEach((concept, index) => {
+      try {
+        if (!concept || typeof concept !== 'object') {
+          throw new GalleryValidationError('Concept must be an object', { index });
+        }
+        const toolSlug = requiredText(concept.toolSlug, 80, 'concept.toolSlug');
+        if (!known.has(toolSlug)) {
+          throw new GalleryValidationError('Concept toolSlug is unknown', { index, toolSlug });
+        }
+        const url = validateLogoUrl(concept.url, toolSlug, known);
+        const embedUrl = validateLogoUrl(concept.embedUrl || concept.url, toolSlug, known);
+        const tags = Array.isArray(concept.tags)
+          ? concept.tags.slice(0, LIMITS.tags).map((tag) => optionalText(tag, LIMITS.tag)).filter(Boolean)
+          : [];
+        const directionId = optionalText(concept.directionId, 80);
+        concepts.push({
+          id: requiredText(concept.id, 80, 'concept.id'),
+          rank: Number.isInteger(concept.rank) ? concept.rank : index + 1,
+          directionId: directionId && directionIds.has(directionId) ? directionId : directionId,
+          sourceConceptId: optionalText(concept.sourceConceptId, 80),
+          sourceUrl: concept.sourceUrl ? validateLogoUrl(concept.sourceUrl, toolSlug, known) : '',
+          toolSlug,
+          toolName: requiredText(concept.toolName, LIMITS.name, 'concept.toolName'),
+          url,
+          embedUrl,
+          iframeSrc: localIframeUrl(embedUrl),
+          colorsUsed: Array.isArray(concept.colorsUsed) ? concept.colorsUsed.slice(0, 8).map(String) : [],
+          variationType: optionalText(concept.variationType, 80) || 'concept',
+          rationale: requiredText(concept.rationale, LIMITS.rationale, 'concept.rationale'),
+          bestFor: optionalText(concept.bestFor, 160),
+          tags,
+          isRecommended: Boolean(concept.isRecommended),
+          recommendationReason: optionalText(concept.recommendationReason, LIMITS.rationale),
+        });
+      } catch (error) {
+        blocked.push({
+          index,
+          id: concept && concept.id ? String(concept.id) : `concept ${index + 1}`,
+          reason: error.message,
+          errorName: error.name,
+          context: error.context || {},
+        });
+      }
+    });
+
+    if (concepts.length === 0) {
+      throw new GalleryValidationError('Manifest has no valid concepts after validation');
+    }
+
+    const recommendationIds = Array.isArray(input.recommendations)
+      ? new Set(input.recommendations.slice(0, 5).map((rec) => rec && rec.conceptId).filter(Boolean))
+      : new Set();
+
+    concepts.forEach((concept) => {
+      if (recommendationIds.has(concept.id)) concept.isRecommended = true;
+    });
+
+    return {
+      version: 1,
+      brand: {
+        name: requiredText(input.brand.name, LIMITS.name, 'brand.name'),
+        category: optionalText(input.brand.category, 160),
+        audience: optionalText(input.brand.audience, 240),
+        attributes: Array.isArray(input.brand.attributes)
+          ? input.brand.attributes.slice(0, 16).map((item) => optionalText(item, 48)).filter(Boolean)
+          : [],
+        colors: {
+          background: normalizeHex(brandColors.background),
+          foreground: normalizeHex(brandColors.foreground),
+          accent: normalizeHex(brandColors.accent),
+          preferred: Array.isArray(brandColors.preferred)
+            ? brandColors.preferred.map(normalizeHex).filter(Boolean).slice(0, 12)
+            : [],
+        },
+      },
+      summary: optionalText(input.summary, LIMITS.summary),
+      directions,
+      concepts,
+      blocked,
+      disclaimer: optionalText(input.disclaimer, 500) || 'Concepts are starting points. Check distinctiveness, conflicts, and trademark availability before commercial use.',
+    };
+  }
+
+  function setStatus(kind, message, details) {
+    dom.status.textContent = '';
+    const row = document.createElement('div');
+    row.className = 'status-row';
+    const pill = document.createElement('span');
+    pill.className = 'pill ' + (kind === 'error' ? 'pill--bad' : kind === 'ok' ? 'pill--ok' : '');
+    pill.textContent = message;
+    row.appendChild(pill);
+    (details || []).forEach((detail) => {
+      const item = document.createElement('span');
+      item.className = 'pill';
+      item.textContent = detail;
+      row.appendChild(item);
+    });
+    dom.status.appendChild(row);
+  }
+
+  function clearChildren(node) {
+    while (node.firstChild) node.removeChild(node.firstChild);
+  }
+
+  function text(node, value) {
+    node.textContent = value || '';
+  }
+
+  async function fetchManifest(src, token) {
+    const url = safeSourceUrl(src);
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), LIMITS.sourceTimeoutMs);
+    let response;
+    try {
+      response = await fetch(url, { cache: 'no-store', signal: controller.signal });
+    } catch (error) {
+      throw new GalleryFetchError(error.name === 'AbortError' ? 'Manifest source timed out' : 'Manifest source could not be fetched', {
+        source: url,
+        error: error.message,
+      });
+    } finally {
+      clearTimeout(timer);
+    }
+    if (token !== state.loadToken) return null;
+    if (!response.ok) {
+      throw new GalleryFetchError('Manifest source returned an error', { source: url, status: response.status });
+    }
+    const raw = await response.text();
+    if (raw.length > LIMITS.bytes) {
+      throw new GalleryFetchError('Manifest source is too large', { source: url, bytes: raw.length, max: LIMITS.bytes });
+    }
+    return { raw, url };
+  }
+
+  function parseManifestJson(raw) {
+    try {
+      return JSON.parse(raw);
+    } catch (error) {
+      throw new GalleryValidationError('Manifest JSON is invalid', { error: error.message });
+    }
+  }
+
+  function renderManifest(manifest, sourceLabel) {
+    state.manifest = manifest;
+    state.validConcepts = manifest.concepts;
+    state.blockedConcepts = manifest.blocked;
+    state.source = sourceLabel || '';
+    state.filter = 'all';
+
+    text(dom.brand, manifest.brand.name);
+    text(dom.summary, manifest.summary || `${manifest.concepts.length} Logo Lab concepts for ${manifest.brand.name}.`);
+    text(dom.disclaimer, manifest.disclaimer);
+    renderStatus();
+    renderBlocked();
+    renderPalette(manifest.brand.colors);
+    renderDirections(manifest.directions);
+    renderCards();
+    renderFilters();
+    applyFilter();
+    setupLazyMounting();
+  }
+
+  function renderStatus() {
+    const details = [
+      `${state.validConcepts.length} valid`,
+      `${state.blockedConcepts.length} blocked`,
+    ];
+    if (state.source) details.push(state.source);
+    setStatus('ok', 'Gallery loaded', details);
+  }
+
+  function renderBlocked() {
+    clearChildren(dom.blocked);
+    if (!state.blockedConcepts.length) {
+      dom.blocked.classList.remove('is-visible');
+      return;
+    }
+    const strong = document.createElement('strong');
+    strong.textContent = `${state.blockedConcepts.length} concept${state.blockedConcepts.length === 1 ? '' : 's'} blocked`;
+    const list = document.createElement('ul');
+    state.blockedConcepts.slice(0, 12).forEach((item) => {
+      const li = document.createElement('li');
+      li.textContent = `${item.id}: ${item.reason}`;
+      list.appendChild(li);
+    });
+    dom.blocked.append(strong, list);
+    dom.blocked.classList.add('is-visible');
+  }
+
+  function renderPalette(colors) {
+    clearChildren(dom.palette);
+    const entries = [];
+    if (colors.background) entries.push(['Background', colors.background]);
+    if (colors.foreground) entries.push(['Foreground', colors.foreground]);
+    if (colors.accent) entries.push(['Accent', colors.accent]);
+    (colors.preferred || []).forEach((color, index) => entries.push([`Preferred ${index + 1}`, color]));
+    entries.forEach(([label, color]) => {
+      const swatch = document.createElement('span');
+      swatch.className = 'swatch';
+      const dot = document.createElement('i');
+      dot.style.background = color;
+      const span = document.createElement('span');
+      span.textContent = `${label} ${color}`;
+      swatch.append(dot, span);
+      dom.palette.appendChild(swatch);
+    });
+  }
+
+  function renderDirections(directions) {
+    clearChildren(dom.directions);
+    directions.forEach((direction) => {
+      const item = document.createElement('div');
+      item.className = 'direction';
+      const name = document.createElement('strong');
+      name.textContent = direction.name;
+      const description = document.createElement('span');
+      description.textContent = direction.description;
+      item.append(name, description);
+      dom.directions.appendChild(item);
+    });
+  }
+
+  function buildCard(concept, compact) {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.dataset.id = concept.id;
+    card.dataset.direction = concept.directionId || '';
+    card.dataset.tool = concept.toolSlug;
+    card.dataset.variation = concept.variationType;
+    card.dataset.recommended = concept.isRecommended ? 'true' : 'false';
+
+    const preview = document.createElement('div');
+    preview.className = 'preview';
+    const skeleton = document.createElement('div');
+    skeleton.className = 'skeleton';
+    skeleton.textContent = concept.toolName;
+    const fallback = document.createElement('div');
+    fallback.className = 'fallback';
+    fallback.textContent = 'Preview unavailable. Open the concept in Logo Lab.';
+    preview.append(skeleton, fallback);
+
+    const body = document.createElement('div');
+    body.className = 'card-body';
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    const rank = document.createElement('span');
+    rank.textContent = `#${concept.rank}`;
+    const variation = document.createElement('span');
+    variation.textContent = concept.variationType;
+    meta.append(rank, variation);
+
+    const title = document.createElement('p');
+    title.className = 'concept-title';
+    title.textContent = concept.toolName;
+    const rationale = document.createElement('p');
+    rationale.className = 'rationale';
+    rationale.textContent = compact && concept.recommendationReason ? concept.recommendationReason : concept.rationale;
+
+    const tags = document.createElement('div');
+    tags.className = 'tags';
+    concept.tags.slice(0, compact ? 3 : 6).forEach((tag) => {
+      const el = document.createElement('span');
+      el.className = 'tag';
+      el.textContent = tag;
+      tags.appendChild(el);
+    });
+
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+    const open = document.createElement('a');
+    open.className = 'linkish';
+    open.href = concept.url;
+    open.target = '_blank';
+    open.rel = 'noopener noreferrer';
+    open.textContent = 'Open';
+    const source = document.createElement('a');
+    source.className = 'linkish';
+    source.href = concept.sourceUrl || concept.url;
+    source.target = '_blank';
+    source.rel = 'noopener noreferrer';
+    source.textContent = concept.sourceConceptId ? concept.sourceConceptId : 'Source';
+    const copy = document.createElement('button');
+    copy.className = 'linkish';
+    copy.type = 'button';
+    copy.textContent = 'Copy iframe';
+    copy.addEventListener('click', () => copySnippet(concept, copy));
+    actions.append(open, source, copy);
+    body.append(meta, title, rationale, tags, actions);
+    card.append(preview, body);
+    return card;
+  }
+
+  function renderCards() {
+    clearChildren(dom.grid);
+    clearChildren(dom.recommendations);
+    state.validConcepts.forEach((concept) => {
+      dom.grid.appendChild(buildCard(concept, false));
+    });
+    state.validConcepts.filter((concept) => concept.isRecommended).slice(0, 5).forEach((concept) => {
+      dom.recommendations.appendChild(buildCard(concept, true));
+    });
+    const count = dom.recommendations.children.length;
+    dom.recCount.textContent = count ? `${count} highlighted` : '';
+  }
+
+  function renderFilters() {
+    clearChildren(dom.filters);
+    const directions = new Map((state.manifest.directions || []).map((direction) => [direction.id, direction.name]));
+    const options = [
+      ['all', 'All'],
+      ['recommended', 'Recommended'],
+      ...Array.from(new Set(state.validConcepts.map((concept) => concept.directionId).filter(Boolean))).map((id) => [id, directions.get(id) || id]),
+      ...Array.from(new Set(state.validConcepts.map((concept) => concept.toolSlug))).map((slug) => [slug, slug]),
+      ...Array.from(new Set(state.validConcepts.map((concept) => concept.variationType))).map((type) => [type, type]),
+    ];
+
+    options.forEach(([value, label]) => {
+      const button = document.createElement('button');
+      button.className = 'filter';
+      button.type = 'button';
+      button.dataset.filter = value;
+      button.setAttribute('aria-pressed', String(state.filter === value));
+      button.textContent = label;
+      button.addEventListener('click', () => {
+        state.filter = value;
+        renderFilters();
+        applyFilter();
+      });
+      dom.filters.appendChild(button);
+    });
+  }
+
+  function applyFilter() {
+    let visible = 0;
+    dom.grid.querySelectorAll('.card').forEach((card) => {
+      const match = state.filter === 'all'
+        || (state.filter === 'recommended' && card.dataset.recommended === 'true')
+        || card.dataset.direction === state.filter
+        || card.dataset.tool === state.filter
+        || card.dataset.variation === state.filter;
+      card.hidden = !match;
+      if (match) visible++;
+    });
+    dom.empty.style.display = visible ? 'none' : 'block';
+    dom.visibleCount.textContent = `${visible} showing`;
+  }
+
+  function setupLazyMounting() {
+    if (state.observer) state.observer.disconnect();
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const recommendations = new Set(state.validConcepts.filter((concept) => concept.isRecommended).slice(0, 5).map((concept) => concept.id));
+    cards.forEach((card) => {
+      if (recommendations.has(card.dataset.id)) mountIframe(card, true);
+    });
+    const lazyCards = cards.filter((card) => !recommendations.has(card.dataset.id));
+    if (!('IntersectionObserver' in window)) {
+      lazyCards.forEach((card) => mountIframe(card, false));
+      return;
+    }
+    state.observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        mountIframe(entry.target, false);
+        state.observer.unobserve(entry.target);
+      });
+    }, { rootMargin: '400px' });
+    lazyCards.forEach((card) => state.observer.observe(card));
+  }
+
+  function mountIframe(card, eager) {
+    if (card.dataset.mounted === 'true') return;
+    const concept = state.validConcepts.find((item) => item.id === card.dataset.id);
+    if (!concept) return;
+    card.dataset.mounted = 'true';
+    const iframe = document.createElement('iframe');
+    iframe.title = `${concept.toolName} preview`;
+    iframe.loading = eager ? 'eager' : 'lazy';
+    iframe.scrolling = 'no';
+    iframe.src = concept.iframeSrc;
+    const preview = card.querySelector('.preview');
+    let settled = false;
+    const settle = (ok) => {
+      if (settled) return;
+      settled = true;
+      card.classList.add(ok ? 'is-ready' : 'is-failed');
+    };
+    iframe.addEventListener('load', () => settle(true));
+    iframe.addEventListener('error', () => settle(false));
+    setTimeout(() => {
+      if (!settled) {
+        console.warn('[logo-gallery] iframe timeout', { id: concept.id, toolSlug: concept.toolSlug });
+        settle(false);
+      }
+    }, LIMITS.iframeTimeoutMs);
+    preview.insertBefore(iframe, preview.firstChild);
+  }
+
+  function copySnippet(concept, button) {
+    const snippet = `<iframe src="${concept.embedUrl}" width="320" height="320" style="border:0"></iframe>`;
+    const done = () => {
+      const previous = button.textContent;
+      button.textContent = 'Copied';
+      setTimeout(() => { button.textContent = previous; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(snippet).then(done).catch(() => fallbackCopy(snippet));
+    } else {
+      fallbackCopy(snippet);
+    }
+  }
+
+  function fallbackCopy(textValue) {
+    const textarea = document.createElement('textarea');
+    textarea.value = textValue;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try { document.execCommand('copy'); }
+    catch (error) { window.prompt('Copy iframe snippet', textValue); }
+    finally { textarea.remove(); }
+  }
+
+  function loadRaw(raw, sourceLabel) {
+    const manifest = validateManifest(parseManifestJson(raw));
+    renderManifest(manifest, sourceLabel);
+  }
+
+  async function loadFromSource(src) {
+    const token = ++state.loadToken;
+    setStatus('loading', 'Loading manifest');
+    try {
+      const result = await fetchManifest(src, token);
+      if (!result || token !== state.loadToken) return;
+      dom.srcInput.value = result.url;
+      dom.pasteInput.value = result.raw;
+      loadRaw(result.raw, result.url);
+      const url = new URL(location.href);
+      url.searchParams.set('src', result.url);
+      history.replaceState(null, '', url);
+    } catch (error) {
+      console.warn('[logo-gallery] source load failed', error);
+      setStatus('error', error.message, error.context ? Object.values(error.context).map(String).slice(0, 2) : []);
+    }
+  }
+
+  function clearGallery() {
+    ++state.loadToken;
+    state.manifest = null;
+    state.validConcepts = [];
+    state.blockedConcepts = [];
+    state.source = '';
+    state.filter = 'all';
+    dom.srcInput.value = '';
+    dom.pasteInput.value = '';
+    text(dom.brand, 'Gallery Renderer');
+    text(dom.summary, 'Paste a Logo Lab gallery manifest or load one from an HTTPS JSON URL.');
+    clearChildren(dom.palette);
+    clearChildren(dom.directions);
+    clearChildren(dom.recommendations);
+    clearChildren(dom.filters);
+    clearChildren(dom.grid);
+    dom.recCount.textContent = '';
+    dom.visibleCount.textContent = '';
+    dom.empty.style.display = 'none';
+    dom.blocked.classList.remove('is-visible');
+    dom.blocked.textContent = '';
+    setStatus('idle', 'Ready');
+    history.replaceState(null, '', location.pathname);
+  }
+
+  dom.loader.addEventListener('submit', (event) => {
+    event.preventDefault();
+    loadFromSource(dom.srcInput.value);
+  });
+  dom.renderPaste.addEventListener('click', () => {
+    ++state.loadToken;
+    try {
+      loadRaw(dom.pasteInput.value, 'pasted JSON');
+      history.replaceState(null, '', location.pathname);
+    } catch (error) {
+      console.warn('[logo-gallery] paste render failed', error);
+      setStatus('error', error.message, error.context ? Object.values(error.context).map(String).slice(0, 2) : []);
+    }
+  });
+  dom.sample.addEventListener('click', () => loadFromSource(SAMPLE_SRC));
+  dom.clear.addEventListener('click', clearGallery);
+
+  window.addEventListener('popstate', () => {
+    const src = new URL(location.href).searchParams.get('src');
+    if (src) loadFromSource(src);
+    else clearGallery();
+  });
+
+  window.LogoGalleryRuntime = {
+    GalleryValidationError,
+    UnsafeEmbedUrlError,
+    GalleryFetchError,
+    validateManifest,
+    safeSourceUrl,
+    parseManifestJson,
+    validateLogoUrl,
+    localIframeUrl,
+    LIMITS,
+  };
+
+  const initialSrc = new URL(location.href).searchParams.get('src');
+  if (initialSrc) loadFromSource(initialSrc);
+  else setStatus('idle', 'Ready');
+})();
+</script>
+</body>
+</html>

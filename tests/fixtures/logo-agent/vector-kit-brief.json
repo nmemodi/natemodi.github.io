@@ -1,0 +1,33 @@
+{
+  "companyName": "VectorKit",
+  "initials": "VK",
+  "category": "AI developer platform",
+  "audience": "Engineering teams building reliable agent workflows",
+  "brandAttributes": [
+    "precise",
+    "technical",
+    "calm",
+    "modular",
+    "trustworthy"
+  ],
+  "colors": {
+    "background": "#ffffff",
+    "foreground": "#111111",
+    "accent": "#2563eb",
+    "preferred": [
+      "#111111",
+      "#ffffff",
+      "#2563eb"
+    ],
+    "forbidden": [
+      "generic AI sparkle gradients"
+    ]
+  },
+  "styleConstraints": [
+    "must work in black and white",
+    "must read at favicon size",
+    "avoid mascots"
+  ],
+  "outputCount": 50,
+  "minInitialConcepts": 10
+}

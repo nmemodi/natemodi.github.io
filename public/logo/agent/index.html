@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Use Logo Lab With an Agent</title>
+<meta name="description" content="Generate a custom Explorer-style Logo Lab gallery with your AI coding agent.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:title" content="Use Logo Lab With an Agent">
+<meta property="og:description" content="Generate a custom Explorer-style Logo Lab gallery with your AI coding agent.">
+<meta property="og:url" content="https://natemodi.com/logo/agent/">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --bg: #fdfdfc;
+    --fg: #111;
+    --fg-muted: rgba(17, 17, 17, 0.58);
+    --fg-faded: rgba(17, 17, 17, 0.4);
+    --fg-quiet: rgba(17, 17, 17, 0.32);
+    --border: rgba(17, 17, 17, 0.1);
+    --border-subtle: rgba(17, 17, 17, 0.06);
+    --tile-bg: #f4f3f1;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    color-scheme: light;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.005em;
+  }
+
+  .page {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 48px 32px 96px;
+  }
+
+  .crumb {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--fg-faded);
+    text-decoration: none;
+    font-size: 13px;
+    margin-bottom: 12px;
+    transition: color 0.15s ease;
+  }
+  .crumb:hover { color: var(--fg); }
+  .crumb svg { width: 12px; height: 12px; }
+
+  header {
+    margin-bottom: 24px;
+  }
+
+  .eyebrow {
+    color: var(--fg-faded);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .lede {
+    color: var(--fg-muted);
+    font-size: 14px;
+    max-width: 680px;
+    margin-bottom: 18px;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .btn {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--bg);
+    color: var(--fg);
+    cursor: pointer;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 6px 12px;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    user-select: none;
+  }
+  .btn:hover { border-color: var(--fg); }
+  .btn--dark { background: transparent; border-color: var(--border); color: var(--fg); }
+
+  section {
+    margin-top: 32px;
+  }
+
+  h2 {
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+
+  p {
+    color: var(--fg-muted);
+  }
+
+  .links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .link-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 10px 12px;
+    color: var(--fg-muted);
+    text-decoration: none;
+    min-height: 43px;
+    transition: border-color 0.15s ease;
+  }
+  .link-row strong { color: var(--fg); font-weight: 600; }
+  .link-row span { color: var(--fg-faded); font-size: 12.5px; }
+  .link-row:hover { border-color: var(--fg); }
+
+  .prompt-wrap {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--tile-bg);
+  }
+
+  .prompt-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .prompt-head span {
+    color: var(--fg-faded);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  pre {
+    padding: 14px;
+    overflow: auto;
+    max-height: 520px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+  }
+
+  .note {
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 42px;
+    padding-top: 18px;
+    color: var(--fg-faded);
+    font-size: 13px;
+  }
+
+  @media (max-width: 640px) {
+    .page { padding: 32px 20px 80px; }
+    .links { grid-template-columns: 1fr; }
+    .prompt-head { align-items: flex-start; flex-direction: column; }
+    h1 { font-size: 19px; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <a class="crumb" href="/logo/">
+    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M7.5 3L4.5 6L7.5 9"/>
+    </svg>
+    Logo Lab
+  </a>
+
+  <header>
+    <p class="eyebrow">Agent guide</p>
+    <h1>Generate a custom Logo Lab gallery with your AI agent</h1>
+    <p class="lede">Logo Lab gives agents deterministic, URL-addressable logo systems and a curated Explorer corpus of strong outputs. Your agent can start from those curated concepts, apply your design-system colors and initials, and produce a browsable mini-Explorer for your brand.</p>
+    <div class="actions">
+      <button class="btn btn--dark" type="button" data-copy-prompt>Copy gallery prompt</button>
+      <a class="btn" href="/logo/gallery/?src=https://natemodi.com/logo/examples/agent-gallery/gallery.json">Open sample gallery</a>
+      <a class="btn" href="/logo/gallery-template.html">Gallery template</a>
+    </div>
+  </header>
+
+  <section>
+    <h2>Agent Files</h2>
+    <div class="links">
+      <a class="link-row" href="/logo/llms.txt"><strong>llms.txt</strong><span>instructions</span></a>
+      <a class="link-row" href="/logo/tools.json"><strong>tools.json</strong><span>tool metadata</span></a>
+      <a class="link-row" href="/logo/explorer.json"><strong>explorer.json</strong><span>curated concepts</span></a>
+      <a class="link-row" href="/logo/agent-rules.md"><strong>agent-rules.md</strong><span>taste rules</span></a>
+      <a class="link-row" href="/logo/gallery.schema.json"><strong>gallery.schema.json</strong><span>manifest schema</span></a>
+      <a class="link-row" href="/logo/brand-brief.schema.json"><strong>brand-brief.schema.json</strong><span>brief schema</span></a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Prompt</h2>
+    <div class="prompt-wrap">
+      <div class="prompt-head">
+        <span>copy-paste</span>
+        <button class="btn" type="button" data-copy-prompt>Copy</button>
+      </div>
+      <pre id="agent-prompt">Read these Logo Lab files:
+
+https://natemodi.com/logo/llms.txt
+https://natemodi.com/logo/tools.json
+https://natemodi.com/logo/explorer.json
+https://natemodi.com/logo/agent-rules.md
+https://natemodi.com/logo/gallery.schema.json
+https://natemodi.com/logo/gallery-template.html
+
+Using the brand brief below, generate a custom Explorer-style gallery with 50 strong logo concepts.
+
+Important:
+Do not return a wall of links.
+Create a browsable gallery page.
+
+Use Logo Lab's curated Explorer outputs as the quality seed set. Start from curated concepts, apply my design-system colors and initials where appropriate, and create controlled variations that preserve strong silhouettes.
+
+Requirements:
+- Create a standalone HTML or React gallery page.
+- Use at least 5 different Logo Lab tools.
+- Include exactly 50 concepts unless the brief asks otherwise.
+- Include at least 30 concepts derived from curated Explorer outputs.
+- Include at least 10 concepts customized with my initials if relevant.
+- Include no more than 5 wildcard explorations.
+- Use my preferred colors where possible.
+- Preserve black-and-white viability.
+- Group concepts into 3 to 6 named directions.
+- Each concept card must include:
+  - concept number
+  - rendered iframe
+  - tool name
+  - source Explorer concept ID when applicable
+  - stable Logo Lab URL
+  - colors used
+  - variation type
+  - short rationale
+  - suggested use case
+- Add filters for:
+  - direction
+  - tool
+  - variation type
+  - recommended concepts
+- Highlight the strongest 5 concepts.
+- Include a final recommendation section explaining the strongest 5.
+- Include a disclaimer that concepts are not trademark-cleared.
+- Do not present any output as final identity work.
+
+Brand brief:
+[PASTE BRAND BRIEF HERE]</pre>
+    </div>
+  </section>
+
+  <p class="note">Every concept is a starting point. Check distinctiveness, conflicts, and trademark availability before using any mark commercially. Logo Lab does not provide AI chat, hosted saving, accounts, server-side generation, or trademark review.</p>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  const prompt = document.getElementById('agent-prompt');
+  const buttons = document.querySelectorAll('[data-copy-prompt]');
+  function copyPrompt(button) {
+    const text = prompt.textContent;
+    const done = () => {
+      const previous = button.textContent;
+      button.textContent = 'Copied';
+      setTimeout(() => { button.textContent = previous; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => fallback(text));
+    } else {
+      fallback(text);
+    }
+  }
+  function fallback(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try { document.execCommand('copy'); }
+    catch (error) { window.prompt('Copy prompt', text); }
+    finally { textarea.remove(); }
+  }
+  buttons.forEach((button) => button.addEventListener('click', () => copyPrompt(button)));
+})();
+</script>
+</body>
+</html>

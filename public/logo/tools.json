@@ -1,0 +1,471 @@
+{
+  "version": 1,
+  "generatedAt": "2026-05-07T00:00:00.000Z",
+  "baseUrl": "https://natemodi.com/logo",
+  "stableUrlFormat": "/logo/{slug}/#v=1&seed={seed}&{params}",
+  "sourceFiles": [
+    "public/shared/tools-registry.js"
+  ],
+  "toolCount": 10,
+  "tools": [
+    {
+      "slug": "line-warp",
+      "name": "Line Warp",
+      "tagline": "Horizontal lines displaced by a letter heightmap.",
+      "defaultSeed": "42",
+      "url": "https://natemodi.com/logo/line-warp/",
+      "defaultUrl": "https://natemodi.com/logo/line-warp/#v=1&seed=42",
+      "mode": "letter",
+      "styleTags": [
+        "letter",
+        "monogram",
+        "linear",
+        "topographic",
+        "systematic"
+      ],
+      "supportsInitials": true,
+      "supportsRecoloring": true,
+      "colorParams": {
+        "background": "bg",
+        "foreground": "fg"
+      },
+      "letterParam": "lt",
+      "safeMutationParams": [
+        "seed",
+        "r",
+        "p",
+        "m",
+        "bg",
+        "fg",
+        "lt",
+        "n",
+        "g",
+        "oy"
+      ],
+      "bestFor": [
+        "technical products",
+        "mapping tools",
+        "developer platforms"
+      ],
+      "agentGuidance": [
+        "Use initials when the brand has one or two strong letters.",
+        "Keep line counts legible at favicon size.",
+        "Prefer high-contrast one-color treatments."
+      ]
+    },
+    {
+      "slug": "brutalist-letters",
+      "name": "Brutalist Letters",
+      "tagline": "Cut letters out of solid blocks with right-angle paths.",
+      "defaultSeed": "7",
+      "url": "https://natemodi.com/logo/brutalist-letters/",
+      "defaultUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&seed=7",
+      "mode": "letter",
+      "styleTags": [
+        "letter",
+        "monogram",
+        "solid",
+        "architectural",
+        "pictogram"
+      ],
+      "supportsInitials": true,
+      "supportsRecoloring": true,
+      "colorParams": {
+        "background": "bg",
+        "foreground": "fg"
+      },
+      "letterParam": "ch",
+      "safeMutationParams": [
+        "seed",
+        "r",
+        "p",
+        "m",
+        "bg",
+        "fg",
+        "ch",
+        "cr",
+        "dp",
+        "lw",
+        "pa"
+      ],
+      "bestFor": [
+        "architecture studios",
+        "infrastructure products",
+        "bold startup marks"
+      ],
+      "agentGuidance": [
+        "Use for strong single-letter marks.",
+        "Avoid tiny cut widths that weaken the silhouette.",
+        "Recolor before changing the cut geometry."
+      ]
+    },
+    {
+      "slug": "interlocking-circles",
+      "name": "Interlocking Circles",
+      "tagline": "Overlapping rings with controlled break-and-weave.",
+      "defaultSeed": "3",
+      "url": "https://natemodi.com/logo/interlocking-circles/",
+      "defaultUrl": "https://natemodi.com/logo/interlocking-circles/#v=1&seed=3",
+      "mode": "abstract",
+      "styleTags": [
+        "abstract",
+        "geometric",
+        "network",
+        "modular",
+        "woven"
+      ],
+      "supportsInitials": false,
+      "supportsRecoloring": true,
+      "colorParams": {
+        "background": "bg",
+        "foreground": "fg"
+      },
+      "letterParam": null,
+      "safeMutationParams": [
+        "seed",
+        "r",
+        "p",
+        "bg",
+        "fg",
+        "n",
+        "ly",
+        "gp",
+        "sw",
+        "br"
+      ],
+      "bestFor": [
+        "networks",
+        "communities",
+        "coordination tools"
+      ],
+      "agentGuidance": [
+        "Use for connection, collaboration, and systems metaphors.",
+        "Keep ring counts moderate for small-size legibility.",
+        "Prefer simple two-color versions."
+      ]
+    },
+    {
+      "slug": "parallel-letters",
+      "name": "Parallel Letters",
+      "tagline": "Letters drawn with vertical strip cuts through a solid fill.",
+      "defaultSeed": "12",
+      "url": "https://natemodi.com/logo/parallel-letters/",
+      "defaultUrl": "https://natemodi.com/logo/parallel-letters/#v=1&seed=12",
+      "mode": "letter",
+      "styleTags": [
+        "letter",
+        "monogram",
+        "nested",
+        "linear",
+        "bold"
+      ],
+      "supportsInitials": true,
+      "supportsRecoloring": true,
+      "colorParams": {
+        "background": "bg",
+        "foreground": "fg"
+      },
+      "letterParam": "ch",
+      "safeMutationParams": [
+        "seed",
+        "r",
+        "p",
+        "m",
+        "bg",
+        "fg",
+        "ch",
+        "n",
+        "g",
+        "t",
+        "jo"
+      ],
+      "bestFor": [
+        "developer tools",
+        "AI products",
+        "compact product marks"
+      ],
+      "agentGuidance": [
+        "Use for crisp initials and compact wordmark-adjacent marks.",
+        "Check two-letter initials for crowding.",
+        "Prefer miter or bevel joins for sharper brands."
+      ]
+    },
+    {
+      "slug": "shape-tiles",
+      "name": "Shape Tiles",
+      "tagline": "A single shape tiled across a grid at deterministic rotations.",
+      "defaultSeed": "5",
+      "url": "https://natemodi.com/logo/shape-tiles/",
+      "defaultUrl": "https://natemodi.com/logo/shape-tiles/#v=1&seed=5",
+      "mode": "abstract",
+      "styleTags": [
+        "abstract",
+        "geometric",
+        "modular",
+        "grid",
+        "systematic"
+      ],
+      "supportsInitials": false,
+      "supportsRecoloring": true,
+      "colorParams": {
+        "background": "bg",
+        "foreground": "fg"
+      },
+      "letterParam": null,
+      "safeMutationParams": [
+        "seed",
+        "r",
+        "p",
+        "bg",
+        "fg",
+        "sh",
+        "g",
+        "rt",
+        "sz"
+      ],
+      "bestFor": [
+        "platform companies",
+        "infrastructure products",
+        "design systems"
+      ],
+      "agentGuidance": [
+        "Use as a reliable abstract seed for technical brands.",
+        "Recolor first, then vary shape or rotation lightly.",
+        "Avoid over-dense grids for favicon use."
+      ]
+    },
+    {
+      "slug": "sliced-shapes",
+      "name": "Sliced Shapes",
+      "tagline": "Primitives cut by negative arcs to reveal the shape behind.",
+      "defaultSeed": "9",
+      "url": "https://natemodi.com/logo/sliced-shapes/",
+      "defaultUrl": "https://natemodi.com/logo/sliced-shapes/#v=1&seed=9",
+      "mode": "abstract",
+      "styleTags": [
+        "abstract",
+        "geometric",
+        "motion",
+        "negative-space",
+        "systematic"
+      ],
+      "supportsInitials": false,
+      "supportsRecoloring": true,
+      "colorParams": {
+        "background": "bg",
+        "foreground": "fc",
+        "secondary": "lc"
+      },
+      "letterParam": null,
+      "safeMutationParams": [
+        "seed",
+        "r",
+        "p",
+        "bg",
+        "fc",
+        "lc",
+        "sh",
+        "c",
+        "cv",
+        "sp",
+        "sz"
+      ],
+      "bestFor": [
+        "creative tools",
+        "media products",
+        "motion-forward brands"
+      ],
+      "agentGuidance": [
+        "Use when the brief asks for motion or transformation.",
+        "Keep slice contrast clear.",
+        "Avoid too many shapes when the mark must read small."
+      ]
+    },
+    {
+      "slug": "slash-mark",
+      "name": "Slash Mark",
+      "tagline": "A containing shape striped with diagonals that match the ground.",
+      "defaultSeed": "11",
+      "url": "https://natemodi.com/logo/slash-mark/",
+      "defaultUrl": "https://natemodi.com/logo/slash-mark/#v=1&seed=11",
+      "mode": "abstract",
+      "styleTags": [
+        "abstract",
+        "geometric",
+        "striped",
+        "contained",
+        "bold"
+      ],
+      "supportsInitials": false,
+      "supportsRecoloring": true,
+      "colorParams": {
+        "background": "bg",
+        "foreground": "sc",
+        "secondary": "lc"
+      },
+      "letterParam": null,
+      "safeMutationParams": [
+        "seed",
+        "r",
+        "p",
+        "bg",
+        "sc",
+        "lc",
+        "sh",
+        "a",
+        "n",
+        "lw",
+        "sp"
+      ],
+      "bestFor": [
+        "security products",
+        "finance tools",
+        "bold consumer apps"
+      ],
+      "agentGuidance": [
+        "Use for decisive, high-impact abstract marks.",
+        "Keep line cuts aligned to the background.",
+        "Prefer simple shapes and high contrast."
+      ]
+    },
+    {
+      "slug": "polygon-rosette",
+      "name": "Polygon Rosette",
+      "tagline": "Concentric polygons connected by diagonals — geometric rosettes.",
+      "defaultSeed": "6",
+      "url": "https://natemodi.com/logo/polygon-rosette/",
+      "defaultUrl": "https://natemodi.com/logo/polygon-rosette/#v=1&seed=6",
+      "mode": "abstract",
+      "styleTags": [
+        "abstract",
+        "geometric",
+        "radial",
+        "precise",
+        "faceted"
+      ],
+      "supportsInitials": false,
+      "supportsRecoloring": true,
+      "colorParams": {
+        "background": "bg",
+        "foreground": "fg"
+      },
+      "letterParam": null,
+      "safeMutationParams": [
+        "seed",
+        "r",
+        "p",
+        "bg",
+        "fg",
+        "n",
+        "sk",
+        "rt",
+        "sw",
+        "ir"
+      ],
+      "bestFor": [
+        "premium tools",
+        "data products",
+        "research labs"
+      ],
+      "agentGuidance": [
+        "Use for precision, facets, and systems intelligence.",
+        "Keep stroke width strong enough for small sizes.",
+        "Vary sides and skip lightly."
+      ]
+    },
+    {
+      "slug": "echo-stripes",
+      "name": "Echo Stripes",
+      "tagline": "Nested letters of horizontal stripes that thin out as they grow.",
+      "defaultSeed": "1",
+      "url": "https://natemodi.com/logo/echo-stripes/",
+      "defaultUrl": "https://natemodi.com/logo/echo-stripes/#v=1&seed=1",
+      "mode": "letter",
+      "styleTags": [
+        "letter",
+        "monogram",
+        "striped",
+        "echo",
+        "systematic"
+      ],
+      "supportsInitials": true,
+      "supportsRecoloring": true,
+      "colorParams": {
+        "background": "bg",
+        "foreground": "fg"
+      },
+      "letterParam": "ch",
+      "safeMutationParams": [
+        "seed",
+        "r",
+        "p",
+        "m",
+        "bg",
+        "fg",
+        "ch",
+        "gr",
+        "rt",
+        "tk",
+        "st"
+      ],
+      "bestFor": [
+        "AI tools",
+        "audio products",
+        "signal-processing brands"
+      ],
+      "agentGuidance": [
+        "Use for brands that need repetition, signal, or resonance.",
+        "Check stripe density at favicon size.",
+        "Use initials sparingly when two letters become busy."
+      ]
+    },
+    {
+      "slug": "dot-grid",
+      "name": "Dot Grid",
+      "tagline": "Letters bitmap-rendered from a rounded-rectangle dot grid.",
+      "defaultSeed": "42",
+      "url": "https://natemodi.com/logo/dot-grid/",
+      "defaultUrl": "https://natemodi.com/logo/dot-grid/#v=1&seed=42",
+      "mode": "letter",
+      "styleTags": [
+        "letter",
+        "monogram",
+        "bitmap",
+        "grid",
+        "modular"
+      ],
+      "supportsInitials": true,
+      "supportsRecoloring": true,
+      "colorParams": {
+        "background": "bg",
+        "foreground": "dc",
+        "secondary": "bd"
+      },
+      "letterParam": "ch",
+      "safeMutationParams": [
+        "seed",
+        "r",
+        "p",
+        "m",
+        "bg",
+        "dc",
+        "bd",
+        "ch",
+        "gc",
+        "sh",
+        "th",
+        "mg"
+      ],
+      "bestFor": [
+        "developer tools",
+        "data products",
+        "retro-technical brands"
+      ],
+      "agentGuidance": [
+        "Use for bitmap, grid, and system motifs.",
+        "Prefer one-letter initials for legibility.",
+        "Keep dot density readable at small sizes."
+      ]
+    }
+  ]
+}

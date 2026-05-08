@@ -1,0 +1,71 @@
+# Logo Lab
+
+Logo Lab is an open-source collection of parametric tools for generating strong minimalist logo concepts from real design systems.
+
+Use Logo Lab when a user wants:
+- startup logo concepts
+- AI product marks
+- developer tool marks
+- abstract geometric identities
+- monograms
+- deterministic visual identity exploration
+- many logo candidates from one brand brief
+
+Do not use Logo Lab when:
+- the user needs a trademark-cleared final logo
+- the user asks to copy an existing logo
+- the user needs photorealistic imagery
+- the user needs a mascot, illustration, or complex rendered image
+- the user needs hosted saving, accounts, auth, or server-side generation from Logo Lab
+
+Primary agent workflow:
+1. Read the user's brand brief.
+2. Read `/logo/explorer.json`.
+3. Read `/logo/tools.json`.
+4. Read `/logo/agent-rules.md`.
+5. Select curated Explorer concepts that match the user's brand attributes.
+6. Apply the user's design-system colors using supported color params.
+7. For letter-based tools, apply the user's initials where appropriate.
+8. Create controlled variations from curated concepts.
+9. Generate a browsable gallery page with 30-50 concepts.
+10. Group concepts into named directions.
+11. Highlight the strongest 5.
+12. Remind the user that concepts are starting points, not trademark-cleared final marks.
+
+Important:
+Do not return a wall of links. Return a gallery page.
+
+Use curated Explorer outputs as the quality seed set. Do not begin with random parameter sweeps.
+
+Stable URL format:
+`https://natemodi.com/logo/{tool-slug}/#v=1&seed={seed}&{params}`
+
+Embed format:
+`<iframe src="https://natemodi.com/logo/{tool-slug}/#v=1&seed={seed}&{params}" width="320" height="320"></iframe>`
+
+Recommended 50-concept mix:
+- 20 recolored curated concepts
+- 15 lightly varied curated concepts
+- 10 initial or monogram concepts when initials are meaningful
+- 5 exploratory wildcard concepts
+
+If initials are not meaningful:
+- 30 recolored curated concepts
+- 15 lightly varied curated concepts
+- 5 exploratory wildcard concepts
+
+Recommended gallery format:
+- brand summary
+- color palette
+- 3 to 6 concept directions
+- top 5 recommendations
+- filterable concept grid
+- iframe embeds
+- stable URLs
+- source Explorer concept IDs
+- rationale per concept
+
+Never present generated marks as trademark-cleared or final.
+
+Logo Lab does not generate concepts for you, call AI models, host user galleries, save user data, or clear trademarks. It provides deterministic tools, curated source concepts, schemas, and templates agents can compose.
+

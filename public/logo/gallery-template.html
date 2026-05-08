@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en" data-logo-lab-gallery-template-version="1">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Logo Lab Gallery</title>
+  <style>
+    :root {
+      --bg: #fdfdfc;
+      --fg: #111111;
+      --muted: rgba(17, 17, 17, 0.62);
+      --quiet: rgba(17, 17, 17, 0.42);
+      --border: rgba(17, 17, 17, 0.12);
+      --surface: #f4f3f1;
+      --good: #1d7f43;
+      --bad: #a6362f;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color-scheme: light;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font-size: 14px; line-height: 1.5; }
+    main { max-width: 1120px; margin: 0 auto; padding: 48px 24px 80px; }
+    header { display: grid; gap: 10px; margin-bottom: 28px; }
+    .eyebrow { margin: 0; font-size: 12px; color: var(--quiet); text-transform: uppercase; letter-spacing: 0.08em; }
+    h1 { margin: 0; font-size: clamp(28px, 6vw, 64px); line-height: 0.95; letter-spacing: 0; }
+    .summary { max-width: 720px; margin: 0; color: var(--muted); font-size: 16px; }
+    section { margin-top: 34px; }
+    h2 { margin: 0 0 14px; font-size: 16px; }
+    .palette, .directions, .filters { display: flex; flex-wrap: wrap; gap: 8px; }
+    .swatch, .chip, .filter {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: transparent;
+      color: var(--fg);
+      padding: 7px 10px;
+      font: inherit;
+    }
+    .swatch { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
+    .swatch i { display: block; width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--border); }
+    .filter { cursor: pointer; }
+    .filter[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .card { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.36); }
+    .preview { position: relative; aspect-ratio: 1 / 1; background: var(--surface); }
+    .preview iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .preview .fallback { display: none; position: absolute; inset: 0; align-items: center; justify-content: center; padding: 18px; color: var(--quiet); text-align: center; }
+    .card.is-failed iframe { display: none; }
+    .card.is-failed .fallback { display: flex; }
+    .body { padding: 14px; display: grid; gap: 9px; }
+    .meta { display: flex; justify-content: space-between; gap: 8px; color: var(--quiet); font-size: 12px; }
+    .title { margin: 0; font-weight: 600; }
+    .rationale { margin: 0; color: var(--muted); }
+    .links { display: flex; flex-wrap: wrap; gap: 10px; }
+    a, button.linkish { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; background: none; border: 0; padding: 0; font: inherit; cursor: pointer; }
+    .note { border-top: 1px solid var(--border); margin-top: 34px; padding-top: 18px; color: var(--quiet); font-size: 13px; }
+    .empty { display: none; color: var(--quiet); padding: 28px 0; }
+    @media (max-width: 880px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 560px) { main { padding: 32px 18px 64px; } .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Logo Lab concept gallery</p>
+      <h1 data-brand-name>Logo Lab Gallery</h1>
+      <p class="summary" data-summary></p>
+    </header>
+
+    <section aria-label="Palette">
+      <div class="palette" data-palette></div>
+    </section>
+
+    <section aria-labelledby="recommendations-title">
+      <h2 id="recommendations-title">Recommended</h2>
+      <div class="grid" data-recommendations></div>
+    </section>
+
+    <section aria-labelledby="directions-title">
+      <h2 id="directions-title">Directions</h2>
+      <div class="directions" data-directions></div>
+    </section>
+
+    <section aria-labelledby="filters-title">
+      <h2 id="filters-title">Filters</h2>
+      <div class="filters" data-filters></div>
+    </section>
+
+    <section aria-labelledby="concepts-title">
+      <h2 id="concepts-title">Concepts</h2>
+      <div class="empty" data-empty>No concepts match these filters.</div>
+      <div class="grid" data-concept-grid></div>
+    </section>
+
+    <p class="note" data-disclaimer>Concepts are starting points. Check distinctiveness, conflicts, and trademark availability before commercial use.</p>
+    <p class="note">Built with Logo Lab. This template is static and does not save, host, generate, or trademark-clear logos.</p>
+  </main>
+
+  <script type="application/json" id="gallery-data">
+{}
+  </script>
+
+  <script>
+  (function () {
+    'use strict';
+
+    const ALLOWED_HOSTS = new Set(['natemodi.com', location.host]);
+    const KNOWN_SLUG = /^[a-z0-9-]+$/;
+
+    const state = { filter: 'all' };
+    let validConcepts = [];
+
+    function text(node, value) {
+      if (node) node.textContent = value || '';
+    }
+
+    function cleanText(value, fallback) {
+      return typeof value === 'string' && value.trim() ? value.trim() : fallback;
+    }
+
+    function safeLogoUrl(value) {
+      try {
+        const url = new URL(value, location.href);
+        const parts = url.pathname.split('/').filter(Boolean);
+        const slug = parts[0] === 'logo' ? parts[1] : null;
+        if (!ALLOWED_HOSTS.has(url.host)) return null;
+        if (!slug || !KNOWN_SLUG.test(slug)) return null;
+        if (!url.hash.includes('v=1')) return null;
+        return url.href;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function parseData() {
+      const raw = document.getElementById('gallery-data').textContent || '{}';
+      try { return JSON.parse(raw); }
+      catch (error) {
+        console.warn('[logo-gallery-template] invalid JSON', error);
+        return { brand: { name: 'Invalid gallery JSON' }, concepts: [] };
+      }
+    }
+
+    function buildCard(concept) {
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.dataset.direction = concept.directionId || '';
+      card.dataset.tool = concept.toolSlug || '';
+      card.dataset.variation = concept.variationType || '';
+      card.dataset.recommended = concept.isRecommended ? 'true' : 'false';
+
+      const preview = document.createElement('div');
+      preview.className = 'preview';
+      const iframe = document.createElement('iframe');
+      iframe.title = concept.toolName + ' preview';
+      iframe.loading = concept.isRecommended ? 'eager' : 'lazy';
+      iframe.scrolling = 'no';
+      iframe.src = concept.embedUrl;
+      const fallback = document.createElement('div');
+      fallback.className = 'fallback';
+      fallback.textContent = 'Preview unavailable. Open the concept in Logo Lab.';
+      let settled = false;
+      const settle = (ok) => {
+        if (settled) return;
+        settled = true;
+        if (!ok) card.classList.add('is-failed');
+      };
+      iframe.addEventListener('load', () => settle(true));
+      iframe.addEventListener('error', () => settle(false));
+      setTimeout(() => settle(false), 12000);
+      preview.append(iframe, fallback);
+
+      const body = document.createElement('div');
+      body.className = 'body';
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const rank = document.createElement('span');
+      rank.textContent = '#' + (concept.rank || concept.id);
+      const variation = document.createElement('span');
+      variation.textContent = concept.variationType || 'concept';
+      meta.append(rank, variation);
+      const title = document.createElement('p');
+      title.className = 'title';
+      title.textContent = concept.toolName;
+      const rationale = document.createElement('p');
+      rationale.className = 'rationale';
+      rationale.textContent = concept.rationale;
+      const links = document.createElement('div');
+      links.className = 'links';
+      const open = document.createElement('a');
+      open.href = concept.url;
+      open.target = '_blank';
+      open.rel = 'noopener noreferrer';
+      open.textContent = 'Open';
+      const copy = document.createElement('button');
+      copy.className = 'linkish';
+      copy.type = 'button';
+      copy.textContent = 'Copy iframe';
+      copy.addEventListener('click', () => {
+        const snippet = '<iframe src="' + concept.embedUrl + '" width="320" height="320" style="border:0"></iframe>';
+        navigator.clipboard && navigator.clipboard.writeText
+          ? navigator.clipboard.writeText(snippet).catch(() => {})
+          : window.prompt('Copy iframe snippet', snippet);
+      });
+      links.append(open, copy);
+      body.append(meta, title, rationale, links);
+      card.append(preview, body);
+      return card;
+    }
+
+    function renderFilters(data) {
+      const filters = document.querySelector('[data-filters]');
+      filters.textContent = '';
+      const options = [
+        ['all', 'All'],
+        ['recommended', 'Recommended'],
+        ...Array.from(new Set(validConcepts.map((c) => c.directionId).filter(Boolean))).map((id) => [id, cleanText((data.directions || []).find((d) => d.id === id)?.name, id)]),
+        ...Array.from(new Set(validConcepts.map((c) => c.toolSlug).filter(Boolean))).map((id) => [id, id])
+      ];
+      options.forEach(([value, label]) => {
+        const btn = document.createElement('button');
+        btn.className = 'filter';
+        btn.type = 'button';
+        btn.textContent = label;
+        btn.dataset.filter = value;
+        btn.setAttribute('aria-pressed', String(value === state.filter));
+        btn.addEventListener('click', () => {
+          state.filter = value;
+          applyFilter();
+          renderFilters(data);
+        });
+        filters.appendChild(btn);
+      });
+    }
+
+    function applyFilter() {
+      let shown = 0;
+      document.querySelectorAll('[data-concept-grid] .card').forEach((card) => {
+        const match = state.filter === 'all'
+          || (state.filter === 'recommended' && card.dataset.recommended === 'true')
+          || card.dataset.direction === state.filter
+          || card.dataset.tool === state.filter
+          || card.dataset.variation === state.filter;
+        card.hidden = !match;
+        if (match) shown++;
+      });
+      document.querySelector('[data-empty]').style.display = shown ? 'none' : 'block';
+    }
+
+    function render(data) {
+      text(document.querySelector('[data-brand-name]'), cleanText(data.brand && data.brand.name, 'Logo Lab Gallery'));
+      text(document.querySelector('[data-summary]'), cleanText(data.summary, 'A custom Explorer-style gallery generated from Logo Lab concepts.'));
+      text(document.querySelector('[data-disclaimer]'), cleanText(data.disclaimer, 'Concepts are starting points. Check distinctiveness, conflicts, and trademark availability before commercial use.'));
+
+      const palette = document.querySelector('[data-palette]');
+      palette.textContent = '';
+      Object.entries((data.brand && data.brand.colors) || {}).forEach(([name, value]) => {
+        if (typeof value !== 'string' || !/^#?[0-9a-fA-F]{6}$/.test(value)) return;
+        const item = document.createElement('span');
+        item.className = 'swatch';
+        const swatch = document.createElement('i');
+        swatch.style.background = value.startsWith('#') ? value : '#' + value;
+        item.append(swatch, document.createTextNode(name + ' ' + value));
+        palette.appendChild(item);
+      });
+
+      const directions = document.querySelector('[data-directions]');
+      directions.textContent = '';
+      (data.directions || []).forEach((direction) => {
+        const chip = document.createElement('span');
+        chip.className = 'chip';
+        chip.textContent = cleanText(direction.name, direction.id);
+        directions.appendChild(chip);
+      });
+
+      validConcepts = (Array.isArray(data.concepts) ? data.concepts : [])
+        .map((concept) => ({
+          ...concept,
+          url: safeLogoUrl(concept.url),
+          embedUrl: safeLogoUrl(concept.embedUrl)
+        }))
+        .filter((concept) => concept.url && concept.embedUrl && concept.id && concept.toolSlug && concept.toolName && concept.rationale);
+
+      const grid = document.querySelector('[data-concept-grid]');
+      const recs = document.querySelector('[data-recommendations]');
+      grid.textContent = '';
+      recs.textContent = '';
+      validConcepts.forEach((concept) => grid.appendChild(buildCard(concept)));
+      validConcepts.filter((concept) => concept.isRecommended).slice(0, 5).forEach((concept) => recs.appendChild(buildCard(concept)));
+      renderFilters(data);
+      applyFilter();
+    }
+
+    render(parseData());
+  })();
+  </script>
+</body>
+</html>

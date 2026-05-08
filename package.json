@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:logo-agent-data": "node scripts/build-logo-tools-json.mjs && node scripts/build-logo-explorer-json.mjs && node scripts/build-logo-agent-example.mjs",
+    "eval:logo-agent-gallery": "node scripts/evaluate-logo-agent-gallery.mjs public/logo/examples/agent-gallery/gallery.json --brief tests/fixtures/logo-agent/vector-kit-brief.json --expected tests/fixtures/logo-agent/vector-kit.expected-summary.json --min-score 95",
     "preview": "astro preview",
     "test": "vitest run",
     "test:watch": "vitest"
