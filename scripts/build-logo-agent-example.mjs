@@ -22,7 +22,7 @@ const BRAND = {
   },
   constraints: ['must work in black and white', 'must read at favicon size', 'avoid mascots']
 };
-const INITIALS = 'VK';
+const PRIMARY_INITIAL = BRAND.name.slice(0, 1).toUpperCase();
 
 const DIRECTIONS = [
   {
@@ -48,7 +48,7 @@ const DIRECTIONS = [
   {
     id: 'letter-marks',
     name: 'Letter Marks',
-    description: 'Initial-driven marks using V and K as compact product signatures.'
+    description: 'Initial-driven marks using the leading V as a compact product signature.'
   }
 ];
 
@@ -95,12 +95,9 @@ function variationTypeFor(tool, localIndex) {
   return 'lightly-varied-curated';
 }
 
-function initialParamsFor(tool) {
+function brandLetterParamsFor(tool) {
   if (!tool.supportsInitials || !tool.letterParam) return {};
-  const value = ['line-warp', 'parallel-letters', 'echo-stripes'].includes(tool.slug)
-    ? INITIALS
-    : INITIALS.slice(0, 1);
-  return { [tool.letterParam]: value };
+  return { [tool.letterParam]: PRIMARY_INITIAL };
 }
 
 export function buildExampleGallery() {
@@ -122,7 +119,7 @@ export function buildExampleGallery() {
       const variationType = variationTypeFor(tool, localIndex);
       const hash = appendParams(source.hash, {
         ...colorParamsFor(tool, rank),
-        ...(variationType === 'initial-customized' ? initialParamsFor(tool) : {})
+        ...brandLetterParamsFor(tool)
       });
       const url = `${tool.url}#${hash}`;
       const directionId = DIRECTION_BY_TOOL[slug];
@@ -172,7 +169,7 @@ export function buildExampleGallery() {
 
 function rationaleFor(tool, directionId, variationType) {
   if (variationType === 'initial-customized') {
-    return `${tool.name} turns the V/K initials into a compact technical mark while preserving the curated source structure.`;
+    return `${tool.name} turns the leading V into a compact technical mark while preserving the curated source structure.`;
   }
   if (variationType === 'wildcard') {
     return `${tool.name} adds one controlled wildcard option while staying inside Logo Lab's high-contrast geometric vocabulary.`;

@@ -13,7 +13,8 @@ Requirements:
 - Generate exactly 50 concepts.
 - Use at least 5 different Logo Lab tools.
 - Seed at least 30 concepts from curated Explorer outputs.
-- Include at least 10 initial-customized concepts using `VK`, or `V` where a tool only supports one character.
+- Every letter-capable concept should use `V`, the leading letter in VectorKit.
+- Include at least 10 initial-customized concepts using that leading `V`.
 - Include no more than 5 wildcard concepts.
 - Group concepts into 3 to 6 named directions.
 - Highlight exactly 5 recommended concepts with reasons.

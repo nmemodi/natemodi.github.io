@@ -103,7 +103,7 @@
     {
       "id": "letter-marks",
       "name": "Letter Marks",
-      "description": "Initial-driven marks using V and K as compact product signatures.",
+      "description": "Initial-driven marks using the leading V as a compact product signature.",
       "conceptIds": [
         "vectorkit-006",
         "vectorkit-007",
@@ -127,8 +127,8 @@
       "sourceUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ivros3y7",
       "toolSlug": "line-warp",
       "toolName": "Line Warp",
-      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ivros3y7&bg=111111&fg=ffffff",
-      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ivros3y7&bg=111111&fg=ffffff",
+      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ivros3y7&bg=111111&fg=ffffff&lt=V",
+      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ivros3y7&bg=111111&fg=ffffff&lt=V",
       "colorsUsed": [
         "#111111",
         "#ffffff",
@@ -156,8 +156,8 @@
       "sourceUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=crbebkmw",
       "toolSlug": "line-warp",
       "toolName": "Line Warp",
-      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=crbebkmw&bg=ffffff&fg=111111",
-      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=crbebkmw&bg=ffffff&fg=111111",
+      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=crbebkmw&bg=ffffff&fg=111111&lt=V",
+      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=crbebkmw&bg=ffffff&fg=111111&lt=V",
       "colorsUsed": [
         "#ffffff",
         "#111111",
@@ -185,8 +185,8 @@
       "sourceUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ipr1po3r",
       "toolSlug": "line-warp",
       "toolName": "Line Warp",
-      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ipr1po3r&bg=111111&fg=ffffff",
-      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ipr1po3r&bg=111111&fg=ffffff",
+      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ipr1po3r&bg=111111&fg=ffffff&lt=V",
+      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=ipr1po3r&bg=111111&fg=ffffff&lt=V",
       "colorsUsed": [
         "#111111",
         "#ffffff",
@@ -214,15 +214,15 @@
       "sourceUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=wkhph6ea",
       "toolSlug": "line-warp",
       "toolName": "Line Warp",
-      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=wkhph6ea&bg=ffffff&fg=111111&lt=VK",
-      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=wkhph6ea&bg=ffffff&fg=111111&lt=VK",
+      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=wkhph6ea&bg=ffffff&fg=111111&lt=V",
+      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=wkhph6ea&bg=ffffff&fg=111111&lt=V",
       "colorsUsed": [
         "#ffffff",
         "#111111",
         "#2563eb"
       ],
       "variationType": "initial-customized",
-      "rationale": "Line Warp turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "rationale": "Line Warp turns the leading V into a compact technical mark while preserving the curated source structure.",
       "bestFor": "agent orchestration, routing, and observability surfaces",
       "tags": [
         "signal-systems",
@@ -243,15 +243,15 @@
       "sourceUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=9yl5uton",
       "toolSlug": "line-warp",
       "toolName": "Line Warp",
-      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=9yl5uton&bg=111111&fg=ffffff&lt=VK",
-      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=9yl5uton&bg=111111&fg=ffffff&lt=VK",
+      "url": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=9yl5uton&bg=111111&fg=ffffff&lt=V",
+      "embedUrl": "https://natemodi.com/logo/line-warp/#v=1&r=1&seed=9yl5uton&bg=111111&fg=ffffff&lt=V",
       "colorsUsed": [
         "#111111",
         "#ffffff",
         "#2563eb"
       ],
       "variationType": "initial-customized",
-      "rationale": "Line Warp turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "rationale": "Line Warp turns the leading V into a compact technical mark while preserving the curated source structure.",
       "bestFor": "agent orchestration, routing, and observability surfaces",
       "tags": [
         "signal-systems",
@@ -272,8 +272,8 @@
       "sourceUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=mn88l8m3",
       "toolSlug": "brutalist-letters",
       "toolName": "Brutalist Letters",
-      "url": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=mn88l8m3&bg=ffffff&fg=111111",
-      "embedUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=mn88l8m3&bg=ffffff&fg=111111",
+      "url": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=mn88l8m3&bg=ffffff&fg=111111&ch=V",
+      "embedUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=mn88l8m3&bg=ffffff&fg=111111&ch=V",
       "colorsUsed": [
         "#ffffff",
         "#111111",
@@ -300,8 +300,8 @@
       "sourceUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=bax8un5k",
       "toolSlug": "brutalist-letters",
       "toolName": "Brutalist Letters",
-      "url": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=bax8un5k&bg=111111&fg=ffffff",
-      "embedUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=bax8un5k&bg=111111&fg=ffffff",
+      "url": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=bax8un5k&bg=111111&fg=ffffff&ch=V",
+      "embedUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=bax8un5k&bg=111111&fg=ffffff&ch=V",
       "colorsUsed": [
         "#111111",
         "#ffffff",
@@ -328,8 +328,8 @@
       "sourceUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=zogdz5g0",
       "toolSlug": "brutalist-letters",
       "toolName": "Brutalist Letters",
-      "url": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=zogdz5g0&bg=ffffff&fg=111111",
-      "embedUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=zogdz5g0&bg=ffffff&fg=111111",
+      "url": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=zogdz5g0&bg=ffffff&fg=111111&ch=V",
+      "embedUrl": "https://natemodi.com/logo/brutalist-letters/#v=1&r=1&seed=zogdz5g0&bg=ffffff&fg=111111&ch=V",
       "colorsUsed": [
         "#ffffff",
         "#111111",
@@ -364,7 +364,7 @@
         "#2563eb"
       ],
       "variationType": "initial-customized",
-      "rationale": "Brutalist Letters turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "rationale": "Brutalist Letters turns the leading V into a compact technical mark while preserving the curated source structure.",
       "bestFor": "initial-led identities and social avatars",
       "tags": [
         "letter-marks",
@@ -392,7 +392,7 @@
         "#2563eb"
       ],
       "variationType": "initial-customized",
-      "rationale": "Brutalist Letters turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "rationale": "Brutalist Letters turns the leading V into a compact technical mark while preserving the curated source structure.",
       "bestFor": "initial-led identities and social avatars",
       "tags": [
         "letter-marks",
@@ -552,8 +552,8 @@
       "sourceUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=grhh375s",
       "toolSlug": "parallel-letters",
       "toolName": "Parallel Letters",
-      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=grhh375s&bg=ffffff&fg=111111",
-      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=grhh375s&bg=ffffff&fg=111111",
+      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=grhh375s&bg=ffffff&fg=111111&ch=V",
+      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=grhh375s&bg=ffffff&fg=111111&ch=V",
       "colorsUsed": [
         "#ffffff",
         "#111111",
@@ -580,8 +580,8 @@
       "sourceUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=2b9tkirr",
       "toolSlug": "parallel-letters",
       "toolName": "Parallel Letters",
-      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=2b9tkirr&bg=111111&fg=ffffff",
-      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=2b9tkirr&bg=111111&fg=ffffff",
+      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=2b9tkirr&bg=111111&fg=ffffff&ch=V",
+      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=2b9tkirr&bg=111111&fg=ffffff&ch=V",
       "colorsUsed": [
         "#111111",
         "#ffffff",
@@ -608,8 +608,8 @@
       "sourceUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=4q75y1wk",
       "toolSlug": "parallel-letters",
       "toolName": "Parallel Letters",
-      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=4q75y1wk&bg=ffffff&fg=111111",
-      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=4q75y1wk&bg=ffffff&fg=111111",
+      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=4q75y1wk&bg=ffffff&fg=111111&ch=V",
+      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=4q75y1wk&bg=ffffff&fg=111111&ch=V",
       "colorsUsed": [
         "#ffffff",
         "#111111",
@@ -636,15 +636,15 @@
       "sourceUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=f0q0fpvg",
       "toolSlug": "parallel-letters",
       "toolName": "Parallel Letters",
-      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=f0q0fpvg&bg=111111&fg=ffffff&ch=VK",
-      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=f0q0fpvg&bg=111111&fg=ffffff&ch=VK",
+      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=f0q0fpvg&bg=111111&fg=ffffff&ch=V",
+      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=f0q0fpvg&bg=111111&fg=ffffff&ch=V",
       "colorsUsed": [
         "#111111",
         "#ffffff",
         "#2563eb"
       ],
       "variationType": "initial-customized",
-      "rationale": "Parallel Letters turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "rationale": "Parallel Letters turns the leading V into a compact technical mark while preserving the curated source structure.",
       "bestFor": "initial-led identities and social avatars",
       "tags": [
         "letter-marks",
@@ -664,15 +664,15 @@
       "sourceUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=8kaz8y8k",
       "toolSlug": "parallel-letters",
       "toolName": "Parallel Letters",
-      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=8kaz8y8k&bg=ffffff&fg=111111&ch=VK",
-      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=8kaz8y8k&bg=ffffff&fg=111111&ch=VK",
+      "url": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=8kaz8y8k&bg=ffffff&fg=111111&ch=V",
+      "embedUrl": "https://natemodi.com/logo/parallel-letters/#v=1&r=1&seed=8kaz8y8k&bg=ffffff&fg=111111&ch=V",
       "colorsUsed": [
         "#ffffff",
         "#111111",
         "#2563eb"
       ],
       "variationType": "initial-customized",
-      "rationale": "Parallel Letters turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "rationale": "Parallel Letters turns the leading V into a compact technical mark while preserving the curated source structure.",
       "bestFor": "initial-led identities and social avatars",
       "tags": [
         "letter-marks",
@@ -1252,8 +1252,8 @@
       "sourceUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=q1w6p9n7",
       "toolSlug": "echo-stripes",
       "toolName": "Echo Stripes",
-      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=q1w6p9n7&bg=111111&fg=ffffff",
-      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=q1w6p9n7&bg=111111&fg=ffffff",
+      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=q1w6p9n7&bg=111111&fg=ffffff&ch=V",
+      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=q1w6p9n7&bg=111111&fg=ffffff&ch=V",
       "colorsUsed": [
         "#111111",
         "#ffffff",
@@ -1280,8 +1280,8 @@
       "sourceUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=hhpoxpvg",
       "toolSlug": "echo-stripes",
       "toolName": "Echo Stripes",
-      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=hhpoxpvg&bg=ffffff&fg=111111",
-      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=hhpoxpvg&bg=ffffff&fg=111111",
+      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=hhpoxpvg&bg=ffffff&fg=111111&ch=V",
+      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=hhpoxpvg&bg=ffffff&fg=111111&ch=V",
       "colorsUsed": [
         "#ffffff",
         "#111111",
@@ -1308,8 +1308,8 @@
       "sourceUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=9ba2p4x2",
       "toolSlug": "echo-stripes",
       "toolName": "Echo Stripes",
-      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=9ba2p4x2&bg=111111&fg=ffffff",
-      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=9ba2p4x2&bg=111111&fg=ffffff",
+      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=9ba2p4x2&bg=111111&fg=ffffff&ch=V",
+      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=9ba2p4x2&bg=111111&fg=ffffff&ch=V",
       "colorsUsed": [
         "#111111",
         "#ffffff",
@@ -1336,15 +1336,15 @@
       "sourceUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=fz54j50g",
       "toolSlug": "echo-stripes",
       "toolName": "Echo Stripes",
-      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=fz54j50g&bg=ffffff&fg=111111&ch=VK",
-      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=fz54j50g&bg=ffffff&fg=111111&ch=VK",
+      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=fz54j50g&bg=ffffff&fg=111111&ch=V",
+      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=fz54j50g&bg=ffffff&fg=111111&ch=V",
       "colorsUsed": [
         "#ffffff",
         "#111111",
         "#2563eb"
       ],
       "variationType": "initial-customized",
-      "rationale": "Echo Stripes turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "rationale": "Echo Stripes turns the leading V into a compact technical mark while preserving the curated source structure.",
       "bestFor": "agent orchestration, routing, and observability surfaces",
       "tags": [
         "signal-systems",
@@ -1364,15 +1364,15 @@
       "sourceUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=eq6p2hu7",
       "toolSlug": "echo-stripes",
       "toolName": "Echo Stripes",
-      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=eq6p2hu7&bg=111111&fg=ffffff&ch=VK",
-      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=eq6p2hu7&bg=111111&fg=ffffff&ch=VK",
+      "url": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=eq6p2hu7&bg=111111&fg=ffffff&ch=V",
+      "embedUrl": "https://natemodi.com/logo/echo-stripes/#v=1&r=1&seed=eq6p2hu7&bg=111111&fg=ffffff&ch=V",
       "colorsUsed": [
         "#111111",
         "#ffffff",
         "#2563eb"
       ],
       "variationType": "initial-customized",
-      "rationale": "Echo Stripes turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "rationale": "Echo Stripes turns the leading V into a compact technical mark while preserving the curated source structure.",
       "bestFor": "agent orchestration, routing, and observability surfaces",
       "tags": [
         "signal-systems",
@@ -1392,8 +1392,8 @@
       "sourceUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=48amem5v",
       "toolSlug": "dot-grid",
       "toolName": "Dot Grid",
-      "url": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=48amem5v&bg=ffffff&dc=111111&bd=2563eb",
-      "embedUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=48amem5v&bg=ffffff&dc=111111&bd=2563eb",
+      "url": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=48amem5v&bg=ffffff&dc=111111&bd=2563eb&ch=V",
+      "embedUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=48amem5v&bg=ffffff&dc=111111&bd=2563eb&ch=V",
       "colorsUsed": [
         "#ffffff",
         "#111111",
@@ -1420,8 +1420,8 @@
       "sourceUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=26hu62ag",
       "toolSlug": "dot-grid",
       "toolName": "Dot Grid",
-      "url": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=26hu62ag&bg=111111&dc=ffffff&bd=2563eb",
-      "embedUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=26hu62ag&bg=111111&dc=ffffff&bd=2563eb",
+      "url": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=26hu62ag&bg=111111&dc=ffffff&bd=2563eb&ch=V",
+      "embedUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=26hu62ag&bg=111111&dc=ffffff&bd=2563eb&ch=V",
       "colorsUsed": [
         "#111111",
         "#ffffff",
@@ -1448,8 +1448,8 @@
       "sourceUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=c4omg9tb",
       "toolSlug": "dot-grid",
       "toolName": "Dot Grid",
-      "url": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=c4omg9tb&bg=ffffff&dc=111111&bd=2563eb",
-      "embedUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=c4omg9tb&bg=ffffff&dc=111111&bd=2563eb",
+      "url": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=c4omg9tb&bg=ffffff&dc=111111&bd=2563eb&ch=V",
+      "embedUrl": "https://natemodi.com/logo/dot-grid/#v=1&r=1&seed=c4omg9tb&bg=ffffff&dc=111111&bd=2563eb&ch=V",
       "colorsUsed": [
         "#ffffff",
         "#111111",
@@ -1484,7 +1484,7 @@
         "#2563eb"
       ],
       "variationType": "initial-customized",
-      "rationale": "Dot Grid turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "rationale": "Dot Grid turns the leading V into a compact technical mark while preserving the curated source structure.",
       "bestFor": "developer platforms, SDKs, and modular product suites",
       "tags": [
         "platform-grid",
@@ -1512,7 +1512,7 @@
         "#2563eb"
       ],
       "variationType": "initial-customized",
-      "rationale": "Dot Grid turns the V/K initials into a compact technical mark while preserving the curated source structure.",
+      "rationale": "Dot Grid turns the leading V into a compact technical mark while preserving the curated source structure.",
       "bestFor": "developer platforms, SDKs, and modular product suites",
       "tags": [
         "platform-grid",

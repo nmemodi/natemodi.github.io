@@ -11,6 +11,7 @@ const CHECKS = [
   ['recommendations', 12],
   ['curated-mix', 10],
   ['initial-mix', 8],
+  ['brand-letter-constraint', 10],
   ['expected-summary', 10],
 ];
 
@@ -78,6 +79,9 @@ export function evaluateGalleryManifest(manifest, options = {}) {
   addCheck(checks, 'initial-mix', hasInitialCoverage(summary, brandBrief), checkWeight, 'Gallery includes enough initial-customized concepts when the brief provides initials.', {
     initials: brandBrief.initials,
     initialConceptCount: summary.initialConceptCount,
+  });
+  addCheck(checks, 'brand-letter-constraint', hasBrandLetterConstraint(manifest, toolBySlug, brandBrief), checkWeight, 'Letter-capable concept outputs use the brand leading letter instead of inherited source letters.', {
+    leadingLetter: leadingBrandLetter(manifest, brandBrief),
   });
   addCheck(checks, 'expected-summary', !expectedSummary || matchesExpectedSummary(summary, expectedSummary), checkWeight, 'Gallery summary matches the checked-in expected snapshot.');
 
@@ -167,6 +171,30 @@ function hasInitialCoverage(summary, brandBrief) {
   if (!brandBrief.initials) return true;
   const expected = brandBrief.minInitialConcepts || 10;
   return summary.initialConceptCount >= expected;
+}
+
+function hasBrandLetterConstraint(manifest, toolBySlug, brandBrief) {
+  const leadingLetter = leadingBrandLetter(manifest, brandBrief);
+  if (!leadingLetter) return true;
+  return (manifest.concepts || []).every((concept) => {
+    const meta = toolBySlug.get(concept.toolSlug)?.agentMetadata;
+    if (!meta?.supportsInitials || !meta.letterParam) return true;
+    return [concept.url, concept.embedUrl].every((value) => urlHashParam(value, meta.letterParam) === leadingLetter);
+  });
+}
+
+function leadingBrandLetter(manifest, brandBrief) {
+  const source = brandBrief.companyName || manifest.brand?.name || '';
+  const match = String(source).trim().match(/[A-Za-z0-9]/);
+  return match ? match[0].toUpperCase() : '';
+}
+
+function urlHashParam(value, key) {
+  try {
+    return (new URL(String(value)).hash ? new URLSearchParams(new URL(String(value)).hash.slice(1)).get(key) : '').toUpperCase();
+  } catch {
+    return '';
+  }
 }
 
 function hasCuratedSource(concept) {

@@ -22,6 +22,7 @@ describe('Logo Lab agent gallery evaluator', () => {
       'https://natemodi.com/logo/gallery.schema.json',
       'https://natemodi.com/logo/gallery-template.html',
     ].forEach((url) => expect(prompt).toContain(url));
+    expect(prompt).toContain('Every letter-capable concept should use `V`');
   });
 
   it('passes the generated VectorKit sample against quality thresholds and summary snapshot', () => {
@@ -52,6 +53,18 @@ describe('Logo Lab agent gallery evaluator', () => {
     });
     expect(result.passed).toBe(false);
     expect(result.checks.find((check) => check.id === 'canonical-logo-urls').pass).toBe(false);
+  });
+
+  it('flags letter-capable outputs that drift away from the brand leading letter', () => {
+    const dirty = structuredClone(buildExampleGallery());
+    dirty.concepts.find((concept) => concept.toolSlug === 'line-warp').url =
+      'https://natemodi.com/logo/line-warp/#v=1&r=1&seed=x&bg=ffffff&fg=111111&lt=K';
+    const result = evaluateGalleryManifest(dirty, {
+      brandBrief: readJson('vector-kit-brief.json'),
+      expectedSummary: readJson('vector-kit.expected-summary.json'),
+    });
+    expect(result.passed).toBe(false);
+    expect(result.checks.find((check) => check.id === 'brand-letter-constraint').pass).toBe(false);
   });
 
   it('flags weak recommendation coverage', () => {
