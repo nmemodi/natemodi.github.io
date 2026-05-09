@@ -23,6 +23,7 @@ const BRAND = {
   constraints: ['must work in black and white', 'must read at favicon size', 'avoid mascots']
 };
 const PRIMARY_INITIAL = BRAND.name.slice(0, 1).toUpperCase();
+const RECOMMENDATION_COUNT = 5;
 
 const DIRECTIONS = [
   {
@@ -100,6 +101,57 @@ function brandLetterParamsFor(tool) {
   return { [tool.letterParam]: PRIMARY_INITIAL };
 }
 
+function isLetterTool(tool) {
+  return Boolean(tool && (tool.mode === 'letter' || tool.supportsInitials));
+}
+
+function selectRecommendedConcepts(concepts, toolBySlug) {
+  const selected = [];
+  const usedTools = new Set();
+  let letterCount = 0;
+  let abstractCount = 0;
+  const targetLetterCount = Math.floor(RECOMMENDATION_COUNT / 2);
+  const targetAbstractCount = Math.ceil(RECOMMENDATION_COUNT / 2);
+
+  const addConcept = (concept) => {
+    selected.push(concept);
+    usedTools.add(concept.toolSlug);
+    if (isLetterTool(toolBySlug.get(concept.toolSlug))) letterCount++;
+    else abstractCount++;
+  };
+
+  const candidateScore = (concept) => {
+    const isLetter = isLetterTool(toolBySlug.get(concept.toolSlug));
+    const modePenalty = isLetter
+      ? (letterCount >= targetLetterCount ? 100 : 0)
+      : (abstractCount >= targetAbstractCount ? 100 : 0);
+    const wildcardPenalty = concept.variationType === 'wildcard' ? 20 : 0;
+    return modePenalty + wildcardPenalty + (concept.rank / 1000);
+  };
+
+  DIRECTIONS.forEach((direction) => {
+    if (selected.length >= RECOMMENDATION_COUNT) return;
+    const candidate = concepts
+      .filter((concept) => concept.directionId === direction.id && !usedTools.has(concept.toolSlug))
+      .sort((a, b) => candidateScore(a) - candidateScore(b))[0];
+    if (candidate) addConcept(candidate);
+  });
+
+  concepts
+    .filter((concept) => !usedTools.has(concept.toolSlug))
+    .sort((a, b) => candidateScore(a) - candidateScore(b))
+    .slice(0, RECOMMENDATION_COUNT - selected.length)
+    .forEach(addConcept);
+
+  return selected.slice(0, RECOMMENDATION_COUNT);
+}
+
+function recommendationReasonFor(concept) {
+  const direction = DIRECTIONS.find((item) => item.id === concept.directionId);
+  const directionName = direction ? direction.name.toLowerCase() : 'distinct';
+  return `${concept.toolName} keeps the top set balanced across tools while adding a strong ${directionName} option for VectorKit.`;
+}
+
 export function buildExampleGallery() {
   const explorer = readJson(EXPLORER_JSON_PATH);
   const toolsData = readJson(TOOLS_JSON_PATH);
@@ -142,12 +194,16 @@ export function buildExampleGallery() {
         rationale: rationaleFor(tool, directionId, variationType),
         bestFor: bestFor(directionId),
         tags: Array.from(new Set([directionId, tool.mode, ...tool.styleTags])).slice(0, 8),
-        isRecommended: rank <= 5,
-        recommendationReason: rank <= 5
-          ? 'Strong silhouette, clear technical fit, and useful contrast as a system seed.'
-          : undefined
+        isRecommended: false
       });
     });
+  });
+
+  const recommendedConcepts = selectRecommendedConcepts(concepts, toolBySlug);
+  const recommendationById = new Map(recommendedConcepts.map((concept) => [concept.id, recommendationReasonFor(concept)]));
+  concepts.forEach((concept) => {
+    concept.isRecommended = recommendationById.has(concept.id);
+    if (concept.isRecommended) concept.recommendationReason = recommendationById.get(concept.id);
   });
 
   return {
@@ -159,7 +215,7 @@ export function buildExampleGallery() {
       conceptIds: concepts.filter((concept) => concept.directionId === direction.id).map((concept) => concept.id)
     })),
     concepts,
-    recommendations: concepts.slice(0, 5).map((concept) => ({
+    recommendations: recommendedConcepts.map((concept) => ({
       conceptId: concept.id,
       reason: concept.recommendationReason
     })),

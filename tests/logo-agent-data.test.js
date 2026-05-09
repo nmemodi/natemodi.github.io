@@ -27,10 +27,18 @@ describe('Logo Lab agent data artifacts', () => {
 
   it('keeps the sample gallery in sync with the generator', () => {
     const sample = readJson('public/logo/examples/agent-gallery/gallery.json');
+    const toolBySlug = new Map(readJson('public/logo/tools.json').tools.map((tool) => [tool.slug, tool]));
     expect(sample).toEqual(buildExampleGallery());
     expect(sample.concepts).toHaveLength(50);
     expect(new Set(sample.concepts.map((concept) => concept.toolSlug)).size).toBeGreaterThanOrEqual(5);
     expect(sample.recommendations).toHaveLength(5);
+    const conceptById = new Map(sample.concepts.map((concept) => [concept.id, concept]));
+    const recommendedConcepts = sample.recommendations.map((recommendation) => conceptById.get(recommendation.conceptId));
+    const recommendedToolSlugs = recommendedConcepts.map((concept) => concept.toolSlug);
+    const recommendedModes = recommendedConcepts.map((concept) => toolBySlug.get(concept.toolSlug).mode);
+    expect(new Set(recommendedToolSlugs).size).toBe(5);
+    expect(recommendedModes.filter((mode) => mode === 'letter')).toHaveLength(2);
+    expect(recommendedModes.filter((mode) => mode === 'abstract')).toHaveLength(3);
   });
 
   it('uses canonical public Logo Lab URLs in generated data', () => {
@@ -47,4 +55,3 @@ describe('Logo Lab agent data artifacts', () => {
     });
   });
 });
-

@@ -46,6 +46,13 @@ For each concept, return:
 - why it fits the brief
 
 For a 50-concept gallery, use at least 5 different Logo Lab tools.
+Keep tool representation balanced across the full gallery: no selected tool should produce materially more concepts than another selected tool.
+
+Top recommendations:
+- choose exactly 5 concepts from 5 distinct tools
+- balance letter/monogram tools against abstract tools as evenly as possible
+- avoid filling the recommendation set from one visual system or one direction
+- when there are 5 directions, prefer one recommendation per direction
 
 Recommended distribution:
 - 40% abstract geometric marks
@@ -54,4 +61,3 @@ Recommended distribution:
 - 10% wildcard options
 
 Logo Lab is a static substrate. It does not provide AI chat, server-side generation, hosted saving, accounts, auth, or trademark review.
-

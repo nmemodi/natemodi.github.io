@@ -147,6 +147,30 @@
   }
   .btn:hover { border-color: var(--fg); }
   .btn--dark { background: transparent; border-color: var(--border); color: var(--fg); }
+  .btn--primary {
+    background: transparent;
+    color: var(--fg);
+    border-color: var(--border);
+  }
+  .btn--primary:hover { background: transparent; border-color: var(--fg); }
+  .btn svg { width: 12px; height: 12px; }
+  .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+  .btn--shuffle { perspective: 220px; }
+  .btn--shuffle .ico-shuffle {
+    width: 14px;
+    height: 14px;
+    transform-style: preserve-3d;
+  }
+  .btn--shuffle.is-spinning .ico-shuffle {
+    animation: shuffleFlipX 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes shuffleFlipX {
+    from { transform: rotateX(0deg); }
+    to { transform: rotateX(360deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn--shuffle.is-spinning .ico-shuffle { animation: none; }
+  }
 
   .quick-actions {
     display: flex;
@@ -198,55 +222,28 @@
     font-size: 13px;
   }
 
-  .palette,
-  .directions,
-  .filters {
+  .palette {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
   }
 
-  .swatch,
-  .direction,
-  .filter {
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    background: var(--bg);
-    color: var(--fg);
-    font: inherit;
-    padding: 6px 10px;
-  }
   .swatch {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--bg);
     color: var(--fg-muted);
+    font: inherit;
+    padding: 6px 10px;
   }
   .swatch i {
     width: 16px;
     height: 16px;
     border-radius: 50%;
     border: 1px solid var(--border);
-  }
-  .direction {
-    max-width: 340px;
-    color: var(--fg-muted);
-  }
-  .direction strong {
-    display: block;
-    color: var(--fg);
-    font-weight: 600;
-    margin-bottom: 2px;
-  }
-  .filter {
-    cursor: pointer;
-    color: var(--fg-muted);
-  }
-  .filter:hover { border-color: var(--fg); color: var(--fg); }
-  .filter[aria-pressed="true"] {
-    color: var(--fg);
-    background: rgba(17, 17, 17, 0.07);
-    border-color: var(--border);
   }
 
   .grid {
@@ -365,12 +362,6 @@
   .blocked.is-visible { display: block; }
   .blocked ul { margin: 8px 0 0; padding-left: 18px; }
 
-  .empty {
-    display: none;
-    padding: 28px 0;
-    color: var(--fg-faded);
-  }
-
   .foot {
     margin-top: 42px;
     padding-top: 18px;
@@ -439,20 +430,22 @@
     <div class="grid" data-recommendations></div>
   </section>
 
-  <section class="section" aria-labelledby="directions-title">
+  <section class="section" aria-labelledby="concepts-title">
     <div class="section-head">
-      <h2 id="directions-title">Directions</h2>
+      <h2 id="concepts-title">Concepts</h2>
+      <button type="button" class="btn btn--primary btn--shuffle" data-shuffle-concepts disabled aria-label="Shuffle concepts">
+        <svg class="ico-shuffle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M16 18h5"/>
+          <path d="M3 6h4c1.5 0 2.5 1 3.5 2.5l3 7c1 1.5 2 2.5 3.5 2.5"/>
+          <path d="M16 6h5"/>
+          <path d="M3 18h4c1.5 0 2.5-1 3.5-2.5"/>
+          <path d="M13.5 8.5C14.5 7 15.5 6 17 6"/>
+          <path d="M19 16l2 2-2 2"/>
+          <path d="M19 4l2 2-2 2"/>
+        </svg>
+        Shuffle
+      </button>
     </div>
-    <div class="directions" data-directions></div>
-  </section>
-
-  <section class="section" aria-labelledby="filters-title">
-    <div class="section-head">
-      <h2 id="filters-title">Concepts</h2>
-      <p class="section-note" data-visible-count></p>
-    </div>
-    <div class="filters" data-filters></div>
-    <div class="empty" data-empty>No concepts match these filters.</div>
     <div class="grid" data-concept-grid></div>
   </section>
 
@@ -503,9 +496,9 @@
 
   const SAMPLE_SRC = '/logo/examples/agent-gallery/gallery.json';
   const state = {
-    filter: 'all',
     manifest: null,
     validConcepts: [],
+    gridConcepts: [],
     blockedConcepts: [],
     source: '',
     loadToken: 0,
@@ -526,11 +519,8 @@
     palette: document.querySelector('[data-palette]'),
     recommendations: document.querySelector('[data-recommendations]'),
     recCount: document.querySelector('[data-rec-count]'),
-    directions: document.querySelector('[data-directions]'),
-    filters: document.querySelector('[data-filters]'),
-    empty: document.querySelector('[data-empty]'),
     grid: document.querySelector('[data-concept-grid]'),
-    visibleCount: document.querySelector('[data-visible-count]'),
+    shuffle: document.querySelector('[data-shuffle-concepts]'),
     disclaimer: document.querySelector('[data-disclaimer]'),
   };
 
@@ -691,12 +681,28 @@
       throw new GalleryValidationError('Manifest has no valid concepts after validation');
     }
 
-    const recommendationIds = Array.isArray(input.recommendations)
-      ? new Set(input.recommendations.slice(0, 5).map((rec) => rec && rec.conceptId).filter(Boolean))
-      : new Set();
+    const conceptIds = new Set(concepts.map((concept) => concept.id));
+    const seenRecommendationIds = new Set();
+    const recommendations = (Array.isArray(input.recommendations) ? input.recommendations : [])
+      .slice(0, 5)
+      .map((recommendation) => ({
+        conceptId: optionalText(recommendation && recommendation.conceptId, LIMITS.name),
+        reason: optionalText(recommendation && recommendation.reason, LIMITS.rationale),
+      }))
+      .filter((recommendation) => {
+        if (!recommendation.conceptId || !conceptIds.has(recommendation.conceptId) || seenRecommendationIds.has(recommendation.conceptId)) return false;
+        seenRecommendationIds.add(recommendation.conceptId);
+        return true;
+      });
+    const recommendationReasonById = new Map(recommendations.map((recommendation) => [recommendation.conceptId, recommendation.reason]));
 
     concepts.forEach((concept) => {
-      if (recommendationIds.has(concept.id)) concept.isRecommended = true;
+      if (recommendations.length) {
+        concept.isRecommended = recommendationReasonById.has(concept.id);
+        if (concept.isRecommended && recommendationReasonById.get(concept.id)) {
+          concept.recommendationReason = recommendationReasonById.get(concept.id);
+        }
+      }
     });
 
     return {
@@ -720,6 +726,7 @@
       summary: optionalText(input.summary, LIMITS.summary),
       directions,
       concepts,
+      recommendations,
       blocked,
       disclaimer: optionalText(input.disclaimer, 500) || 'Concepts are starting points. Check distinctiveness, conflicts, and trademark availability before commercial use.',
     };
@@ -787,9 +794,9 @@
   function renderManifest(manifest, sourceLabel) {
     state.manifest = manifest;
     state.validConcepts = manifest.concepts;
+    state.gridConcepts = manifest.concepts.slice();
     state.blockedConcepts = manifest.blocked;
     state.source = sourceLabel || '';
-    state.filter = 'all';
 
     text(dom.brand, manifest.brand.name);
     text(dom.summary, manifest.summary || `${manifest.concepts.length} Logo Lab concepts for ${manifest.brand.name}.`);
@@ -797,10 +804,8 @@
     renderStatus();
     renderBlocked();
     renderPalette(manifest.brand.colors);
-    renderDirections(manifest.directions);
     renderCards();
-    renderFilters();
-    applyFilter();
+    dom.shuffle.disabled = state.gridConcepts.length < 2;
     setupLazyMounting();
   }
 
@@ -847,20 +852,6 @@
       span.textContent = `${label} ${color}`;
       swatch.append(dot, span);
       dom.palette.appendChild(swatch);
-    });
-  }
-
-  function renderDirections(directions) {
-    clearChildren(dom.directions);
-    directions.forEach((direction) => {
-      const item = document.createElement('div');
-      item.className = 'direction';
-      const name = document.createElement('strong');
-      name.textContent = direction.name;
-      const description = document.createElement('span');
-      description.textContent = direction.description;
-      item.append(name, description);
-      dom.directions.appendChild(item);
     });
   }
 
@@ -937,62 +928,50 @@
   function renderCards() {
     clearChildren(dom.grid);
     clearChildren(dom.recommendations);
-    state.validConcepts.forEach((concept) => {
+    state.gridConcepts.forEach((concept) => {
       dom.grid.appendChild(buildCard(concept, false));
     });
-    state.validConcepts.filter((concept) => concept.isRecommended).slice(0, 5).forEach((concept) => {
+    getRecommendedConcepts().forEach((concept) => {
       dom.recommendations.appendChild(buildCard(concept, true));
     });
     const count = dom.recommendations.children.length;
     dom.recCount.textContent = count ? `${count} highlighted` : '';
   }
 
-  function renderFilters() {
-    clearChildren(dom.filters);
-    const directions = new Map((state.manifest.directions || []).map((direction) => [direction.id, direction.name]));
-    const options = [
-      ['all', 'All'],
-      ['recommended', 'Recommended'],
-      ...Array.from(new Set(state.validConcepts.map((concept) => concept.directionId).filter(Boolean))).map((id) => [id, directions.get(id) || id]),
-      ...Array.from(new Set(state.validConcepts.map((concept) => concept.toolSlug))).map((slug) => [slug, slug]),
-      ...Array.from(new Set(state.validConcepts.map((concept) => concept.variationType))).map((type) => [type, type]),
-    ];
-
-    options.forEach(([value, label]) => {
-      const button = document.createElement('button');
-      button.className = 'filter';
-      button.type = 'button';
-      button.dataset.filter = value;
-      button.setAttribute('aria-pressed', String(state.filter === value));
-      button.textContent = label;
-      button.addEventListener('click', () => {
-        state.filter = value;
-        renderFilters();
-        applyFilter();
-      });
-      dom.filters.appendChild(button);
-    });
+  function getRecommendedConcepts() {
+    const byId = new Map(state.validConcepts.map((concept) => [concept.id, concept]));
+    const explicit = (state.manifest && state.manifest.recommendations ? state.manifest.recommendations : [])
+      .map((recommendation) => byId.get(recommendation.conceptId))
+      .filter(Boolean);
+    return (explicit.length ? explicit : state.validConcepts.filter((concept) => concept.isRecommended)).slice(0, 5);
   }
 
-  function applyFilter() {
-    let visible = 0;
-    dom.grid.querySelectorAll('.card').forEach((card) => {
-      const match = state.filter === 'all'
-        || (state.filter === 'recommended' && card.dataset.recommended === 'true')
-        || card.dataset.direction === state.filter
-        || card.dataset.tool === state.filter
-        || card.dataset.variation === state.filter;
-      card.hidden = !match;
-      if (match) visible++;
-    });
-    dom.empty.style.display = visible ? 'none' : 'block';
-    dom.visibleCount.textContent = `${visible} showing`;
+  function shuffled(items) {
+    const copy = items.slice();
+    for (let index = copy.length - 1; index > 0; index--) {
+      const swapIndex = Math.floor(Math.random() * (index + 1));
+      [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+    }
+    return copy;
+  }
+
+  function shuffleConcepts() {
+    if (state.gridConcepts.length < 2) return;
+    state.gridConcepts = shuffled(state.gridConcepts);
+    dom.shuffle.classList.add('is-spinning');
+    dom.shuffle.disabled = true;
+    renderCards();
+    setupLazyMounting();
+    setTimeout(() => {
+      dom.shuffle.classList.remove('is-spinning');
+      dom.shuffle.disabled = false;
+    }, 560);
   }
 
   function setupLazyMounting() {
     if (state.observer) state.observer.disconnect();
     const cards = Array.from(document.querySelectorAll('.card'));
-    const recommendations = new Set(state.validConcepts.filter((concept) => concept.isRecommended).slice(0, 5).map((concept) => concept.id));
+    const recommendations = new Set(getRecommendedConcepts().map((concept) => concept.id));
     cards.forEach((card) => {
       if (recommendations.has(card.dataset.id)) mountIframe(card, true);
     });
@@ -1093,21 +1072,18 @@
     ++state.loadToken;
     state.manifest = null;
     state.validConcepts = [];
+    state.gridConcepts = [];
     state.blockedConcepts = [];
     state.source = '';
-    state.filter = 'all';
     dom.srcInput.value = '';
     dom.pasteInput.value = '';
     text(dom.brand, 'Gallery Renderer');
     text(dom.summary, 'Paste a Logo Lab gallery manifest or load one from an HTTPS JSON URL.');
     clearChildren(dom.palette);
-    clearChildren(dom.directions);
     clearChildren(dom.recommendations);
-    clearChildren(dom.filters);
     clearChildren(dom.grid);
+    dom.shuffle.disabled = true;
     dom.recCount.textContent = '';
-    dom.visibleCount.textContent = '';
-    dom.empty.style.display = 'none';
     dom.blocked.classList.remove('is-visible');
     dom.blocked.textContent = '';
     setStatus('idle', 'Ready');
@@ -1130,6 +1106,7 @@
   });
   dom.sample.addEventListener('click', () => loadFromSource(SAMPLE_SRC));
   dom.clear.addEventListener('click', clearGallery);
+  dom.shuffle.addEventListener('click', shuffleConcepts);
 
   window.addEventListener('popstate', () => {
     const src = new URL(location.href).searchParams.get('src');

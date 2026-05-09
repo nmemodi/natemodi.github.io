@@ -58,7 +58,7 @@ Recommended gallery format:
 - brand summary
 - color palette
 - 3 to 6 concept directions
-- top 5 recommendations
+- top 5 recommendations from distinct tools, balanced between letter/monogram and abstract tools
 - filterable concept grid
 - iframe embeds
 - stable URLs
@@ -68,4 +68,3 @@ Recommended gallery format:
 Never present generated marks as trademark-cleared or final.
 
 Logo Lab does not generate concepts for you, call AI models, host user galleries, save user data, or clear trademarks. It provides deterministic tools, curated source concepts, schemas, and templates agents can compose.
-

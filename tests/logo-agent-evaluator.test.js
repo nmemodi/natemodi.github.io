@@ -77,4 +77,41 @@ describe('Logo Lab agent gallery evaluator', () => {
     expect(result.passed).toBe(false);
     expect(result.checks.find((check) => check.id === 'recommendations').pass).toBe(false);
   });
+
+  it('flags recommendations that collapse onto one tool family', () => {
+    const dirty = structuredClone(buildExampleGallery());
+    const lineWarpIds = dirty.concepts
+      .filter((concept) => concept.toolSlug === 'line-warp')
+      .slice(0, 5)
+      .map((concept) => concept.id);
+    dirty.concepts.forEach((concept) => {
+      concept.isRecommended = lineWarpIds.includes(concept.id);
+      if (concept.isRecommended) {
+        concept.recommendationReason = 'This intentionally duplicated recommendation should fail the diversity check.';
+      }
+    });
+    dirty.recommendations = lineWarpIds.map((conceptId) => ({
+      conceptId,
+      reason: 'This intentionally duplicated recommendation should fail the diversity check.'
+    }));
+
+    const result = evaluateGalleryManifest(dirty, {
+      brandBrief: readJson('vector-kit-brief.json'),
+    });
+
+    expect(result.passed).toBe(false);
+    expect(result.checks.find((check) => check.id === 'recommendations').pass).toBe(false);
+  });
+
+  it('flags uneven tool representation across generated outputs', () => {
+    const dirty = structuredClone(buildExampleGallery());
+    dirty.concepts = dirty.concepts.filter((concept) => !(concept.toolSlug === 'line-warp' && concept.rank > 3));
+
+    const result = evaluateGalleryManifest(dirty, {
+      brandBrief: readJson('vector-kit-brief.json'),
+    });
+
+    expect(result.passed).toBe(false);
+    expect(result.checks.find((check) => check.id === 'tool-coverage').pass).toBe(false);
+  });
 });

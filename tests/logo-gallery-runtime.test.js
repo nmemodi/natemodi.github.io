@@ -45,6 +45,22 @@ describe('Logo Gallery runtime validation', () => {
     expect(manifest.blocked).toHaveLength(0);
   });
 
+  it('uses a single Explorer-style shuffle control instead of gallery filter buttons', () => {
+    expect(window.document.querySelector('[data-shuffle-concepts]')).toBeTruthy();
+    expect(window.document.querySelector('[data-filters]')).toBeNull();
+    expect(window.document.querySelector('[data-directions]')).toBeNull();
+    expect(window.document.querySelector('[data-empty]')).toBeNull();
+  });
+
+  it('preserves explicit recommendation order from the manifest', () => {
+    const manifest = window.LogoGalleryRuntime.validateManifest(sample);
+    const conceptById = new Map(manifest.concepts.map((concept) => [concept.id, concept]));
+    expect(manifest.recommendations.map((recommendation) => recommendation.conceptId))
+      .toEqual(sample.recommendations.map((recommendation) => recommendation.conceptId));
+    expect(new Set(manifest.recommendations.map((recommendation) => conceptById.get(recommendation.conceptId).toolSlug)).size)
+      .toBe(5);
+  });
+
   it('blocks unsafe off-domain embed URLs without rejecting the whole gallery', () => {
     const dirty = structuredClone(sample);
     dirty.concepts[0].embedUrl = 'https://evil.example/logo/line-warp/#v=1&seed=x';

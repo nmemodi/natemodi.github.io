@@ -18,6 +18,8 @@ Requirements:
 - Include no more than 5 wildcard concepts.
 - Group concepts into 3 to 6 named directions.
 - Highlight exactly 5 recommended concepts with reasons.
+- Use 5 distinct tools in the recommendation set.
+- Balance letter/monogram tools and abstract tools across the recommendation set.
 - Use canonical `https://natemodi.com/logo/{tool-slug}/#v=1...` URLs only.
 - Include the trademark and starting-point disclaimer.
 - Do not present concepts as final identity work.

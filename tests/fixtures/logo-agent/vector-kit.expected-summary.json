@@ -28,15 +28,52 @@
   ],
   "recommendationIds": [
     "vectorkit-001",
-    "vectorkit-002",
-    "vectorkit-003",
-    "vectorkit-004",
-    "vectorkit-005"
+    "vectorkit-011",
+    "vectorkit-021",
+    "vectorkit-026",
+    "vectorkit-006"
   ],
   "variationCounts": {
     "recolored-curated": 20,
     "lightly-varied-curated": 15,
     "initial-customized": 10,
     "wildcard": 5
+  },
+  "toolCounts": {
+    "line-warp": 5,
+    "brutalist-letters": 5,
+    "interlocking-circles": 5,
+    "parallel-letters": 5,
+    "shape-tiles": 5,
+    "sliced-shapes": 5,
+    "slash-mark": 5,
+    "polygon-rosette": 5,
+    "echo-stripes": 5,
+    "dot-grid": 5
+  },
+  "recommendationToolSlugs": [
+    "line-warp",
+    "interlocking-circles",
+    "shape-tiles",
+    "sliced-shapes",
+    "brutalist-letters"
+  ],
+  "recommendationDirectionIds": [
+    "signal-systems",
+    "precise-geometry",
+    "platform-grid",
+    "bold-containers",
+    "letter-marks"
+  ],
+  "recommendationModeCounts": {
+    "letter": 2,
+    "abstract": 3
+  },
+  "recommendationToolCounts": {
+    "line-warp": 1,
+    "interlocking-circles": 1,
+    "shape-tiles": 1,
+    "sliced-shapes": 1,
+    "brutalist-letters": 1
   }
 }

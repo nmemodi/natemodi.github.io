@@ -281,12 +281,25 @@
         }))
         .filter((concept) => concept.url && concept.embedUrl && concept.id && concept.toolSlug && concept.toolName && concept.rationale);
 
+      const conceptById = new Map(validConcepts.map((concept) => [concept.id, concept]));
+      const explicitRecommendations = (Array.isArray(data.recommendations) ? data.recommendations : [])
+        .slice(0, 5)
+        .map((recommendation) => conceptById.get(recommendation && recommendation.conceptId))
+        .filter(Boolean);
+      if (explicitRecommendations.length) {
+        const recommendationIds = new Set(explicitRecommendations.map((concept) => concept.id));
+        validConcepts.forEach((concept) => {
+          concept.isRecommended = recommendationIds.has(concept.id);
+        });
+      }
+
       const grid = document.querySelector('[data-concept-grid]');
       const recs = document.querySelector('[data-recommendations]');
       grid.textContent = '';
       recs.textContent = '';
       validConcepts.forEach((concept) => grid.appendChild(buildCard(concept)));
-      validConcepts.filter((concept) => concept.isRecommended).slice(0, 5).forEach((concept) => recs.appendChild(buildCard(concept)));
+      (explicitRecommendations.length ? explicitRecommendations : validConcepts.filter((concept) => concept.isRecommended).slice(0, 5))
+        .forEach((concept) => recs.appendChild(buildCard(concept)));
       renderFilters(data);
       applyFilter();
     }

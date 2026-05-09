@@ -31,9 +31,14 @@ export function summarizeGallery(manifest, tools = loadRegistry()) {
   const toolBySlug = new Map(tools.map((tool) => [tool.slug, tool]));
   const concepts = Array.isArray(manifest.concepts) ? manifest.concepts : [];
   const recommendations = Array.isArray(manifest.recommendations) ? manifest.recommendations : [];
+  const conceptById = new Map(concepts.map((concept) => [concept.id, concept]));
+  const recommendationConcepts = recommendations
+    .map((recommendation) => conceptById.get(recommendation && recommendation.conceptId))
+    .filter(Boolean);
   const variationCounts = countBy(concepts, (concept) => concept.variationType || 'unspecified');
   const toolCounts = countBy(concepts, (concept) => concept.toolSlug || 'missing');
   const directionCounts = countBy(concepts, (concept) => concept.directionId || 'missing');
+  const recommendationToolCounts = countBy(recommendationConcepts, (concept) => concept.toolSlug || 'missing');
 
   return {
     brandName: manifest.brand && manifest.brand.name,
@@ -53,7 +58,12 @@ export function summarizeGallery(manifest, tools = loadRegistry()) {
       .sort(),
     recommendationIds: recommendations.map((recommendation) => recommendation.conceptId),
     variationCounts,
+    toolCounts,
     directionCounts,
+    recommendationToolSlugs: recommendationConcepts.map((concept) => concept.toolSlug),
+    recommendationDirectionIds: recommendationConcepts.map((concept) => concept.directionId),
+    recommendationModeCounts: countBy(recommendationConcepts, (concept) => toolMode(toolBySlug.get(concept.toolSlug))),
+    recommendationToolCounts,
   };
 }
 
@@ -69,9 +79,12 @@ export function evaluateGalleryManifest(manifest, options = {}) {
   addCheck(checks, 'schema-basics', isValidBasicShape(manifest), checkWeight, 'Manifest has version, brand, unique concept IDs, and a bounded concept array.');
   addCheck(checks, 'canonical-logo-urls', allConceptUrlsAreCanonical(manifest, toolBySlug), checkWeight, 'Concept URLs are canonical natemodi.com Logo Lab URLs with matching tool slugs and v=1 hashes.');
   addCheck(checks, 'source-safety', hasSafeSources(manifest), checkWeight, 'Manifest avoids raw HTML/script payloads and includes trademark-starting-point language.');
-  addCheck(checks, 'tool-coverage', summary.toolCount >= 5, checkWeight, 'Gallery uses at least five Logo Lab tools.', { toolCount: summary.toolCount });
+  addCheck(checks, 'tool-coverage', summary.toolCount >= 5 && hasBalancedToolRepresentation(manifest), checkWeight, 'Gallery uses enough Logo Lab tools with balanced representation.', {
+    toolCount: summary.toolCount,
+    toolCounts: summary.toolCounts,
+  });
   addCheck(checks, 'direction-coverage', hasDirectionCoverage(manifest), checkWeight, 'Gallery has 3-6 non-empty directions and all concept direction IDs are filterable.');
-  addCheck(checks, 'recommendations', hasRecommendationCoverage(manifest), checkWeight, 'Gallery has five unique recommendations with reasons that point to valid concepts.');
+  addCheck(checks, 'recommendations', hasRecommendationCoverage(manifest, toolBySlug), checkWeight, 'Gallery has five unique, cross-tool recommendations with balanced letter and abstract coverage.');
   addCheck(checks, 'curated-mix', summary.curatedSourceCount >= 30 && summary.wildcardCount <= 5, checkWeight, 'Gallery is seeded by curated Explorer concepts and caps wildcard exploration.', {
     curatedSourceCount: summary.curatedSourceCount,
     wildcardCount: summary.wildcardCount,
@@ -158,13 +171,37 @@ function hasDirectionCoverage(manifest) {
     && (manifest.concepts || []).every((concept) => directionIds.has(concept.directionId));
 }
 
-function hasRecommendationCoverage(manifest) {
-  const concepts = new Set((manifest.concepts || []).map((concept) => concept.id));
+function hasBalancedToolRepresentation(manifest) {
+  const counts = Object.values(countBy(manifest.concepts || [], (concept) => concept.toolSlug || 'missing'));
+  if (!counts.length) return false;
+  return Math.max(...counts) - Math.min(...counts) <= 1;
+}
+
+function hasRecommendationCoverage(manifest, toolBySlug) {
+  const conceptById = new Map((manifest.concepts || []).map((concept) => [concept.id, concept]));
   const recommendations = Array.isArray(manifest.recommendations) ? manifest.recommendations : [];
   const ids = recommendations.map((recommendation) => recommendation && recommendation.conceptId);
-  return recommendations.length === 5
+  if (!(recommendations.length === 5
     && new Set(ids).size === 5
-    && recommendations.every((recommendation) => concepts.has(recommendation.conceptId) && String(recommendation.reason || '').trim().length >= 20);
+    && recommendations.every((recommendation) => conceptById.has(recommendation.conceptId) && String(recommendation.reason || '').trim().length >= 20))) {
+    return false;
+  }
+
+  const recommendedConcepts = recommendations.map((recommendation) => conceptById.get(recommendation.conceptId));
+  const toolSlugs = recommendedConcepts.map((concept) => concept.toolSlug);
+  if (new Set(toolSlugs).size !== recommendations.length) return false;
+
+  const directionIds = new Set(recommendedConcepts.map((concept) => concept.directionId).filter(Boolean));
+  const availableDirectionCount = new Set((manifest.directions || []).map((direction) => direction.id).filter(Boolean)).size;
+  if (directionIds.size < Math.min(3, availableDirectionCount || 3)) return false;
+
+  const letterCount = recommendedConcepts
+    .filter((concept) => toolMode(toolBySlug.get(concept.toolSlug)) === 'letter')
+    .length;
+  const abstractCount = recommendedConcepts.length - letterCount;
+  return letterCount > 0
+    && abstractCount > 0
+    && Math.abs(letterCount - abstractCount) <= 1;
 }
 
 function hasInitialCoverage(summary, brandBrief) {
@@ -204,6 +241,10 @@ function hasCuratedSource(concept) {
 function isInitialConcept(concept, tool) {
   const meta = tool && tool.agentMetadata;
   return Boolean(meta && meta.supportsInitials && concept.variationType === 'initial-customized');
+}
+
+function toolMode(tool) {
+  return tool?.agentMetadata?.mode || tool?.mode || 'missing';
 }
 
 function countBy(items, getKey) {

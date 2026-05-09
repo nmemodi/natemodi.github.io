@@ -146,7 +146,7 @@
         "systematic"
       ],
       "isRecommended": true,
-      "recommendationReason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+      "recommendationReason": "Line Warp keeps the top set balanced across tools while adding a strong signal systems option for VectorKit."
     },
     {
       "id": "vectorkit-002",
@@ -174,8 +174,7 @@
         "topographic",
         "systematic"
       ],
-      "isRecommended": true,
-      "recommendationReason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+      "isRecommended": false
     },
     {
       "id": "vectorkit-003",
@@ -203,8 +202,7 @@
         "topographic",
         "systematic"
       ],
-      "isRecommended": true,
-      "recommendationReason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+      "isRecommended": false
     },
     {
       "id": "vectorkit-004",
@@ -232,8 +230,7 @@
         "topographic",
         "systematic"
       ],
-      "isRecommended": true,
-      "recommendationReason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+      "isRecommended": false
     },
     {
       "id": "vectorkit-005",
@@ -261,8 +258,7 @@
         "topographic",
         "systematic"
       ],
-      "isRecommended": true,
-      "recommendationReason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+      "isRecommended": false
     },
     {
       "id": "vectorkit-006",
@@ -290,7 +286,8 @@
         "architectural",
         "pictogram"
       ],
-      "isRecommended": false
+      "isRecommended": true,
+      "recommendationReason": "Brutalist Letters keeps the top set balanced across tools while adding a strong letter marks option for VectorKit."
     },
     {
       "id": "vectorkit-007",
@@ -430,7 +427,8 @@
         "modular",
         "woven"
       ],
-      "isRecommended": false
+      "isRecommended": true,
+      "recommendationReason": "Interlocking Circles keeps the top set balanced across tools while adding a strong precise geometry option for VectorKit."
     },
     {
       "id": "vectorkit-012",
@@ -710,7 +708,8 @@
         "grid",
         "systematic"
       ],
-      "isRecommended": false
+      "isRecommended": true,
+      "recommendationReason": "Shape Tiles keeps the top set balanced across tools while adding a strong platform grid option for VectorKit."
     },
     {
       "id": "vectorkit-022",
@@ -850,7 +849,8 @@
         "negative-space",
         "systematic"
       ],
-      "isRecommended": false
+      "isRecommended": true,
+      "recommendationReason": "Sliced Shapes keeps the top set balanced across tools while adding a strong bold containers option for VectorKit."
     },
     {
       "id": "vectorkit-027",
@@ -1528,23 +1528,23 @@
   "recommendations": [
     {
       "conceptId": "vectorkit-001",
-      "reason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+      "reason": "Line Warp keeps the top set balanced across tools while adding a strong signal systems option for VectorKit."
     },
     {
-      "conceptId": "vectorkit-002",
-      "reason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+      "conceptId": "vectorkit-011",
+      "reason": "Interlocking Circles keeps the top set balanced across tools while adding a strong precise geometry option for VectorKit."
     },
     {
-      "conceptId": "vectorkit-003",
-      "reason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+      "conceptId": "vectorkit-021",
+      "reason": "Shape Tiles keeps the top set balanced across tools while adding a strong platform grid option for VectorKit."
     },
     {
-      "conceptId": "vectorkit-004",
-      "reason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+      "conceptId": "vectorkit-026",
+      "reason": "Sliced Shapes keeps the top set balanced across tools while adding a strong bold containers option for VectorKit."
     },
     {
-      "conceptId": "vectorkit-005",
-      "reason": "Strong silhouette, clear technical fit, and useful contrast as a system seed."
+      "conceptId": "vectorkit-006",
+      "reason": "Brutalist Letters keeps the top set balanced across tools while adding a strong letter marks option for VectorKit."
     }
   ],
   "disclaimer": "Concepts are starting points. Check distinctiveness, conflicts, and trademark availability before commercial use."
