@@ -20,7 +20,8 @@
     --fg-quiet: rgba(17, 17, 17, 0.32);
     --border: rgba(17, 17, 17, 0.1);
     --border-subtle: rgba(17, 17, 17, 0.06);
-    --tile-bg: #f4f3f1;
+    --code-bg: #f4f3f1;
+    --code-border: rgba(17, 17, 17, 0.08);
     --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     --font-mono: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, Courier, monospace;
     color-scheme: light;
@@ -40,7 +41,7 @@
   }
 
   .page {
-    max-width: 1120px;
+    max-width: 720px;
     margin: 0 auto;
     padding: 48px 32px 96px;
   }
@@ -58,18 +59,8 @@
   .crumb:hover { color: var(--fg); }
   .crumb svg { width: 12px; height: 12px; }
 
-  header {
+  .head {
     margin-bottom: 24px;
-  }
-
-  .eyebrow {
-    color: var(--fg-faded);
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
   }
 
   h1 {
@@ -83,18 +74,18 @@
   .lede {
     color: var(--fg-muted);
     font-size: 14px;
-    max-width: 680px;
     margin-bottom: 18px;
   }
 
-  .actions {
+  .toolbar {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
+    align-items: flex-end;
+    gap: 14px 18px;
     padding-top: 16px;
     border-top: 1px solid var(--border-subtle);
   }
+  .toolbar__spacer { flex: 1; }
 
   .btn {
     appearance: none;
@@ -115,71 +106,65 @@
     user-select: none;
   }
   .btn:hover { border-color: var(--fg); }
-  .btn--dark { background: transparent; border-color: var(--border); color: var(--fg); }
 
   section {
     margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-subtle);
   }
 
   h2 {
-    font-size: 17px;
-    letter-spacing: -0.01em;
-    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    margin-bottom: 10px;
   }
 
-  p {
-    color: var(--fg-muted);
-  }
-
-  .links {
+  .reference-list {
+    list-style: none;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    column-gap: 20px;
+    row-gap: 6px;
   }
-  .link-row {
-    display: flex;
-    justify-content: space-between;
+  .reference-link {
+    display: inline-flex;
     align-items: center;
-    gap: 16px;
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    padding: 10px 12px;
+    gap: 7px;
     color: var(--fg-muted);
     text-decoration: none;
-    min-height: 43px;
+    font-size: 13px;
+    line-height: 1.4;
+    min-width: 0;
+    transition: color 0.15s ease;
+  }
+  .reference-link:hover { color: var(--fg); }
+  .reference-link__label {
+    color: var(--fg);
+    border-bottom: 1px solid transparent;
     transition: border-color 0.15s ease;
   }
-  .link-row strong { color: var(--fg); font-weight: 600; }
-  .link-row span { color: var(--fg-faded); font-size: 12.5px; }
-  .link-row:hover { border-color: var(--fg); }
-
-  .prompt-wrap {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    background: var(--tile-bg);
-  }
-
-  .prompt-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 10px;
-    border-bottom: 1px solid var(--border-subtle);
-  }
-
-  .prompt-head span {
+  .reference-link:hover .reference-link__label { border-bottom-color: currentColor; }
+  .reference-link__meta {
     color: var(--fg-faded);
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    font-size: 12.5px;
   }
 
-  pre {
-    padding: 14px;
+  .section-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .section-top h2 { margin: 0; }
+
+  .prompt-shell {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 6px;
+    color: var(--fg);
+    padding: 10px 12px;
     overflow: auto;
     max-height: 520px;
     font-family: var(--font-mono);
@@ -188,18 +173,47 @@
     white-space: pre-wrap;
   }
 
-  .note {
-    border-top: 1px solid var(--border-subtle);
+  .article-note {
     margin-top: 42px;
-    padding-top: 18px;
     color: var(--fg-faded);
     font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .site-footer {
+    margin-top: 56px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--fg-faded);
+  }
+  .site-footer a {
+    color: var(--fg-faded);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .site-footer a:hover {
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+  .site-footer__name {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+  .site-footer__x {
+    font-size: 28px;
+    line-height: 1;
   }
 
   @media (max-width: 640px) {
     .page { padding: 32px 20px 80px; }
-    .links { grid-template-columns: 1fr; }
-    .prompt-head { align-items: flex-start; flex-direction: column; }
+    .reference-list { grid-template-columns: 1fr; }
+    .section-top { align-items: flex-start; flex-direction: column; }
     h1 { font-size: 19px; }
   }
 </style>
@@ -213,39 +227,39 @@
     Logo Lab
   </a>
 
-  <header>
-    <p class="eyebrow">Agent guide</p>
+  <header class="head">
     <h1>Generate a custom Logo Lab gallery with your AI agent</h1>
-    <p class="lede">Logo Lab gives agents deterministic, URL-addressable logo systems and a curated Explorer corpus of strong outputs. Your agent can start from those curated concepts, apply your design-system colors and initials, and produce a browsable mini-Explorer for your brand.</p>
-    <div class="actions">
-      <button class="btn btn--dark" type="button" data-copy-prompt>Copy gallery prompt</button>
+    <p class="lede">Use Logo Lab to give agents deterministic, URL-addressable logo systems as a starting point for choosing a logo for your brand. Your agent can apply your design system and brand brief, and produce a browsable mini-gallery to find good concepts to refine.</p>
+    <div class="toolbar" role="toolbar" aria-label="Agent guide actions">
+      <button class="btn" type="button" data-copy-prompt>Copy gallery prompt</button>
+      <div class="toolbar__spacer"></div>
       <a class="btn" href="/logo/gallery/?src=https://natemodi.com/logo/examples/agent-gallery/gallery.json">Open sample gallery</a>
-      <a class="btn" href="/logo/gallery-template.html">Gallery template</a>
     </div>
   </header>
 
   <section>
-    <h2>Agent Files</h2>
-    <div class="links">
-      <a class="link-row" href="/logo/llms.txt"><strong>llms.txt</strong><span>instructions</span></a>
-      <a class="link-row" href="/logo/tools.json"><strong>tools.json</strong><span>tool metadata</span></a>
-      <a class="link-row" href="/logo/explorer.json"><strong>explorer.json</strong><span>curated concepts</span></a>
-      <a class="link-row" href="/logo/agent-rules.md"><strong>agent-rules.md</strong><span>taste rules</span></a>
-      <a class="link-row" href="/logo/gallery.schema.json"><strong>gallery.schema.json</strong><span>manifest schema</span></a>
-      <a class="link-row" href="/logo/brand-brief.schema.json"><strong>brand-brief.schema.json</strong><span>brief schema</span></a>
-    </div>
+    <h2>Agent files</h2>
+    <ul class="reference-list">
+      <li><a class="reference-link" href="/logo/agents.md"><span class="reference-link__label">agents.md</span><span class="reference-link__meta">instructions</span></a></li>
+      <li><a class="reference-link" href="/logo/tools.json"><span class="reference-link__label">tools.json</span><span class="reference-link__meta">tool metadata</span></a></li>
+      <li><a class="reference-link" href="/logo/explorer.json"><span class="reference-link__label">explorer.json</span><span class="reference-link__meta">curated concepts</span></a></li>
+      <li><a class="reference-link" href="/logo/agent-rules.md"><span class="reference-link__label">agent-rules.md</span><span class="reference-link__meta">taste rules</span></a></li>
+      <li><a class="reference-link" href="/logo/gallery.schema.json"><span class="reference-link__label">gallery.schema.json</span><span class="reference-link__meta">manifest schema</span></a></li>
+      <li><a class="reference-link" href="/logo/"><span class="reference-link__label">Landing page</span><span class="reference-link__meta">main site</span></a></li>
+      <li><a class="reference-link" href="https://github.com/nmemodi/natemodi.github.io" target="_blank" rel="noopener noreferrer"><span class="reference-link__label">GitHub repo</span><span class="reference-link__meta">source ↗</span></a></li>
+    </ul>
   </section>
 
   <section>
-    <h2>Prompt</h2>
-    <div class="prompt-wrap">
-      <div class="prompt-head">
-        <span>copy-paste</span>
-        <button class="btn" type="button" data-copy-prompt>Copy</button>
-      </div>
-      <pre id="agent-prompt">Read these Logo Lab files:
+    <div class="section-top">
+      <h2>Prompt</h2>
+      <button class="btn" type="button" data-copy-prompt>Copy</button>
+    </div>
+    <pre class="prompt-shell" id="agent-prompt">Read these Logo Lab references:
 
-https://natemodi.com/logo/llms.txt
+https://natemodi.com/logo/
+https://github.com/nmemodi/natemodi.github.io
+https://natemodi.com/logo/agents.md
 https://natemodi.com/logo/tools.json
 https://natemodi.com/logo/explorer.json
 https://natemodi.com/logo/agent-rules.md
@@ -274,29 +288,26 @@ Requirements:
   - concept number
   - rendered iframe
   - tool name
-  - source Explorer concept ID when applicable
-  - stable Logo Lab URL
+  - one "Open in tool ↗" link to the stable Logo Lab URL
   - colors used
-  - variation type
-  - short rationale
-  - suggested use case
-- Add filters for:
-  - direction
-  - tool
-  - variation type
-  - recommended concepts
-- Highlight the strongest 5 concepts from 5 distinct tools.
-- Balance letter/monogram tools and abstract tools across the strongest 5.
-- Include a final recommendation section explaining the strongest 5.
+- Keep all concepts in one Concepts section. Do not add a separate Recommended section.
+- Do not render per-card variation type labels.
+- Do not render per-card rationale or descriptive paragraphs. Keep rationale in manifest metadata only.
+- Do not render per-card tags or metadata pills.
+- If you include recommendation metadata, keep it balanced across distinct tools.
 - Include a disclaimer that concepts are not trademark-cleared.
 - Do not present any output as final identity work.
 
 Brand brief:
 [PASTE BRAND BRIEF HERE]</pre>
-    </div>
   </section>
 
-  <p class="note">Every concept is a starting point. Check distinctiveness, conflicts, and trademark availability before using any mark commercially. Logo Lab does not provide AI chat, hosted saving, accounts, server-side generation, or trademark review.</p>
+  <p class="article-note">Every concept is a starting point. Check distinctiveness, conflicts, and trademark availability before using any mark commercially. Logo Lab does not provide AI chat, hosted saving, accounts, server-side generation, or trademark review.</p>
+
+  <footer class="site-footer">
+    <a class="site-footer__name" href="/">natemodi.com</a>
+    <a class="site-footer__x" href="https://x.com/nemodi" target="_blank" rel="noopener noreferrer" aria-label="Nate Modi on X">𝕏</a>
+  </footer>
 </main>
 
 <script>
@@ -308,7 +319,7 @@ Brand brief:
     const text = prompt.textContent;
     const done = () => {
       const previous = button.textContent;
-      button.textContent = 'Copied';
+      button.textContent = 'Copied ✓';
       setTimeout(() => { button.textContent = previous; }, 1400);
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {

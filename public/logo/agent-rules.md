@@ -1,5 +1,9 @@
 # Logo Lab Agent Rules
 
+Reference links:
+- Landing page: https://natemodi.com/logo/
+- Open-source GitHub repo: https://github.com/nmemodi/natemodi.github.io
+
 Use Explorer as the quality seed set.
 
 Prefer:
@@ -53,6 +57,7 @@ Top recommendations:
 - balance letter/monogram tools against abstract tools as evenly as possible
 - avoid filling the recommendation set from one visual system or one direction
 - when there are 5 directions, prefer one recommendation per direction
+- keep recommendation metadata inside the manifest; do not render a separate Recommended section
 
 Recommended distribution:
 - 40% abstract geometric marks

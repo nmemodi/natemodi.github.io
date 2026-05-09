@@ -27,8 +27,8 @@
     .summary { max-width: 720px; margin: 0; color: var(--muted); font-size: 16px; }
     section { margin-top: 34px; }
     h2 { margin: 0 0 14px; font-size: 16px; }
-    .palette, .directions, .filters { display: flex; flex-wrap: wrap; gap: 8px; }
-    .swatch, .chip, .filter {
+    .palette { display: flex; flex-wrap: wrap; gap: 8px; }
+    .swatch {
       border: 1px solid var(--border);
       border-radius: 7px;
       background: transparent;
@@ -38,8 +38,40 @@
     }
     .swatch { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
     .swatch i { display: block; width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--border); }
-    .filter { cursor: pointer; }
-    .filter[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+    .section-head h2 { margin: 0; }
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: transparent;
+      color: var(--fg);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font: inherit;
+      min-height: 38px;
+      padding: 8px 12px;
+    }
+    .btn:disabled { cursor: default; opacity: 0.42; }
+    .btn--primary { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+    .btn--shuffle { perspective: 220px; }
+    .btn--shuffle .ico-shuffle {
+      width: 16px;
+      height: 16px;
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+    .btn--shuffle.is-spinning .ico-shuffle { animation: shuffleFlipX 0.55s cubic-bezier(0.4, 0, 0.2, 1); }
+    @keyframes shuffleFlipX {
+      0% { transform: rotateX(0deg); }
+      100% { transform: rotateX(360deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .btn--shuffle.is-spinning .ico-shuffle { animation: none; }
+    }
     .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
     .card { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.36); }
     .preview { position: relative; aspect-ratio: 1 / 1; background: var(--surface); }
@@ -48,15 +80,13 @@
     .card.is-failed iframe { display: none; }
     .card.is-failed .fallback { display: flex; }
     .body { padding: 14px; display: grid; gap: 9px; }
-    .meta { display: flex; justify-content: space-between; gap: 8px; color: var(--quiet); font-size: 12px; }
+    .meta { display: flex; justify-content: flex-start; gap: 8px; color: var(--quiet); font-size: 12px; }
     .title { margin: 0; font-weight: 600; }
-    .rationale { margin: 0; color: var(--muted); }
     .links { display: flex; flex-wrap: wrap; gap: 10px; }
     a, button.linkish { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; background: none; border: 0; padding: 0; font: inherit; cursor: pointer; }
     .note { border-top: 1px solid var(--border); margin-top: 34px; padding-top: 18px; color: var(--quiet); font-size: 13px; }
-    .empty { display: none; color: var(--quiet); padding: 28px 0; }
     @media (max-width: 880px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 560px) { main { padding: 32px 18px 64px; } .grid { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) { main { padding: 32px 18px 64px; } .section-head { align-items: start; flex-direction: column; } .grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -71,24 +101,22 @@
       <div class="palette" data-palette></div>
     </section>
 
-    <section aria-labelledby="recommendations-title">
-      <h2 id="recommendations-title">Recommended</h2>
-      <div class="grid" data-recommendations></div>
-    </section>
-
-    <section aria-labelledby="directions-title">
-      <h2 id="directions-title">Directions</h2>
-      <div class="directions" data-directions></div>
-    </section>
-
-    <section aria-labelledby="filters-title">
-      <h2 id="filters-title">Filters</h2>
-      <div class="filters" data-filters></div>
-    </section>
-
     <section aria-labelledby="concepts-title">
-      <h2 id="concepts-title">Concepts</h2>
-      <div class="empty" data-empty>No concepts match these filters.</div>
+      <div class="section-head">
+        <h2 id="concepts-title">Concepts</h2>
+        <button type="button" class="btn btn--primary btn--shuffle" data-shuffle-concepts disabled aria-label="Shuffle concepts">
+          <svg class="ico-shuffle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16 18h5"/>
+            <path d="M3 6h4c1.5 0 2.5 1 3.5 2.5l3 7c1 1.5 2 2.5 3.5 2.5"/>
+            <path d="M16 6h5"/>
+            <path d="M3 18h4c1.5 0 2.5-1 3.5-2.5"/>
+            <path d="M13.5 8.5C14.5 7 15.5 6 17 6"/>
+            <path d="M19 16l2 2-2 2"/>
+            <path d="M19 4l2 2-2 2"/>
+          </svg>
+          Shuffle
+        </button>
+      </div>
       <div class="grid" data-concept-grid></div>
     </section>
 
@@ -107,8 +135,8 @@
     const ALLOWED_HOSTS = new Set(['natemodi.com', location.host]);
     const KNOWN_SLUG = /^[a-z0-9-]+$/;
 
-    const state = { filter: 'all' };
     let validConcepts = [];
+    let gridConcepts = [];
 
     function text(node, value) {
       if (node) node.textContent = value || '';
@@ -176,75 +204,50 @@
       meta.className = 'meta';
       const rank = document.createElement('span');
       rank.textContent = '#' + (concept.rank || concept.id);
-      const variation = document.createElement('span');
-      variation.textContent = concept.variationType || 'concept';
-      meta.append(rank, variation);
+      meta.append(rank);
       const title = document.createElement('p');
       title.className = 'title';
       title.textContent = concept.toolName;
-      const rationale = document.createElement('p');
-      rationale.className = 'rationale';
-      rationale.textContent = concept.rationale;
       const links = document.createElement('div');
       links.className = 'links';
       const open = document.createElement('a');
       open.href = concept.url;
       open.target = '_blank';
       open.rel = 'noopener noreferrer';
-      open.textContent = 'Open';
-      const copy = document.createElement('button');
-      copy.className = 'linkish';
-      copy.type = 'button';
-      copy.textContent = 'Copy iframe';
-      copy.addEventListener('click', () => {
-        const snippet = '<iframe src="' + concept.embedUrl + '" width="320" height="320" style="border:0"></iframe>';
-        navigator.clipboard && navigator.clipboard.writeText
-          ? navigator.clipboard.writeText(snippet).catch(() => {})
-          : window.prompt('Copy iframe snippet', snippet);
-      });
-      links.append(open, copy);
-      body.append(meta, title, rationale, links);
+      open.textContent = 'Open in tool ↗';
+      open.setAttribute('aria-label', 'Open ' + concept.toolName + ' in Logo Lab in a new tab');
+      links.append(open);
+      body.append(meta, title, links);
       card.append(preview, body);
       return card;
     }
 
-    function renderFilters(data) {
-      const filters = document.querySelector('[data-filters]');
-      filters.textContent = '';
-      const options = [
-        ['all', 'All'],
-        ['recommended', 'Recommended'],
-        ...Array.from(new Set(validConcepts.map((c) => c.directionId).filter(Boolean))).map((id) => [id, cleanText((data.directions || []).find((d) => d.id === id)?.name, id)]),
-        ...Array.from(new Set(validConcepts.map((c) => c.toolSlug).filter(Boolean))).map((id) => [id, id])
-      ];
-      options.forEach(([value, label]) => {
-        const btn = document.createElement('button');
-        btn.className = 'filter';
-        btn.type = 'button';
-        btn.textContent = label;
-        btn.dataset.filter = value;
-        btn.setAttribute('aria-pressed', String(value === state.filter));
-        btn.addEventListener('click', () => {
-          state.filter = value;
-          applyFilter();
-          renderFilters(data);
-        });
-        filters.appendChild(btn);
-      });
+    function renderCards() {
+      const grid = document.querySelector('[data-concept-grid]');
+      grid.textContent = '';
+      gridConcepts.forEach((concept) => grid.appendChild(buildCard(concept)));
     }
 
-    function applyFilter() {
-      let shown = 0;
-      document.querySelectorAll('[data-concept-grid] .card').forEach((card) => {
-        const match = state.filter === 'all'
-          || (state.filter === 'recommended' && card.dataset.recommended === 'true')
-          || card.dataset.direction === state.filter
-          || card.dataset.tool === state.filter
-          || card.dataset.variation === state.filter;
-        card.hidden = !match;
-        if (match) shown++;
-      });
-      document.querySelector('[data-empty]').style.display = shown ? 'none' : 'block';
+    function shuffled(items) {
+      const copy = items.slice();
+      for (let index = copy.length - 1; index > 0; index--) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+      }
+      return copy;
+    }
+
+    function shuffleConcepts() {
+      if (gridConcepts.length < 2) return;
+      const button = document.querySelector('[data-shuffle-concepts]');
+      gridConcepts = shuffled(gridConcepts);
+      button.classList.add('is-spinning');
+      button.disabled = true;
+      renderCards();
+      setTimeout(() => {
+        button.classList.remove('is-spinning');
+        button.disabled = false;
+      }, 560);
     }
 
     function render(data) {
@@ -262,15 +265,6 @@
         swatch.style.background = value.startsWith('#') ? value : '#' + value;
         item.append(swatch, document.createTextNode(name + ' ' + value));
         palette.appendChild(item);
-      });
-
-      const directions = document.querySelector('[data-directions]');
-      directions.textContent = '';
-      (data.directions || []).forEach((direction) => {
-        const chip = document.createElement('span');
-        chip.className = 'chip';
-        chip.textContent = cleanText(direction.name, direction.id);
-        directions.appendChild(chip);
       });
 
       validConcepts = (Array.isArray(data.concepts) ? data.concepts : [])
@@ -293,17 +287,12 @@
         });
       }
 
-      const grid = document.querySelector('[data-concept-grid]');
-      const recs = document.querySelector('[data-recommendations]');
-      grid.textContent = '';
-      recs.textContent = '';
-      validConcepts.forEach((concept) => grid.appendChild(buildCard(concept)));
-      (explicitRecommendations.length ? explicitRecommendations : validConcepts.filter((concept) => concept.isRecommended).slice(0, 5))
-        .forEach((concept) => recs.appendChild(buildCard(concept)));
-      renderFilters(data);
-      applyFilter();
+      gridConcepts = validConcepts.slice();
+      renderCards();
+      document.querySelector('[data-shuffle-concepts]').disabled = gridConcepts.length < 2;
     }
 
+    document.querySelector('[data-shuffle-concepts]').addEventListener('click', shuffleConcepts);
     render(parseData());
   })();
   </script>

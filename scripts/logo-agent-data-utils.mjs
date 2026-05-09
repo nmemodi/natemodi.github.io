@@ -4,6 +4,12 @@ import vm from 'node:vm';
 
 export const ROOT = path.resolve(new URL('..', import.meta.url).pathname);
 export const LOGO_BASE_URL = 'https://natemodi.com/logo';
+export const LOGO_LANDING_PAGE_URL = `${LOGO_BASE_URL}/`;
+export const LOGO_GITHUB_REPO_URL = 'https://github.com/nmemodi/natemodi.github.io';
+export const LOGO_REFERENCE_LINKS = {
+  landingPage: LOGO_LANDING_PAGE_URL,
+  githubRepo: LOGO_GITHUB_REPO_URL,
+};
 export const TOOL_REGISTRY_PATH = path.join(ROOT, 'public/shared/tools-registry.js');
 export const EXPLORER_PRESETS_PATH = path.join(ROOT, 'public/logo/explorer/presets.json');
 export const TOOLS_JSON_PATH = path.join(ROOT, 'public/logo/tools.json');
@@ -211,4 +217,3 @@ export function conceptId(slug, index) {
 export function stableStringify(value) {
   return `${JSON.stringify(value, null, 2)}\n`;
 }
-

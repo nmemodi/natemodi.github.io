@@ -47,18 +47,65 @@ describe('Logo Gallery runtime validation', () => {
 
   it('uses a single Explorer-style shuffle control instead of gallery filter buttons', () => {
     expect(window.document.querySelector('[data-shuffle-concepts]')).toBeTruthy();
+    expect(window.document.querySelector('[data-recommendations]')).toBeNull();
     expect(window.document.querySelector('[data-filters]')).toBeNull();
     expect(window.document.querySelector('[data-directions]')).toBeNull();
     expect(window.document.querySelector('[data-empty]')).toBeNull();
   });
 
-  it('preserves explicit recommendation order from the manifest', () => {
+  it('preserves explicit recommendation metadata without rendering a separate section', () => {
     const manifest = window.LogoGalleryRuntime.validateManifest(sample);
     const conceptById = new Map(manifest.concepts.map((concept) => [concept.id, concept]));
     expect(manifest.recommendations.map((recommendation) => recommendation.conceptId))
       .toEqual(sample.recommendations.map((recommendation) => recommendation.conceptId));
     expect(new Set(manifest.recommendations.map((recommendation) => conceptById.get(recommendation.conceptId).toolSlug)).size)
       .toBe(5);
+    expect(window.document.querySelector('[aria-labelledby="recommendations-title"]')).toBeNull();
+  });
+
+  it('does not render per-card rationale descriptions', () => {
+    expect(window.document.querySelector('.rationale')).toBeNull();
+  });
+
+  it('does not render per-card tags or metadata pills', () => {
+    expect(window.document.querySelector('.tags')).toBeNull();
+    expect(window.document.querySelector('.tag')).toBeNull();
+  });
+
+  it('keeps variation type metadata out of visible card labels', () => {
+    const html = fs.readFileSync(path.join(root, 'public/logo/gallery/index.html'), 'utf8');
+    expect(html).not.toContain('variation.textContent');
+    expect(html).not.toContain('meta.append(rank, variation)');
+  });
+
+  it('uses one external tool action instead of source and iframe-copy actions', () => {
+    const html = fs.readFileSync(path.join(root, 'public/logo/gallery/index.html'), 'utf8');
+    expect(html).toContain('Open in tool ↗');
+    expect(html).not.toContain('Copy iframe');
+    expect(html).not.toContain('Copy iframe snippet');
+  });
+
+  it('keeps raw JSON in a collapsed advanced panel and removes load status pills', () => {
+    const html = fs.readFileSync(path.join(root, 'public/logo/gallery/index.html'), 'utf8');
+    const panel = window.document.querySelector('[data-json-panel]');
+    expect(panel).toBeTruthy();
+    expect(panel.open).toBe(false);
+    expect(panel.querySelector('[data-paste-input]')).toBeTruthy();
+    expect(html).not.toContain('Gallery loaded');
+    expect(window.document.querySelector('[data-status]')).toBeNull();
+    expect(window.document.querySelector('.status-row')).toBeNull();
+    expect(window.document.querySelector('.pill')).toBeNull();
+  });
+
+  it('keeps the static gallery template aligned with the simplified Concepts view', () => {
+    const html = fs.readFileSync(path.join(root, 'public/logo/gallery-template.html'), 'utf8');
+    const template = new JSDOM(html).window.document;
+    expect(template.querySelector('[data-shuffle-concepts]')).toBeTruthy();
+    expect(template.querySelector('[data-directions]')).toBeNull();
+    expect(template.querySelector('[data-filters]')).toBeNull();
+    expect(template.querySelector('[data-empty]')).toBeNull();
+    expect(html).toContain('Open in tool ↗');
+    expect(html).not.toContain('Copy iframe');
   });
 
   it('blocks unsafe off-domain embed URLs without rejecting the whole gallery', () => {

@@ -134,35 +134,6 @@
     flex-shrink: 0;
   }
 
-  .aside-source {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--fg-faded);
-    text-decoration: none;
-    font-size: 13px;
-    line-height: 1.4;
-    margin-bottom: 16px;
-    transition: color 0.15s ease;
-  }
-  .aside-source:hover { color: var(--fg); }
-  .aside-source:focus-visible {
-    outline: 2px solid var(--fg);
-    outline-offset: 3px;
-    border-radius: 4px;
-  }
-  .aside-source__arrow {
-    color: var(--fg-faded);
-    font-size: 12px;
-    line-height: 1;
-    flex-shrink: 0;
-    transition: color 0.15s ease, transform 0.15s ease;
-  }
-  .aside-source:hover .aside-source__arrow {
-    color: var(--fg);
-    transform: translate(1px, -1px);
-  }
-
   aside ul {
     list-style: none;
     display: flex;
@@ -718,28 +689,35 @@
   }
 
   /* ── Footer ── */
-  .article-foot {
-    margin-top: 48px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-subtle);
-    color: var(--fg-quiet);
-  }
-  .article-foot p {
-    font-size: 11.5px;
-    line-height: 1.55;
-    color: var(--fg-quiet);
-    margin-top: 0;
-    letter-spacing: 0.003em;
-  }
-  .article-foot code {
-    font-family: var(--font-mono);
-    font-size: 11px;
+  .site-footer {
+    margin-top: 64px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     color: var(--fg-faded);
-    background: none;
-    padding: 0;
   }
-  .article-foot a { color: var(--fg-faded); text-decoration: none; border-bottom: 1px dotted var(--fg-quiet); }
-  .article-foot a:hover { color: var(--fg); border-bottom-color: var(--fg); }
+  .site-footer a {
+    color: var(--fg-faded);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .site-footer a:hover {
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+  .site-footer__name {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+  .site-footer__x {
+    font-size: 28px;
+    line-height: 1;
+  }
 
   .mobile-home {
     display: none;
@@ -794,20 +772,6 @@
     color: var(--fg-faded);
     font-size: 18px;
     line-height: 1;
-  }
-  .agent-note {
-    color: var(--fg-muted);
-    font-size: 13px;
-    line-height: 1.45;
-    margin-top: 12px;
-  }
-  .agent-note a {
-    color: var(--fg);
-    text-decoration: none;
-    border-bottom: 1px solid var(--fg-quiet);
-  }
-  .agent-note a:hover {
-    border-bottom-color: var(--fg);
   }
   .intro-arrow {
     color: var(--fg-faded);
@@ -918,10 +882,6 @@
         <span>Logo Lab</span>
       </a>
     </h1>
-    <a class="aside-source" href="https://github.com/nmemodi/logo-lab" target="_blank" rel="noopener noreferrer" aria-label="Fork Logo Lab on GitHub">
-      <span>Github</span>
-      <span class="aside-source__arrow" aria-hidden="true">↗</span>
-    </a>
     <ul id="toc"></ul>
     <a class="aside-home" href="/">
       <span class="aside-home__arrow" aria-hidden="true">←</span>
@@ -966,6 +926,23 @@
             <span class="entry__title">Explorer</span>
             <span class="entry__arrow" aria-hidden="true">→</span>
           </a>
+          <a class="entry" data-dir="right" href="/logo/agent/">
+            <svg class="entry__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M13.5 6L10 18.5"/>
+              <path d="M6.5 8.5L3 12L6.5 15.5"/>
+              <path d="M17.5 8.5L21 12L17.5 15.5"/>
+            </svg>
+            <span class="entry__title">Agents.md</span>
+            <span class="entry__arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="entry" data-dir="right" href="https://github.com/nmemodi/natemodi.github.io" target="_blank" rel="noopener noreferrer">
+            <svg class="entry__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M16 22.0268V19.1568C16.0375 18.68 15.9731 18.2006 15.811 17.7506C15.6489 17.3006 15.3929 16.8902 15.06 16.5468C18.2 16.1968 21.5 15.0068 21.5 9.54679C21.4997 8.15062 20.9627 6.80799 20 5.79679C20.4558 4.5753 20.4236 3.22514 19.91 2.02679C19.91 2.02679 18.73 1.67679 16 3.50679C13.708 2.88561 11.292 2.88561 8.99999 3.50679C6.26999 1.67679 5.08999 2.02679 5.08999 2.02679C4.57636 3.22514 4.54413 4.5753 4.99999 5.79679C4.03011 6.81549 3.49251 8.17026 3.49999 9.57679C3.49999 14.9968 6.79998 16.1868 9.93998 16.5768C9.61098 16.9168 9.35725 17.3222 9.19529 17.7667C9.03334 18.2112 8.96679 18.6849 8.99999 19.1568V22.0268"/>
+              <path d="M9 20.0267C6 20.9999 3.5 20.0267 2 17.0267"/>
+            </svg>
+            <span class="entry__title">Github</span>
+            <span class="entry__arrow" aria-hidden="true">↗</span>
+          </a>
           <a class="entry" data-dir="down" href="#sections">
             <svg class="entry__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M10.0503 10.6066L2.97923 17.6777C2.19818 18.4587 2.19818 19.7251 2.97923 20.5061C3.76027 21.2872 5.0266 21.2872 5.80765 20.5061L12.8787 13.4351"/>
@@ -973,11 +950,10 @@
               <path d="M6.73267 5.90381L4.61135 6.61092L2.49003 3.07539L3.90424 1.66117L7.43978 3.78249L6.73267 5.90381ZM6.73267 5.90381L9.5629 8.73404"/>
               <path d="M10.0503 10.6066C9.2065 8.45359 9.37147 5.62861 11.111 3.8891C12.8505 2.14958 16.0607 1.76778 17.8285 2.82844L14.7878 5.86911L14.5052 8.98015L17.6162 8.69754L20.6569 5.65686C21.7176 7.42463 21.3358 10.6349 19.5963 12.3744C17.8567 14.1139 15.0318 14.2789 12.8788 13.435"/>
             </svg>
-            <span class="entry__title">Individual tools</span>
+            <span class="entry__title">Toolkit</span>
             <span class="entry__arrow" aria-hidden="true">↓</span>
           </a>
         </div>
-        <p class="agent-note">Building with an AI agent? Generate a custom logo gallery from your design system. <a href="/logo/agent/">Use Logo Lab with an agent&nbsp;→</a></p>
       </div>
 
       <div class="intro" id="logo-lab-intro">
@@ -1019,9 +995,10 @@
 
       <div id="sections"></div>
 
-      <div class="article-foot">
-        <p>Embed URLs follow <code>/logo/&lt;slug&gt;/#v=1&amp;seed=&lt;value&gt;</code> and stay stable across redesigns. Source on <a href="https://github.com/nmemodi/logo-lab" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
-      </div>
+      <footer class="site-footer">
+        <a class="site-footer__name" href="/">natemodi.com</a>
+        <a class="site-footer__x" href="https://x.com/nemodi" target="_blank" rel="noopener noreferrer" aria-label="Nate Modi on X">𝕏</a>
+      </footer>
 
       <a class="mobile-home" href="/">
         <span class="mobile-home__arrow" aria-hidden="true">←</span>

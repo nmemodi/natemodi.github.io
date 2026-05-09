@@ -15,7 +15,9 @@ describe('Logo Lab agent gallery evaluator', () => {
   it('keeps the VectorKit fixture prompt wired to the public contract files', () => {
     const prompt = fs.readFileSync(path.join(fixtureDir, 'vector-kit.prompt.md'), 'utf8');
     [
-      'https://natemodi.com/logo/llms.txt',
+      'https://natemodi.com/logo/',
+      'https://github.com/nmemodi/natemodi.github.io',
+      'https://natemodi.com/logo/agents.md',
       'https://natemodi.com/logo/tools.json',
       'https://natemodi.com/logo/explorer.json',
       'https://natemodi.com/logo/agent-rules.md',

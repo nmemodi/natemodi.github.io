@@ -1,6 +1,8 @@
-Read these Logo Lab files:
+Read these Logo Lab references:
 
-https://natemodi.com/logo/llms.txt
+https://natemodi.com/logo/
+https://github.com/nmemodi/natemodi.github.io
+https://natemodi.com/logo/agents.md
 https://natemodi.com/logo/tools.json
 https://natemodi.com/logo/explorer.json
 https://natemodi.com/logo/agent-rules.md
@@ -17,9 +19,14 @@ Requirements:
 - Include at least 10 initial-customized concepts using that leading `V`.
 - Include no more than 5 wildcard concepts.
 - Group concepts into 3 to 6 named directions.
-- Highlight exactly 5 recommended concepts with reasons.
+- Include exactly 5 recommendation entries in the manifest with reasons.
 - Use 5 distinct tools in the recommendation set.
 - Balance letter/monogram tools and abstract tools across the recommendation set.
+- Render one Concepts section only; do not add a separate Recommended section.
+- Do not render per-card variation type labels.
+- Do not render per-card rationale or descriptive paragraphs.
+- Do not render per-card tags or metadata pills.
+- Render one action link per card: `Open in tool ↗`.
 - Use canonical `https://natemodi.com/logo/{tool-slug}/#v=1...` URLs only.
 - Include the trademark and starting-point disclaimer.
 - Do not present concepts as final identity work.

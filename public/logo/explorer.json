@@ -2,6 +2,10 @@
   "version": 1,
   "generatedAt": "2026-05-07T00:00:00.000Z",
   "baseUrl": "https://natemodi.com/logo",
+  "links": {
+    "landingPage": "https://natemodi.com/logo/",
+    "githubRepo": "https://github.com/nmemodi/natemodi.github.io"
+  },
   "sourceFiles": [
     "public/shared/tools-registry.js",
     "public/logo/explorer/presets.json"

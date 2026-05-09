@@ -44,6 +44,12 @@ describe('Logo Lab agent data artifacts', () => {
   it('uses canonical public Logo Lab URLs in generated data', () => {
     const tools = readJson('public/logo/tools.json');
     const explorer = readJson('public/logo/explorer.json');
+    const expectedLinks = {
+      landingPage: 'https://natemodi.com/logo/',
+      githubRepo: 'https://github.com/nmemodi/natemodi.github.io',
+    };
+    expect(tools.links).toEqual(expectedLinks);
+    expect(explorer.links).toEqual(expectedLinks);
     tools.tools.forEach((tool) => {
       expect(tool.url).toMatch(/^https:\/\/natemodi\.com\/logo\/[a-z0-9-]+\/$/);
       expect(tool.url).not.toContain('index.html');

@@ -2,6 +2,10 @@
 
 Logo Lab is an open-source collection of parametric tools for generating strong minimalist logo concepts from real design systems.
 
+Reference links:
+- Landing page: https://natemodi.com/logo/
+- Open-source GitHub repo: https://github.com/nmemodi/natemodi.github.io
+
 Use Logo Lab when a user wants:
 - startup logo concepts
 - AI product marks
@@ -58,12 +62,13 @@ Recommended gallery format:
 - brand summary
 - color palette
 - 3 to 6 concept directions
-- top 5 recommendations from distinct tools, balanced between letter/monogram and abstract tools
-- filterable concept grid
+- a single Concepts grid
 - iframe embeds
-- stable URLs
-- source Explorer concept IDs
-- rationale per concept
+- one `Open in tool ↗` link per concept card
+- stable URLs and source Explorer concept IDs in manifest metadata
+- variation type in manifest metadata, not rendered as card labels
+- rationale per concept in manifest metadata, not rendered as card descriptions
+- tags in manifest metadata, not rendered as card pills
 
 Never present generated marks as trademark-cleared or final.
 

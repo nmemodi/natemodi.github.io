@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import {
   GENERATED_AT,
   LOGO_BASE_URL,
+  LOGO_REFERENCE_LINKS,
   TOOLS_JSON_PATH,
   canonicalToolUrl,
   loadRegistry,
@@ -14,6 +15,7 @@ export function buildToolsData() {
     version: 1,
     generatedAt: GENERATED_AT,
     baseUrl: LOGO_BASE_URL,
+    links: LOGO_REFERENCE_LINKS,
     stableUrlFormat: '/logo/{slug}/#v=1&seed={seed}&{params}',
     sourceFiles: ['public/shared/tools-registry.js'],
     toolCount: tools.length,
@@ -49,4 +51,3 @@ export function writeToolsData(filePath = TOOLS_JSON_PATH) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   writeToolsData();
 }
-

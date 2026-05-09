@@ -177,30 +177,30 @@
     flex-wrap: wrap;
     gap: 8px;
   }
-
-  .status {
-    margin-top: 18px;
-    display: grid;
+  .advanced-json {
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 10px;
+  }
+  .advanced-json summary {
+    color: var(--fg-faded);
+    cursor: pointer;
+    font-size: 13px;
+    user-select: none;
+    width: max-content;
+  }
+  .advanced-json summary:hover { color: var(--fg); }
+  .advanced-json textarea { margin-top: 10px; }
+  .json-actions {
+    display: flex;
     gap: 8px;
-    color: var(--fg-muted);
+    margin-top: 8px;
+  }
+  .form-error {
+    display: none;
+    color: var(--danger);
     font-size: 13px;
   }
-  .status-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    padding: 4px 8px;
-    background: transparent;
-  }
-  .pill--bad { color: var(--danger); border-color: rgba(155, 45, 38, 0.28); }
-  .pill--ok { color: var(--fg); background: rgba(17, 17, 17, 0.07); }
+  .form-error.is-visible { display: block; }
 
   .section {
     margin-top: 32px;
@@ -304,7 +304,7 @@
   .meta {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 8px;
     color: var(--fg-faded);
     font-size: 12px;
@@ -312,23 +312,6 @@
   .concept-title {
     margin: 0;
     font-weight: 600;
-  }
-  .rationale {
-    margin: 0;
-    color: var(--fg-muted);
-    min-height: 42px;
-  }
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .tag {
-    color: var(--fg-faded);
-    font-size: 11px;
-    border: 1px solid var(--border-subtle);
-    border-radius: 999px;
-    padding: 2px 7px;
   }
   .card-actions {
     display: flex;
@@ -398,8 +381,7 @@
     <div>
       <p class="eyebrow">Logo Lab gallery</p>
       <h1 data-brand-name>Gallery Renderer</h1>
-      <p class="summary" data-summary>Paste a Logo Lab gallery manifest or load one from an HTTPS JSON URL.</p>
-      <div class="status" data-status aria-live="polite"></div>
+      <p class="summary" data-summary>Load a Logo Lab gallery manifest from a JSON URL.</p>
     </div>
 
     <form class="loader" data-loader>
@@ -407,12 +389,18 @@
         <input data-src-input type="url" inputmode="url" placeholder="https://example.com/logo-gallery.json" aria-label="Gallery JSON URL">
         <button class="btn" type="submit">Load</button>
       </div>
-      <textarea data-paste-input spellcheck="false" aria-label="Gallery manifest JSON" placeholder="{ ... }"></textarea>
       <div class="quick-actions">
-        <button class="btn btn--dark" type="button" data-render-paste>Render JSON</button>
         <button class="btn" type="button" data-load-sample>Sample</button>
         <button class="btn" type="button" data-clear>Clear</button>
       </div>
+      <details class="advanced-json" data-json-panel>
+        <summary>Advanced JSON</summary>
+        <textarea data-paste-input spellcheck="false" aria-label="Gallery manifest JSON" placeholder="{ ... }"></textarea>
+        <div class="json-actions">
+          <button class="btn btn--dark" type="button" data-render-paste>Render JSON</button>
+        </div>
+      </details>
+      <p class="form-error" data-error role="alert"></p>
     </form>
   </div>
 
@@ -420,14 +408,6 @@
 
   <section class="section" aria-label="Palette">
     <div class="palette" data-palette></div>
-  </section>
-
-  <section class="section" aria-labelledby="recommendations-title">
-    <div class="section-head">
-      <h2 id="recommendations-title">Recommended</h2>
-      <p class="section-note" data-rec-count></p>
-    </div>
-    <div class="grid" data-recommendations></div>
   </section>
 
   <section class="section" aria-labelledby="concepts-title">
@@ -450,7 +430,7 @@
   </section>
 
   <p class="foot" data-disclaimer>Concepts are starting points. Check distinctiveness, conflicts, and trademark availability before commercial use.</p>
-  <p class="foot">Logo Lab is static: no AI chat, hosted saving, accounts, server-side generation, or trademark review. <a href="/logo/llms.txt">Agent instructions</a> · <a href="/logo/gallery.schema.json">Gallery schema</a></p>
+  <p class="foot">Logo Lab is static: no AI chat, hosted saving, accounts, server-side generation, or trademark review. <a href="/logo/agents.md">Agent instructions</a> · <a href="/logo/gallery.schema.json">Gallery schema</a></p>
 </main>
 
 <script src="/shared/tools-registry.js"></script>
@@ -508,17 +488,16 @@
   const dom = {
     brand: document.querySelector('[data-brand-name]'),
     summary: document.querySelector('[data-summary]'),
-    status: document.querySelector('[data-status]'),
     loader: document.querySelector('[data-loader]'),
     srcInput: document.querySelector('[data-src-input]'),
     pasteInput: document.querySelector('[data-paste-input]'),
+    jsonPanel: document.querySelector('[data-json-panel]'),
     renderPaste: document.querySelector('[data-render-paste]'),
     sample: document.querySelector('[data-load-sample]'),
     clear: document.querySelector('[data-clear]'),
+    error: document.querySelector('[data-error]'),
     blocked: document.querySelector('[data-blocked]'),
     palette: document.querySelector('[data-palette]'),
-    recommendations: document.querySelector('[data-recommendations]'),
-    recCount: document.querySelector('[data-rec-count]'),
     grid: document.querySelector('[data-concept-grid]'),
     shuffle: document.querySelector('[data-shuffle-concepts]'),
     disclaimer: document.querySelector('[data-disclaimer]'),
@@ -732,21 +711,14 @@
     };
   }
 
-  function setStatus(kind, message, details) {
-    dom.status.textContent = '';
-    const row = document.createElement('div');
-    row.className = 'status-row';
-    const pill = document.createElement('span');
-    pill.className = 'pill ' + (kind === 'error' ? 'pill--bad' : kind === 'ok' ? 'pill--ok' : '');
-    pill.textContent = message;
-    row.appendChild(pill);
-    (details || []).forEach((detail) => {
-      const item = document.createElement('span');
-      item.className = 'pill';
-      item.textContent = detail;
-      row.appendChild(item);
-    });
-    dom.status.appendChild(row);
+  function setError(message, details) {
+    const parts = [message, ...(details || [])].filter(Boolean);
+    dom.error.textContent = parts.join(' · ');
+    dom.error.classList.toggle('is-visible', parts.length > 0);
+  }
+
+  function closeJsonPanel() {
+    dom.jsonPanel.open = false;
   }
 
   function clearChildren(node) {
@@ -801,21 +773,13 @@
     text(dom.brand, manifest.brand.name);
     text(dom.summary, manifest.summary || `${manifest.concepts.length} Logo Lab concepts for ${manifest.brand.name}.`);
     text(dom.disclaimer, manifest.disclaimer);
-    renderStatus();
+    setError('');
+    closeJsonPanel();
     renderBlocked();
     renderPalette(manifest.brand.colors);
     renderCards();
     dom.shuffle.disabled = state.gridConcepts.length < 2;
     setupLazyMounting();
-  }
-
-  function renderStatus() {
-    const details = [
-      `${state.validConcepts.length} valid`,
-      `${state.blockedConcepts.length} blocked`,
-    ];
-    if (state.source) details.push(state.source);
-    setStatus('ok', 'Gallery loaded', details);
   }
 
   function renderBlocked() {
@@ -855,7 +819,7 @@
     });
   }
 
-  function buildCard(concept, compact) {
+  function buildCard(concept) {
     const card = document.createElement('article');
     card.className = 'card';
     card.dataset.id = concept.id;
@@ -880,25 +844,11 @@
     meta.className = 'meta';
     const rank = document.createElement('span');
     rank.textContent = `#${concept.rank}`;
-    const variation = document.createElement('span');
-    variation.textContent = concept.variationType;
-    meta.append(rank, variation);
+    meta.append(rank);
 
     const title = document.createElement('p');
     title.className = 'concept-title';
     title.textContent = concept.toolName;
-    const rationale = document.createElement('p');
-    rationale.className = 'rationale';
-    rationale.textContent = compact && concept.recommendationReason ? concept.recommendationReason : concept.rationale;
-
-    const tags = document.createElement('div');
-    tags.className = 'tags';
-    concept.tags.slice(0, compact ? 3 : 6).forEach((tag) => {
-      const el = document.createElement('span');
-      el.className = 'tag';
-      el.textContent = tag;
-      tags.appendChild(el);
-    });
 
     const actions = document.createElement('div');
     actions.className = 'card-actions';
@@ -907,43 +857,19 @@
     open.href = concept.url;
     open.target = '_blank';
     open.rel = 'noopener noreferrer';
-    open.textContent = 'Open';
-    const source = document.createElement('a');
-    source.className = 'linkish';
-    source.href = concept.sourceUrl || concept.url;
-    source.target = '_blank';
-    source.rel = 'noopener noreferrer';
-    source.textContent = concept.sourceConceptId ? concept.sourceConceptId : 'Source';
-    const copy = document.createElement('button');
-    copy.className = 'linkish';
-    copy.type = 'button';
-    copy.textContent = 'Copy iframe';
-    copy.addEventListener('click', () => copySnippet(concept, copy));
-    actions.append(open, source, copy);
-    body.append(meta, title, rationale, tags, actions);
+    open.textContent = 'Open in tool ↗';
+    open.setAttribute('aria-label', `Open ${concept.toolName} in Logo Lab in a new tab`);
+    actions.append(open);
+    body.append(meta, title, actions);
     card.append(preview, body);
     return card;
   }
 
   function renderCards() {
     clearChildren(dom.grid);
-    clearChildren(dom.recommendations);
     state.gridConcepts.forEach((concept) => {
-      dom.grid.appendChild(buildCard(concept, false));
+      dom.grid.appendChild(buildCard(concept));
     });
-    getRecommendedConcepts().forEach((concept) => {
-      dom.recommendations.appendChild(buildCard(concept, true));
-    });
-    const count = dom.recommendations.children.length;
-    dom.recCount.textContent = count ? `${count} highlighted` : '';
-  }
-
-  function getRecommendedConcepts() {
-    const byId = new Map(state.validConcepts.map((concept) => [concept.id, concept]));
-    const explicit = (state.manifest && state.manifest.recommendations ? state.manifest.recommendations : [])
-      .map((recommendation) => byId.get(recommendation.conceptId))
-      .filter(Boolean);
-    return (explicit.length ? explicit : state.validConcepts.filter((concept) => concept.isRecommended)).slice(0, 5);
   }
 
   function shuffled(items) {
@@ -971,11 +897,11 @@
   function setupLazyMounting() {
     if (state.observer) state.observer.disconnect();
     const cards = Array.from(document.querySelectorAll('.card'));
-    const recommendations = new Set(getRecommendedConcepts().map((concept) => concept.id));
+    const eagerConcepts = new Set(state.gridConcepts.slice(0, 6).map((concept) => concept.id));
     cards.forEach((card) => {
-      if (recommendations.has(card.dataset.id)) mountIframe(card, true);
+      if (eagerConcepts.has(card.dataset.id)) mountIframe(card, true);
     });
-    const lazyCards = cards.filter((card) => !recommendations.has(card.dataset.id));
+    const lazyCards = cards.filter((card) => !eagerConcepts.has(card.dataset.id));
     if (!('IntersectionObserver' in window)) {
       lazyCards.forEach((card) => mountIframe(card, false));
       return;
@@ -1018,33 +944,6 @@
     preview.insertBefore(iframe, preview.firstChild);
   }
 
-  function copySnippet(concept, button) {
-    const snippet = `<iframe src="${concept.embedUrl}" width="320" height="320" style="border:0"></iframe>`;
-    const done = () => {
-      const previous = button.textContent;
-      button.textContent = 'Copied';
-      setTimeout(() => { button.textContent = previous; }, 1400);
-    };
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(snippet).then(done).catch(() => fallbackCopy(snippet));
-    } else {
-      fallbackCopy(snippet);
-    }
-  }
-
-  function fallbackCopy(textValue) {
-    const textarea = document.createElement('textarea');
-    textarea.value = textValue;
-    textarea.setAttribute('readonly', '');
-    textarea.style.position = 'fixed';
-    textarea.style.left = '-9999px';
-    document.body.appendChild(textarea);
-    textarea.select();
-    try { document.execCommand('copy'); }
-    catch (error) { window.prompt('Copy iframe snippet', textValue); }
-    finally { textarea.remove(); }
-  }
-
   function loadRaw(raw, sourceLabel) {
     const manifest = validateManifest(parseManifestJson(raw));
     renderManifest(manifest, sourceLabel);
@@ -1052,7 +951,7 @@
 
   async function loadFromSource(src) {
     const token = ++state.loadToken;
-    setStatus('loading', 'Loading manifest');
+    setError('');
     try {
       const result = await fetchManifest(src, token);
       if (!result || token !== state.loadToken) return;
@@ -1064,7 +963,7 @@
       history.replaceState(null, '', url);
     } catch (error) {
       console.warn('[logo-gallery] source load failed', error);
-      setStatus('error', error.message, error.context ? Object.values(error.context).map(String).slice(0, 2) : []);
+      setError(error.message, error.context ? Object.values(error.context).map(String).slice(0, 2) : []);
     }
   }
 
@@ -1078,15 +977,14 @@
     dom.srcInput.value = '';
     dom.pasteInput.value = '';
     text(dom.brand, 'Gallery Renderer');
-    text(dom.summary, 'Paste a Logo Lab gallery manifest or load one from an HTTPS JSON URL.');
+    text(dom.summary, 'Load a Logo Lab gallery manifest from a JSON URL.');
     clearChildren(dom.palette);
-    clearChildren(dom.recommendations);
     clearChildren(dom.grid);
     dom.shuffle.disabled = true;
-    dom.recCount.textContent = '';
     dom.blocked.classList.remove('is-visible');
     dom.blocked.textContent = '';
-    setStatus('idle', 'Ready');
+    setError('');
+    closeJsonPanel();
     history.replaceState(null, '', location.pathname);
   }
 
@@ -1101,7 +999,7 @@
       history.replaceState(null, '', location.pathname);
     } catch (error) {
       console.warn('[logo-gallery] paste render failed', error);
-      setStatus('error', error.message, error.context ? Object.values(error.context).map(String).slice(0, 2) : []);
+      setError(error.message, error.context ? Object.values(error.context).map(String).slice(0, 2) : []);
     }
   });
   dom.sample.addEventListener('click', () => loadFromSource(SAMPLE_SRC));
@@ -1128,7 +1026,7 @@
 
   const initialSrc = new URL(location.href).searchParams.get('src');
   if (initialSrc) loadFromSource(initialSrc);
-  else setStatus('idle', 'Ready');
+  else setError('');
 })();
 </script>
 </body>
