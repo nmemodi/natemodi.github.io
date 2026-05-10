@@ -54,9 +54,9 @@ const imageURL = image ? new URL(image, canonicalURL).href : undefined;
         <a href="/blog" class={currentPath.startsWith('/blog') ? 'active' : ''}>Writing</a>
         <a href="/reading" class={currentPath === '/reading' ? 'active' : ''}>Reading</a>
         <div class="nav-dropdown">
-          <span class={currentPath.startsWith('/logo') || currentPath.startsWith('/underrated') ? 'active' : ''}>Etc.</span>
+          <button type="button" class={`nav-dropdown-trigger ${currentPath.startsWith('/logo') || currentPath.startsWith('/underrated') ? 'active' : ''}`} aria-haspopup="true" aria-expanded="false">Etc.</button>
           <div class="nav-dropdown-menu">
-            <a href="/logo">Logo Lab</a>
+            <a href="/logo/">Logo Lab</a>
             <a href="/underrated">Underrated Atlas</a>
           </div>
         </div>
@@ -146,6 +146,38 @@ const imageURL = image ? new URL(image, canonicalURL).href : undefined;
         el.innerHTML = wrapped;
       }
 
+      function setupNavDropdowns() {
+        const dropdowns = document.querySelectorAll('.nav-dropdown');
+        dropdowns.forEach((dropdown) => {
+          const trigger = dropdown.querySelector('.nav-dropdown-trigger');
+          if (!(trigger instanceof HTMLButtonElement)) return;
+
+          trigger.addEventListener('click', () => {
+            const isOpen = dropdown.classList.toggle('is-open');
+            trigger.setAttribute('aria-expanded', String(isOpen));
+          });
+
+          dropdown.addEventListener('keydown', (event) => {
+            if (event.key !== 'Escape') return;
+            dropdown.classList.remove('is-open');
+            trigger.setAttribute('aria-expanded', 'false');
+            trigger.focus();
+          });
+        });
+
+        document.addEventListener('click', (event) => {
+          dropdowns.forEach((dropdown) => {
+            if (!(event.target instanceof Node) || dropdown.contains(event.target)) return;
+            const trigger = dropdown.querySelector('.nav-dropdown-trigger');
+            dropdown.classList.remove('is-open');
+            if (trigger instanceof HTMLButtonElement) {
+              trigger.setAttribute('aria-expanded', 'false');
+            }
+          });
+        });
+      }
+
+      setupNavDropdowns();
       updateStatus();
       setInterval(updateStatus, 60000);
       getLocation();
