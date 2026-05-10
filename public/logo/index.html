@@ -496,18 +496,9 @@
     pointer-events: none;
   }
   .embed-grid .tile .embed-skeleton { font-size: 11px; }
-  .embed-grid .tile.is-ready .embed-skeleton { display: none; }
+  .embed-grid .tile.is-ready .embed-skeleton,
+  .embed-grid .tile.is-slow .embed-skeleton,
   .embed-grid .tile.is-failed .embed-skeleton { display: none; }
-  .embed-grid .tile.is-failed::after {
-    content: '⚠';
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--fg-quiet);
-    font-size: 16px;
-  }
 
   @keyframes shimmer {
     0%   { background-position: 200% 0; }
@@ -528,7 +519,7 @@
     }
   }
 
-  /* Fallback (iframe failed or timed out) */
+  /* Fallback (iframe failed) */
   .embed-fallback {
     display: none;
     padding: 48px 24px;
@@ -536,6 +527,8 @@
     color: var(--fg-muted);
     font-size: 13px;
   }
+  .embed-wrap.is-ready .embed-skeleton,
+  .embed-wrap.is-slow .embed-skeleton,
   .embed-wrap.is-failed .embed-skeleton { display: none; }
   .embed-wrap.is-failed iframe { display: none; }
   .embed-wrap.is-failed .embed-fallback { display: block; }
@@ -1277,7 +1270,41 @@
 
   /* ── Lazy-mount iframes via IntersectionObserver ── */
   const MOUNT_MARGIN = '500px';
+  const IFRAME_TIMEOUT_MS = 12000;
   const mountedSlugs = new Set();
+
+  function setIframeReady(iframe, height) {
+    iframe.dataset.logoLabReady = 'true';
+
+    const tile = iframe.closest('.embed-grid .tile');
+    if (tile) {
+      tile.classList.add('is-ready');
+      tile.classList.remove('is-slow', 'is-failed');
+      return;
+    }
+
+    const wrap = iframe.closest('.embed-wrap');
+    if (wrap) {
+      wrap.classList.add('is-ready');
+      wrap.classList.remove('is-slow', 'is-failed');
+      if (typeof height === 'number' && isFinite(height) && height > 0) {
+        iframe.style.height = height + 'px';
+      }
+    }
+  }
+
+  function markIframeSlow(iframe, label) {
+    if (iframe.dataset.logoLabReady === 'true') return;
+    console.warn(label);
+    const host = iframe.closest('.embed-grid .tile') || iframe.closest('.embed-wrap');
+    if (host) host.classList.add('is-slow');
+  }
+
+  function markIframeFailed(iframe) {
+    if (iframe.dataset.logoLabReady === 'true') return;
+    const host = iframe.closest('.embed-grid .tile') || iframe.closest('.embed-wrap');
+    if (host) host.classList.add('is-failed');
+  }
 
   function mountSection(sec) {
     const slug = sec.dataset.slug;
@@ -1289,29 +1316,21 @@
     if (grid) {
       Array.from(grid.querySelectorAll('a.tile')).forEach((tile) => {
         const hash = tile.dataset.hash;
+        const src = ORIGIN + toolPath(slug) + '#' + hash;
         const iframe = document.createElement('iframe');
-        iframe.src = ORIGIN + toolPath(slug) + '#' + hash;
         iframe.setAttribute('title', slug + ' variant ' + tile.dataset.variant + ' preview');
-        iframe.setAttribute('loading', 'lazy');
+        iframe.setAttribute('loading', 'eager');
         iframe.setAttribute('scrolling', 'no');
         iframe.setAttribute('aria-hidden', 'true');
         iframe.setAttribute('tabindex', '-1');
 
-        let settled = false;
-        const settle = (ok) => {
-          if (settled) return;
-          settled = true;
-          tile.classList.add(ok ? 'is-ready' : 'is-failed');
-        };
-        iframe.addEventListener('load', () => settle(true));
-        iframe.addEventListener('error', () => settle(false));
+        iframe.addEventListener('load', () => setIframeReady(iframe));
+        iframe.addEventListener('error', () => markIframeFailed(iframe));
         setTimeout(() => {
-          if (!settled) {
-            console.warn('[logo-lab] grid iframe timeout', slug, tile.dataset.variant);
-            settle(false);
-          }
-        }, 6000);
+          markIframeSlow(iframe, '[logo-lab] grid iframe slow: ' + slug + ' variant ' + tile.dataset.variant);
+        }, IFRAME_TIMEOUT_MS);
 
+        iframe.src = src;
         tile.insertBefore(iframe, tile.querySelector('.embed-skeleton'));
       });
       return;
@@ -1322,30 +1341,20 @@
     const seed = sec.dataset.seed;
 
     const iframe = document.createElement('iframe');
-    iframe.src = embedUrl(slug, seed);
+    const src = embedUrl(slug, seed);
     iframe.setAttribute('title', slug + ' preview');
-    iframe.setAttribute('loading', 'lazy');
+    iframe.setAttribute('loading', 'eager');
     iframe.setAttribute('scrolling', 'no');
 
-    let settled = false;
-    const settle = (ok) => {
-      if (settled) return;
-      settled = true;
-      if (ok) wrap.classList.add('is-ready');
-      else     wrap.classList.add('is-failed');
-    };
+    iframe.addEventListener('load', () => setIframeReady(iframe));
+    iframe.addEventListener('error', () => markIframeFailed(iframe));
 
-    iframe.addEventListener('load', () => settle(true));
-    iframe.addEventListener('error', () => settle(false));
-
-    /* Hard 5s timeout — if the iframe hasn't settled, show fallback. */
+    /* Keep slow iframes visible; mobile Safari can render them after timeout. */
     setTimeout(() => {
-      if (!settled) {
-        console.warn('[logo-lab] landing: iframe timeout for', slug);
-        settle(false);
-      }
-    }, 5000);
+      markIframeSlow(iframe, '[logo-lab] landing: iframe slow for ' + slug);
+    }, IFRAME_TIMEOUT_MS);
 
+    iframe.src = src;
     wrap.insertBefore(iframe, wrap.querySelector('.embed-skeleton'));
   }
 
@@ -1403,10 +1412,10 @@
     if (typeof h !== 'number' || !isFinite(h) || h <= 0 || h > 2000) return;
 
     /* Find the iframe whose contentWindow is the sender */
-    const iframes = document.querySelectorAll('.embed-wrap iframe');
+    const iframes = document.querySelectorAll('.embed-wrap iframe, .embed-grid iframe');
     for (let i = 0; i < iframes.length; i++) {
       if (iframes[i].contentWindow === e.source) {
-        iframes[i].style.height = h + 'px';
+        setIframeReady(iframes[i], h);
         return;
       }
     }
