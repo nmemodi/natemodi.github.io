@@ -43,7 +43,7 @@
       slug: 'line-warp',
       name: 'Line Warp',
       tagline: 'Horizontal lines displaced by a letter heightmap.',
-      blurb: 'Francesco Burcini\'s Solfer mark (1978) drew an "S" by stacking horizontal lines and lifting each one upward as if the letter were a topology, giving a flat field a sense of relief.\n\nThe tool takes that idea and opens it up to any letter and font. Set the line count and how far each line displaces, and the character emerges from the field like a contour map.',
+      blurb: 'Create letter-based marks from horizontal lines that bend around a character like a contour map. Choose the letter, font, line count, and displacement strength to control how subtly or clearly the monogram emerges.\n\nIt brings a technical, topographic energy: precise, dimensional, and quietly futuristic.',
       defaultSeed: '42',
       variants: [
         'v=1',
@@ -65,7 +65,7 @@
       slug: 'brutalist-letters',
       name: 'Brutalist Letters',
       tagline: 'Cut letters out of solid blocks with right-angle paths.',
-      blurb: 'Klaus Grötzinger and Peter Riefenstahl built the Hans-Joachim Gericke architectural mark (1966) by cutting a single right-angle path through a rounded square — letter and frame as one solid, architectural object. The output reads more like a pictogram than a letter.\n\nThe tool uses that concept on any character with only corner radius, cut width, and cut depth as the parameters to change the silhouette.',
+      blurb: 'Build bold single-letter marks by cutting right-angle paths through a solid block. Tune the corner radius, cut width, and cut depth to shift the silhouette from architectural to pictographic.\n\nIt brings a heavy, structural energy: confident, compact, and built to feel permanent.',
       defaultSeed: '7',
       variants: [
         'v=1&cr=16&dp=147&lw=18&pa=12',
@@ -88,7 +88,7 @@
       slug: 'interlocking-circles',
       name: 'Interlocking Circles',
       tagline: 'Overlapping rings with controlled break-and-weave.',
-      blurb: 'Koichi Watanabe\'s Ota Dental Clinic mark (1974) is two outlined rings in a tight coupling, woven where they cross.\n\nThe tool extends that idea to anything from two to fifteen rings, with ring, grid, or line layouts. A weave toggle controls which ring sits on top at every intersection.\n\nPro tip: any circle can be dragged to a new position directly on the canvas.',
+      blurb: 'Generate abstract marks from overlapping rings arranged as a grid, line, or cluster. Adjust the ring count, spacing, stroke width, and weave behavior to control how the forms connect.\n\nIt brings a connected, collaborative energy: modular, social, and system-minded.',
       defaultSeed: '3',
       variants: [
         'v=1&bg=060d2d&br=0&fg=ebeaea&gp=0.5&ly=ring&n=7&r=75&ro=91&sp=91&sw=30',
@@ -110,7 +110,7 @@
       slug: 'parallel-letters',
       name: 'Parallel Letters',
       tagline: 'Letters drawn with vertical strip cuts through a solid fill.',
-      blurb: 'John B. Castle\'s Five G mark (1966) is the letter G drawn as a series of nested concentric outlines, each ring slightly inset from the last.\n\nThe tool generalizes to any character with knobs for count, thickness, and gap. Sharp, round, or beveled joins change the entire feel.',
+      blurb: 'Draw letters as nested parallel outlines with adjustable count, thickness, gap, and join style. Use it for crisp initials that sit somewhere between monogram, symbol, and compact wordmark.\n\nIt brings a sharp, engineered energy: clean, assertive, and highly legible.',
       defaultSeed: '12',
       variants: [
         'v=1&bg=673c40&f=Arial%20Black&g=1&jo=miter&n=7&sz=400&t=10',
@@ -133,7 +133,7 @@
       slug: 'shape-tiles',
       name: 'Shape Tiles',
       tagline: 'A single shape tiled across a grid at deterministic rotations.',
-      blurb: 'Vance Jonson\'s Dayton Hudson mark (1970s) is a grid of circles and half-circles — a single primitive repeated, cut, and rotated to form a coherent block.\n\nThe tool lets you pick one shape (circle, ring, petal, diamond, cross), then set size, gap, and rotation. Two or three tweaks is usually all it takes to land on something distinctive.',
+      blurb: 'Create abstract marks from one repeated shape tiled across a grid with controlled size, gap, and rotation. Choose circles, rings, petals, diamonds, or crosses, then make small adjustments until the pattern locks together.\n\nIt brings a systematic, modular energy: composed, versatile, and crisp.',
       defaultSeed: '5',
       variants: [
         'v=1&g=120',
@@ -155,7 +155,7 @@
       slug: 'sliced-shapes',
       name: 'Sliced Shapes',
       tagline: 'Primitives cut by negative arcs to reveal the shape behind.',
-      blurb: 'Ippo Miyamoto and Tadashi Ishikawa drew the Fujisankei Kokukusha mark (1978) as a row of circles cut by curves — the negative-space slice giving motion and depth to a simple pattern.\n\nThe tool expands on the cut: arc, sine, straight, S-curve, or zigzag, applied to any of several base shapes, repeated up to twelve times across the canvas. Curvature, slice width, and spacing determine whether the row reads as one shape or many.',
+      blurb: 'Generate repeated geometric forms cut by negative-space slices. Choose the base shape and slice type, then tune curvature, width, spacing, and count to control whether the mark reads as one flowing form or a sequence.\n\nIt brings a motion-forward energy: dynamic, transformative, and a little cinematic.',
       defaultSeed: '9',
       variants: [
         'v=1&as=0&ba=6&bg=f4f3f1&c=1&cu=0.24&cv=s-curve&fc=2d04ba&gw=18.4&lc=2d04ba&sd=1kxombe&so=0.08&sp=176&sz=117',
@@ -178,7 +178,7 @@
       slug: 'slash-mark',
       name: 'Slash Mark',
       tagline: 'A containing shape striped with diagonals that match the ground.',
-      blurb: 'Kazumasa Nagai\'s Minami-nihon broadcasting mark (1983) is a solid circle striped with diagonal cuts that match the background, so the slashes read as part of the field rather than lines on top.\n\nThe tool parameterizes this idea. Pick a base shape (circle, square, hexagon, or triangle), then set angle, count, line width, taper, and spread.',
+      blurb: 'Create contained abstract marks by cutting diagonal stripes through a base shape. Choose a circle, square, hexagon, or triangle, then adjust angle, count, line width, taper, and spread.\n\nIt brings a decisive, high-impact energy: bold, fast, and impossible to miss.',
       defaultSeed: '11',
       variants: [
         'v=1&a=135&bg=e3e3e3&ex=-1&lc=e3e3e3&n=9&sh=square&sp=26&tp=100',
@@ -200,7 +200,7 @@
       slug: 'polygon-rosette',
       name: 'Polygon Rosette',
       tagline: 'Concentric polygons connected by diagonals — geometric rosettes.',
-      blurb: 'The Grace jewelers mark (1982) nests an octagon inside an octagon and connects corresponding vertices, producing an internal star pattern that reads as a faceted gem.\n\nThe tool generalizes that to anything from three to twenty-four sides. A skip parameter controls which vertices connect — every value is a different rosette, and rotation rolls through them continuously.',
+      blurb: 'Generate geometric rosettes from polygons, radial connections, and rotational variation. Set the number of sides, inner radius, stroke width, skip pattern, and rotation to move from simple facets to dense star-like structures.\n\nIt brings a precise, premium energy: faceted, intelligent, and quietly prestigious.',
       defaultSeed: '6',
       variants: [
         'v=1&bg=ff4242&sw=18',
@@ -225,7 +225,7 @@
       slug: 'echo-stripes',
       name: 'Echo Stripes',
       tagline: 'Nested letters of horizontal stripes that thin out as they grow.',
-      blurb: 'Tim Larsen\'s Bather Belrose Boje mark (1981) renders a letter as a core of thick stripes ringed by larger ghost copies in progressively thinner bars. The trick is alignment: every stripe sits at the same y, just thicker where the inner letter covers it.\n\nThe tool exposes growth ratio, thinning rate, and number of "echoes" so the cascade can hold or extend as far as you want.',
+      blurb: 'Create letter marks from stacked horizontal stripes that repeat outward in echoing layers. Tune the growth ratio, thinning rate, stripe thickness, and number of echoes to control how far the form radiates.\n\nIt brings a signal-like energy: rhythmic, resonant, and alive.',
       defaultSeed: '1',
       variants: [
         'v=1&an=c&bg=1328c9&fg=ffffff&gr=1.47&rt=0.39&tk=90',
@@ -247,7 +247,7 @@
       slug: 'dot-grid',
       name: 'Dot Grid',
       tagline: 'Letters bitmap-rendered from a rounded-rectangle dot grid.',
-      blurb: 'Morton Goldsholl\'s LaSalle Steel mark (1962) renders a letter as a bitmap — a coarse grid of cells, each on or off depending on whether the letterform passes through it.\n\nThe tool follows the same approach and adds dot shape (circle, square, diamond, hexagon, triangle), grid density, and a corner radius. Pull the radius up and the cells read as dots; leave it at zero and they read as pixel blocks.',
+      blurb: 'Render letters as modular bitmap marks built from a grid of dots or cells. Adjust the character, grid density, shape, corner radius, and spacing to move between pixel block, dot matrix, and technical monogram.\n\nIt brings a digital, grid-based energy: playful, technical, and unmistakably product-minded.',
       defaultSeed: '42',
       variants: [
         'v=1&bd=fcffe5&bg=000000&bs=circle&ch=X&dc=000000&ds=100&ff=Georgia&gc=22&ls=105&mg=7&oy=5&th=5',

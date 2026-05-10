@@ -1068,8 +1068,7 @@
     tag.textContent = t.tagline;
 
     /* Blurb may contain blank-line-separated paragraphs ("\n\n"); render each
-       as its own <p> so the gap between historical context and the "The tool…"
-       follow-up is visible. */
+       as its own <p> so the mood line can stand apart from the tool summary. */
     const bodyParagraphs = String(t.blurb || '')
       .split(/\n\s*\n/)
       .map((s) => s.trim())
