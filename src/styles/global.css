@@ -127,15 +127,25 @@ nav a.active {
   position: relative;
 }
 
-.nav-dropdown > span {
+.nav-dropdown-trigger {
+  appearance: none;
+  background: none;
+  border: 0;
   color: var(--color-text-muted);
+  cursor: pointer;
+  font: inherit;
   font-size: 0.9rem;
-  cursor: default;
+  line-height: inherit;
+  padding: 0;
   transition: color 0.15s ease;
 }
 
-.nav-dropdown:hover > span,
-.nav-dropdown > span.active {
+.nav-dropdown:hover > .nav-dropdown-trigger,
+.nav-dropdown-trigger.active {
+  color: var(--color-text);
+}
+
+.nav-dropdown-trigger:hover {
   color: var(--color-text);
 }
 
@@ -162,8 +172,14 @@ nav a.active {
   height: 0.5rem;
 }
 
-.nav-dropdown:hover .nav-dropdown-menu {
+.nav-dropdown.is-open .nav-dropdown-menu {
   display: block;
+}
+
+@media (hover: hover) {
+  .nav-dropdown:hover .nav-dropdown-menu {
+    display: block;
+  }
 }
 
 .nav-dropdown-menu a {
@@ -470,7 +486,7 @@ article blockquote {
   }
 
   nav a,
-  .nav-dropdown > span {
+  .nav-dropdown-trigger {
     font-size: 0.875rem;
   }
 
