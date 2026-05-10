@@ -719,10 +719,6 @@
     line-height: 1;
   }
 
-  .mobile-home {
-    display: none;
-  }
-
   /* Header entry points — prominent enough to act as primary product paths. */
   .entry-points {
     display: grid;
@@ -841,33 +837,6 @@
       margin-top: 0;
     }
     .showcase-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .mobile-home {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--fg-faded);
-      text-decoration: none;
-      font-size: 13px;
-      line-height: 1.4;
-      margin-top: 28px;
-      transition: color 0.15s ease;
-    }
-    .mobile-home:hover { color: var(--fg); }
-    .mobile-home:focus-visible {
-      outline: 2px solid var(--fg);
-      outline-offset: 3px;
-      border-radius: 4px;
-    }
-    .mobile-home__arrow {
-      color: var(--fg-faded);
-      font-size: 12px;
-      line-height: 1;
-      transition: color 0.15s ease, transform 0.15s ease;
-    }
-    .mobile-home:hover .mobile-home__arrow {
-      color: var(--fg);
-      transform: translateX(-2px);
-    }
   }
 </style>
 </head>
@@ -999,11 +968,6 @@
         <a class="site-footer__name" href="/">natemodi.com</a>
         <a class="site-footer__x" href="https://x.com/nemodi" target="_blank" rel="noopener noreferrer" aria-label="Nate Modi on X">𝕏</a>
       </footer>
-
-      <a class="mobile-home" href="/">
-        <span class="mobile-home__arrow" aria-hidden="true">←</span>
-        <span>Home</span>
-      </a>
     </article>
   </main>
 
