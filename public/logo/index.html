@@ -925,7 +925,7 @@
       <div class="intro" id="logo-lab-intro">
         <button class="context-toggle" type="button" aria-expanded="false" aria-controls="logo-lab-intro-more" data-intro-toggle>
           <span class="context-toggle__glyph" aria-hidden="true"></span>
-          <span class="context-toggle__label">More context</span>
+          <span class="context-toggle__label">Context</span>
         </button>
 
         <div class="intro-more" id="logo-lab-intro-more" aria-hidden="true">
@@ -981,12 +981,10 @@
   const introToggle = intro ? intro.querySelector('[data-intro-toggle]') : null;
   const introMore = document.getElementById('logo-lab-intro-more');
   if (intro && introToggle && introMore) {
-    const introToggleLabel = introToggle.querySelector('.context-toggle__label');
     introToggle.addEventListener('click', () => {
       const isOpen = intro.classList.toggle('is-open');
       introToggle.setAttribute('aria-expanded', String(isOpen));
       introMore.setAttribute('aria-hidden', String(!isOpen));
-      if (introToggleLabel) introToggleLabel.textContent = isOpen ? 'Less context' : 'More context';
     });
   }
 
