@@ -1,0 +1,93 @@
+<svg
+  class="blog-diagram"
+  width="800"
+  height="366"
+  viewBox="0 0 800 366"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-labelledby="gmBoundaryTitle gmBoundaryDesc"
+>
+  <title id="gmBoundaryTitle">Where companies draw the GM boundary</title>
+  <desc id="gmBoundaryDesc">Five ways companies draw the general manager boundary: geography at Uber and Caviar, category at Amazon and Walmart, business line at Robinhood, customer segment at Intuit, and function at Apple, which deliberately has no GMs.</desc>
+
+  <text class="head" x="60" y="48">Boundary</text>
+  <text class="head" x="225" y="48">Example</text>
+  <text class="head" x="390" y="48">What it means</text>
+
+  <line class="rule-strong" x1="60" y1="60" x2="780" y2="60" />
+
+  <text class="boundary" x="60" y="94">Geography</text>
+  <text class="company" x="225" y="94">Uber · Caviar</text>
+  <text class="what" x="390" y="94">One city, one owner: growth, ops, supply, service quality</text>
+  <line class="rule-light" x1="60" y1="118" x2="780" y2="118" />
+
+  <text class="boundary" x="60" y="152">Category</text>
+  <text class="company" x="225" y="152">Amazon · Walmart</text>
+  <text class="what" x="390" y="152">Selection, pricing, inventory, promotion in one model</text>
+  <line class="rule-light" x1="60" y1="176" x2="780" y2="176" />
+
+  <text class="boundary" x="60" y="210">Business line</text>
+  <text class="company" x="225" y="210">Robinhood</text>
+  <text class="what" x="390" y="210">Product teams inside Brokerage, Crypto, Say, and Cash</text>
+  <line class="rule-light" x1="60" y1="234" x2="780" y2="234" />
+
+  <text class="boundary" x="60" y="268">Segment</text>
+  <text class="company" x="225" y="268">Intuit</text>
+  <text class="what" x="390" y="268">Consumer, small business and mid-market, and services</text>
+  <line class="rule-light" x1="60" y1="292" x2="780" y2="292" />
+
+  <text class="boundary boundary-alt" x="60" y="326">Function</text>
+  <text class="company" x="225" y="326">Apple</text>
+  <text class="what what-alt" x="390" y="326">No GMs by design: one P&amp;L, integration lives in the functions</text>
+  <line class="rule-strong" x1="60" y1="350" x2="780" y2="350" />
+</svg>
+
+<style>
+  .blog-diagram {
+    display: block;
+    width: 100%;
+    height: auto;
+    font-family: var(--font-sans);
+  }
+
+  .rule-strong {
+    stroke: var(--color-text-muted);
+    stroke-width: 1;
+  }
+
+  .rule-light {
+    stroke: var(--color-border);
+    stroke-width: 1;
+  }
+
+  .head {
+    fill: var(--color-text-muted);
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  .boundary {
+    fill: var(--color-text);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .company {
+    fill: var(--color-text-muted);
+    font-size: 13px;
+  }
+
+  .what {
+    fill: var(--color-text);
+    font-size: 13px;
+  }
+
+  .boundary-alt,
+  .what-alt {
+    fill: var(--color-accent);
+  }
+
+  .what-alt {
+    font-style: italic;
+  }
+</style>
