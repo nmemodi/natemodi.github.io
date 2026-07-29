@@ -8,7 +8,7 @@
   aria-labelledby="gmBoundaryTitle gmBoundaryDesc"
 >
   <title id="gmBoundaryTitle">Where companies draw the GM boundary</title>
-  <desc id="gmBoundaryDesc">Five ways companies draw the general manager boundary: geography at Uber and Caviar, category at Amazon and Walmart, business line at Robinhood, customer segment at Intuit, and function at Apple, which deliberately has no GMs.</desc>
+  <desc id="gmBoundaryDesc">Five ways companies draw the general manager boundary: geography at DoorDash, Uber, and Caviar, category at Amazon and Walmart, business line at Robinhood, customer segment at Intuit, and function at Apple, which deliberately has no GMs.</desc>
 
   <text class="head" x="60" y="48">Boundary</text>
   <text class="head" x="225" y="48">Example</text>
@@ -17,7 +17,7 @@
   <line class="rule-strong" x1="60" y1="60" x2="780" y2="60" />
 
   <text class="boundary" x="60" y="94">Geography</text>
-  <text class="company" x="225" y="94">Uber · Caviar</text>
+  <text class="company" x="225" y="94">DoorDash · Uber · Caviar</text>
   <text class="what" x="390" y="94">One city, one owner: growth, ops, supply, service quality</text>
   <line class="rule-light" x1="60" y1="118" x2="780" y2="118" />
 
@@ -37,13 +37,14 @@
   <line class="rule-light" x1="60" y1="292" x2="780" y2="292" />
 
   <text class="boundary boundary-alt" x="60" y="326">Function</text>
-  <text class="company" x="225" y="326">Apple</text>
+  <text class="company company-alt" x="225" y="326">Apple</text>
   <text class="what what-alt" x="390" y="326">No GMs by design: one P&amp;L, integration lives in the functions</text>
   <line class="rule-strong" x1="60" y1="350" x2="780" y2="350" />
 </svg>
 
 <style>
   .blog-diagram {
+    --counterexample: #b42318;
     display: block;
     width: 100%;
     height: auto;
@@ -83,8 +84,9 @@
   }
 
   .boundary-alt,
+  .company-alt,
   .what-alt {
-    fill: var(--color-accent);
+    fill: var(--counterexample);
   }
 
   .what-alt {
